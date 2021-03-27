@@ -11,10 +11,6 @@ const (
 	server_port = 8080
 )
 
-func dummy(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "dummy")
-}
-
 func main() {
 	fmt.Printf("Starting server on port %d", server_port)
 

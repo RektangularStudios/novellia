@@ -13,8 +13,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
-
-	"github.com/gorilla/mux"
 )
 
 // A DefaultApiController binds http requests to an api service and writes the service results to the http response
@@ -24,12 +22,12 @@ type DefaultApiController struct {
 
 // NewDefaultApiController creates a default api controller
 func NewDefaultApiController(s DefaultApiServicer) Router {
-	return &DefaultApiController{ service: s }
+	return &DefaultApiController{service: s}
 }
 
 // Routes returns all of the api route for the DefaultApiController
 func (c *DefaultApiController) Routes() Routes {
-	return Routes{ 
+	return Routes{
 		{
 			"GetWallet",
 			strings.ToUpper("Get"),
@@ -58,13 +56,13 @@ func (c *DefaultApiController) Routes() Routes {
 }
 
 // GetWallet - Your GET endpoint
-func (c *DefaultApiController) GetWallet(w http.ResponseWriter, r *http.Request) { 
+func (c *DefaultApiController) GetWallet(w http.ResponseWriter, r *http.Request) {
 	getWalletRequest := &GetWalletRequest{}
 	if err := json.NewDecoder(r.Body).Decode(&getWalletRequest); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	
+
 	result, err := c.service.GetWallet(r.Context(), *getWalletRequest)
 	//If an error occured, encode the error with the status code
 	if err != nil {
@@ -73,11 +71,11 @@ func (c *DefaultApiController) GetWallet(w http.ResponseWriter, r *http.Request)
 	}
 	//If no error, encode the body and the result code
 	EncodeJSONResponse(result.Body, &result.Code, w)
-	
+
 }
 
-// GetWorkflowMinterNvla - 
-func (c *DefaultApiController) GetWorkflowMinterNvla(w http.ResponseWriter, r *http.Request) { 
+// GetWorkflowMinterNvla -
+func (c *DefaultApiController) GetWorkflowMinterNvla(w http.ResponseWriter, r *http.Request) {
 	result, err := c.service.GetWorkflowMinterNvla(r.Context())
 	//If an error occured, encode the error with the status code
 	if err != nil {
@@ -86,17 +84,17 @@ func (c *DefaultApiController) GetWorkflowMinterNvla(w http.ResponseWriter, r *h
 	}
 	//If no error, encode the body and the result code
 	EncodeJSONResponse(result.Body, &result.Code, w)
-	
+
 }
 
-// PostWallet - 
-func (c *DefaultApiController) PostWallet(w http.ResponseWriter, r *http.Request) { 
+// PostWallet -
+func (c *DefaultApiController) PostWallet(w http.ResponseWriter, r *http.Request) {
 	cardanoTransaction := &CardanoTransaction{}
 	if err := json.NewDecoder(r.Body).Decode(&cardanoTransaction); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	
+
 	result, err := c.service.PostWallet(r.Context(), *cardanoTransaction)
 	//If an error occured, encode the error with the status code
 	if err != nil {
@@ -105,17 +103,17 @@ func (c *DefaultApiController) PostWallet(w http.ResponseWriter, r *http.Request
 	}
 	//If no error, encode the body and the result code
 	EncodeJSONResponse(result.Body, &result.Code, w)
-	
+
 }
 
-// PostWorkflowMinterNvla - 
-func (c *DefaultApiController) PostWorkflowMinterNvla(w http.ResponseWriter, r *http.Request) { 
+// PostWorkflowMinterNvla -
+func (c *DefaultApiController) PostWorkflowMinterNvla(w http.ResponseWriter, r *http.Request) {
 	minterRequest := &MinterRequest{}
 	if err := json.NewDecoder(r.Body).Decode(&minterRequest); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	
+
 	result, err := c.service.PostWorkflowMinterNvla(r.Context(), *minterRequest)
 	//If an error occured, encode the error with the status code
 	if err != nil {
@@ -124,5 +122,5 @@ func (c *DefaultApiController) PostWorkflowMinterNvla(w http.ResponseWriter, r *
 	}
 	//If no error, encode the body and the result code
 	EncodeJSONResponse(result.Body, &result.Code, w)
-	
+
 }
