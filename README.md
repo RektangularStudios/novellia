@@ -1,6 +1,6 @@
 # Novellia
 
-The `novellia` microservice exposes REST APIs for interacting with the Novellia Platform. This is the backend for the [Novellia SDK](https://github.com/RektangularStudios/novellia-sdk).
+The Novellia microservice exposes REST APIs for interacting with the Novellia Platform. This is the backend for the [Novellia SDK](https://github.com/RektangularStudios/novellia-sdk).
 
 Initially, we neglect to create a CLI tool for interaction on the microservice's host. A **Postman Collection** (TODO) suffices for manual interaction.
 
@@ -8,9 +8,9 @@ Initially, we neglect to create a CLI tool for interaction on the microservice's
 
 For a comprehensive list, refer to the [Novellia SDK Documentation on our Wiki](https://rektangularstudios.com/wiki) (TODO)
 
-Basically, the `novellia` microservice is just a conventional server that abstracts away interaction with Cardano. It submits transactions and calls smart contracts so that you don't have to. If you know why light wallets exist (e.g. Yoroi, AdaLite), this exists for the same reason.
+Basically, the Novellia microservice is just a conventional server that abstracts away interaction with Cardano. It submits transactions and calls smart contracts so that you don't have to. If you know why light wallets exist (e.g. Yoroi, AdaLite), this exists for the same reason.
 
-Mainstream game developers just don't care about blockchain. The APIs exposed by the `novellia` microservice aren't meant to mirror the technicalities of Cardano, they're meant to abstract it away.
+Mainstream game developers just don't care about blockchain. The APIs exposed by Novellia aren't meant to mirror the technicalities of Cardano, they're meant to abstract it away.
 
 We want developers to call a function like `PostLimitOrderForNFT()` not `CheckIfLiquidityPoolExistsAndWhatAboutTheMarketMakerOhNoAndThenPostLimitOrder()`.
 
@@ -41,24 +41,24 @@ We also expect a need for handling the opening and closing of Hydra heads once t
 **We don't want stake pool operators to run Novellia. We don't want that tight coupling.**
 
 Why?
-- SPOs aren't incentivized to run the `novellia` microservice. This makes them unreliable.
-- Running the `novellia` microservice uses system resources. This taxes systems already running `cardano-node`.
-- The sheer number of API calls made to a `novellia` microservice would easily take down a stake pool. This kind of thing, especially for gaming at scale, requires sophisticated load balancing.
+- SPOs aren't incentivized to run Novellia. This makes them unreliable.
+- Running Novellia uses system resources. This taxes systems already running `cardano-node`.
+- The sheer number of API calls made to a Novellia instance would easily take down a stake pool. This kind of thing, especially for gaming at scale, requires sophisticated load balancing.
 
-This doesn't mean an SPO running a `novellia` microservice on their stake pool infrastructure is necessarily bad, it just:
+This doesn't mean an SPO running a Novellia on their stake pool infrastructure is necessarily bad, it just:
 - isn't our goal to have SPOs run it.
 - is a potential liability for the Cardano network.
 
-So who should run their own `novellia` microservice?
+So who should run their own Novellia instance?
 - Anyone with software that needs constant access to the Novellia Platform and may lose a lot of money if other, trusted microservice instances go down.
 
-For this reason, it is expected that the `novellia` microservice is easy to deploy without a local instance of `cardano-node`.
+For this reason, it is expected that Novellia is easy to deploy without a local instance of `cardano-node`.
 
 ## How does it work?
 
-1. Game developer uses Novellia SDK to issue an API call to a `novellia` microservice.
-2. `novellia` microservice received the call and does some processing.
-3. `novellia` microservice maybe issues some commands to `cardano-node` instances running on other services. This may mean submitting a signed transaction or calling a smart contract.
-4. `novellia` microservice returns a response to the game developer.
+1. Game developer uses Novellia SDK to issue an API call to Novellia.
+2. Novellia receives the call and does some processing.
+3. Novellia maybe issues some commands to `cardano-node` instances running on other services. This may mean submitting a signed transaction or calling a smart contract.
+4. Novellia returns a response to the game developer's application.
 
 As far as the game developer is concerned, Cardano barely exists. At most, they need to surface wallets through their product and indicate transaction fees as a kind of pseudo-tax.
