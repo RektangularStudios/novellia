@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/RektangularStudios/novellia/generated/novellia-api/novellia_api"
+	novellia_api "github.com/RektangularStudios/novellia/generated/novellia-api"
 )
 
 const (
