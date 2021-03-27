@@ -3,7 +3,6 @@ package api_service
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 
 	novellia_api "github.com/RektangularStudios/novellia/generated/novellia-api"
@@ -18,8 +17,6 @@ func NewApiService() novellia_api.DefaultApiServicer {
 
 // GetWallet - Your GET endpoint
 func (s *ApiService) GetWallet(ctx context.Context, getWalletRequest novellia_api.GetWalletRequest) (novellia_api.ImplResponse, error) {
-	fmt.Printf("GET WALLET")
-
 	// TODO - update GetWallet with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 
