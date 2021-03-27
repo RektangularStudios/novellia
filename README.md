@@ -2,7 +2,7 @@
 
 The Novellia microservice exposes REST APIs for interacting with the Novellia Platform. This is the backend for the [Novellia SDK](https://github.com/RektangularStudios/novellia-sdk).
 
-Initially, we neglect to create a CLI tool for interaction on the microservice's host. A **Postman Collection** (TODO) suffices for manual interaction.
+Initially, we neglect to create a CLI tool for interaction on the microservice's host. You can import the [Novellia API](https://github.com/RektangularStudios/novellia-api) OpenAPI specification into [Insomnia](https://insomnia.rest/) for manual testing.
 
 ## What features are supported?
 
