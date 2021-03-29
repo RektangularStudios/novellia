@@ -36,5 +36,5 @@ type DefaultApiServicer interface {
 	GetWallet(context.Context, string) (ImplResponse, error)
 	GetWorkflowMinterNvla(context.Context) (ImplResponse, error)
 	PostCardanoTransaction(context.Context, CardanoTransaction) (ImplResponse, error)
-	PostWorkflowMinterNvla(context.Context, MinterRequest) (ImplResponse, error)
+	PostWorkflowMinterNvla(context.Context, MinterInfo) (ImplResponse, error)
 }

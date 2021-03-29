@@ -107,13 +107,13 @@ func (c *DefaultApiController) PostCardanoTransaction(w http.ResponseWriter, r *
 
 // PostWorkflowMinterNvla - 
 func (c *DefaultApiController) PostWorkflowMinterNvla(w http.ResponseWriter, r *http.Request) { 
-	minterRequest := &MinterRequest{}
-	if err := json.NewDecoder(r.Body).Decode(&minterRequest); err != nil {
+	minterInfo := &MinterInfo{}
+	if err := json.NewDecoder(r.Body).Decode(&minterInfo); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	
-	result, err := c.service.PostWorkflowMinterNvla(r.Context(), *minterRequest)
+	result, err := c.service.PostWorkflowMinterNvla(r.Context(), *minterInfo)
 	//If an error occured, encode the error with the status code
 	if err != nil {
 		EncodeJSONResponse(err.Error(), &result.Code, w)

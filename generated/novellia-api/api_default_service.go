@@ -12,12 +12,12 @@ package novellia_api
 
 import (
 	"context"
-	"errors"
 	"net/http"
+	"errors"
 )
 
 // DefaultApiService is a service that implents the logic for the DefaultApiServicer
-// This service should implement the business logic for every endpoint for the DefaultApi API.
+// This service should implement the business logic for every endpoint for the DefaultApi API. 
 // Include any external packages or services that will be required by this service.
 type DefaultApiService struct {
 }
@@ -41,7 +41,7 @@ func (s *DefaultApiService) GetWallet(ctx context.Context, walletAddress string)
 	return Response(http.StatusNotImplemented, nil), errors.New("GetWallet method not implemented")
 }
 
-// GetWorkflowMinterNvla -
+// GetWorkflowMinterNvla - 
 func (s *DefaultApiService) GetWorkflowMinterNvla(ctx context.Context) (ImplResponse, error) {
 	// TODO - update GetWorkflowMinterNvla with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
@@ -52,7 +52,7 @@ func (s *DefaultApiService) GetWorkflowMinterNvla(ctx context.Context) (ImplResp
 	return Response(http.StatusNotImplemented, nil), errors.New("GetWorkflowMinterNvla method not implemented")
 }
 
-// PostCardanoTransaction -
+// PostCardanoTransaction - 
 func (s *DefaultApiService) PostCardanoTransaction(ctx context.Context, cardanoTransaction CardanoTransaction) (ImplResponse, error) {
 	// TODO - update PostCardanoTransaction with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
@@ -66,8 +66,8 @@ func (s *DefaultApiService) PostCardanoTransaction(ctx context.Context, cardanoT
 	return Response(http.StatusNotImplemented, nil), errors.New("PostCardanoTransaction method not implemented")
 }
 
-// PostWorkflowMinterNvla -
-func (s *DefaultApiService) PostWorkflowMinterNvla(ctx context.Context, minterRequest MinterRequest) (ImplResponse, error) {
+// PostWorkflowMinterNvla - 
+func (s *DefaultApiService) PostWorkflowMinterNvla(ctx context.Context, minterInfo MinterInfo) (ImplResponse, error) {
 	// TODO - update PostWorkflowMinterNvla with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 
@@ -79,3 +79,4 @@ func (s *DefaultApiService) PostWorkflowMinterNvla(ctx context.Context, minterRe
 
 	return Response(http.StatusNotImplemented, nil), errors.New("PostWorkflowMinterNvla method not implemented")
 }
+

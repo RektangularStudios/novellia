@@ -10,11 +10,11 @@
 
 package novellia_api
 
-// MinterRequest - Generic request for minter workflows.
-type MinterRequest struct {
+// MinterInfo - Generic information required for minter workflows.
+type MinterInfo struct {
 
 	// Wallet that pays transaction fee
-	TransactionAddress string `json:"transaction_address"`
+	WalletAddress string `json:"wallet_address"`
 
 	// Wallet that received minted tokens
 	MinterDepositAddress string `json:"minter_deposit_address"`
