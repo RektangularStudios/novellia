@@ -16,11 +16,10 @@ func NewApiService() novellia_api.DefaultApiServicer {
 }
 
 // GetWallet - Your GET endpoint
-func (s *ApiService) GetWallet(ctx context.Context, getWalletRequest novellia_api.GetWalletRequest) (novellia_api.ImplResponse, error) {
+func (s *ApiService) GetWallet(ctx context.Context, walletAddress string) (novellia_api.ImplResponse, error) {
 	// TODO - update GetWallet with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 
-	//TODO: Uncomment the next line to return response Response(200, []Token{}) or use other options such as http.Ok ...
 	var tokens []novellia_api.Token
 	tokens = append(tokens,
 		novellia_api.Token{
@@ -40,7 +39,7 @@ func (s *ApiService) GetWallet(ctx context.Context, getWalletRequest novellia_ap
 	//TODO: Uncomment the next line to return response Response(400, {}) or use other options such as http.Ok ...
 	//return Response(400, nil),nil
 
-	//return novellia_api.Response(http.StatusNotImplemented, nil), errors.New("GetWallet method not implemented")
+	return novellia_api.Response(http.StatusNotImplemented, nil), errors.New("GetWallet method not implemented")
 }
 
 // GetWorkflowMinterNvla -
@@ -54,9 +53,9 @@ func (s *ApiService) GetWorkflowMinterNvla(ctx context.Context) (novellia_api.Im
 	return novellia_api.Response(http.StatusNotImplemented, nil), errors.New("GetWorkflowMinterNvla method not implemented")
 }
 
-// PostWallet -
-func (s *ApiService) PostWallet(ctx context.Context, cardanoTransaction novellia_api.CardanoTransaction) (novellia_api.ImplResponse, error) {
-	// TODO - update PostWallet with the required logic for this service method.
+// PostCardanoTransaction -
+func (s *ApiService) PostCardanoTransaction(ctx context.Context, cardanoTransaction novellia_api.CardanoTransaction) (novellia_api.ImplResponse, error) {
+	// TODO - update PostCardanoTransaction with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 
 	//TODO: Uncomment the next line to return response Response(200, {}) or use other options such as http.Ok ...
@@ -65,7 +64,7 @@ func (s *ApiService) PostWallet(ctx context.Context, cardanoTransaction novellia
 	//TODO: Uncomment the next line to return response Response(400, {}) or use other options such as http.Ok ...
 	//return Response(400, nil),nil
 
-	return novellia_api.Response(http.StatusNotImplemented, nil), errors.New("PostWallet method not implemented")
+	return novellia_api.Response(http.StatusNotImplemented, nil), errors.New("PostCardanoTransaction method not implemented")
 }
 
 // PostWorkflowMinterNvla -
