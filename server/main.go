@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	novellia_api "github.com/RektangularStudios/novellia/generated/novellia-api"
+	"github.com/RektangularStudios/novellia/internal/api"
 )
 
 const (
@@ -14,7 +15,7 @@ const (
 func main() {
 	fmt.Printf("Starting server on port %d", server_port)
 
-	DefaultApiService := novellia_api.NewDefaultApiService()
+	DefaultApiService := api.NewApiService()
 	DefaultApiController := novellia_api.NewDefaultApiController(DefaultApiService)
 
 	router := novellia_api.NewRouter(DefaultApiController)

@@ -1,4 +1,4 @@
-package api_service
+package api
 
 import (
 	"context"
@@ -21,12 +21,26 @@ func (s *ApiService) GetWallet(ctx context.Context, getWalletRequest novellia_ap
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 
 	//TODO: Uncomment the next line to return response Response(200, []Token{}) or use other options such as http.Ok ...
-	//return Response(200, []Token{}), nil
+	var tokens []novellia_api.Token
+	tokens = append(tokens,
+		novellia_api.Token{
+			PolicyId:    "0xtNVLA",
+			Amount:      25,
+			Ticker:      "tNVLA",
+			Description: "Test tokens for Novellia",
+		},
+		novellia_api.Token{
+			PolicyId:    "0xADA",
+			Amount:      15,
+			Ticker:      "ADA",
+			Description: "Cardano's ADA Token",
+		})
+	return novellia_api.Response(200, tokens), nil
 
 	//TODO: Uncomment the next line to return response Response(400, {}) or use other options such as http.Ok ...
 	//return Response(400, nil),nil
 
-	return novellia_api.Response(http.StatusNotImplemented, nil), errors.New("GetWallet method not implemented")
+	//return novellia_api.Response(http.StatusNotImplemented, nil), errors.New("GetWallet method not implemented")
 }
 
 // GetWorkflowMinterNvla -
