@@ -1,5 +1,6 @@
-# github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210331044759-f57dcaa95ff3
+# github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210331050447-fdbc0dd933cc
 ## explicit
+github.com/RektangularStudios/novellia-sdk/sdk/server/go/v1
 # github.com/felixge/httpsnoop v1.0.1
 github.com/felixge/httpsnoop
 # github.com/gorilla/handlers v1.5.1
