@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	novellia_api "github.com/RektangularStudios/novellia/generated/novellia-api"
+	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0"
 	"github.com/RektangularStudios/novellia/internal/api"
 )
 
@@ -16,9 +16,9 @@ func main() {
 	fmt.Printf("Starting server on port %d", server_port)
 
 	DefaultApiService := api.NewApiService()
-	DefaultApiController := novellia_api.NewDefaultApiController(DefaultApiService)
+	DefaultApiController := nvla.NewDefaultApiController(DefaultApiService)
 
-	router := novellia_api.NewRouter(DefaultApiController)
+	router := nvla.NewRouter(DefaultApiController)
 
 	err := http.ListenAndServe(fmt.Sprintf(":%d", server_port), router)
 	if err != nil {

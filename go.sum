@@ -1,3 +1,9 @@
+github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210331044759-f57dcaa95ff3 h1:j4APEXR2SjUFSTkTJz6f4JZ3d9datT/E7T2TZqtQmqw=
+github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210331044759-f57dcaa95ff3/go.mod h1:4uC/Sk07QugLd53RpEhP6U55VMk8BfnVCISSC+KKdy0=
+github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210331050447-fdbc0dd933cc h1:0LDveorWkMDqyGr7yQpr5sXmNZsXPV0Fh7E7Ry9ZbNM=
+github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210331050447-fdbc0dd933cc/go.mod h1:4uC/Sk07QugLd53RpEhP6U55VMk8BfnVCISSC+KKdy0=
+github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210401042001-2cb64a92fa6c h1:tF8w/apRejvDYRLqF+XABO1A1o/n6r3amrt2U/WVSbE=
+github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210401042001-2cb64a92fa6c/go.mod h1:4uC/Sk07QugLd53RpEhP6U55VMk8BfnVCISSC+KKdy0=
 github.com/felixge/httpsnoop v1.0.1 h1:lvB5Jl89CsZtGIWuTcDM1E/vkVs49/Ml7JJe07l8SPQ=
 github.com/felixge/httpsnoop v1.0.1/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
 github.com/gorilla/handlers v1.5.1 h1:9lRY6j8DEeeBT10CvO9hGW0gmky0BprnvDI5vfhUHH4=
