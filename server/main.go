@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/v1"
+	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0"
 	"github.com/RektangularStudios/novellia/internal/api"
 )
 
