@@ -6,11 +6,22 @@ Initially, we neglect to create a CLI tool for interaction on the microservice's
 
 ## Running the server
 
+### Pre-requisites
+
+1. a locally running [cardano-node](https://github.com/input-output-hk/cardano-node) which should not be a block producer, or even better, should not be part of a stake pool.
+2. a locally running [cardano-db-sync](https://github.com/input-output-hk/cardano-db-sync).
+3. a locally running [cardano-graphql](https://github.com/input-output-hk/cardano-graphql).
+
+This stack is required for Novellia to connect with and retrieve data from the Cardano blockchain.
+
+### Execution
+
 Install Go: https://golang.org/doc/install
 
 Start the server
 - `go run ./server/main.go`
 
+Alternatively, you may run a pre-compiled binary.
 
 ## What features are supported?
 
@@ -70,3 +81,9 @@ For this reason, it is expected that Novellia is easy to deploy without a local 
 4. Novellia returns a response to the game developer's application.
 
 As far as the game developer is concerned, Cardano barely exists. At most, they need to surface wallets through their product and indicate transaction fees as a kind of pseudo-tax.
+
+# GraphQL
+
+Novellia connects to Cardano through GraphQL as exposed by [cardano-graphql](https://github.com/input-output-hk/cardano-graphql).
+
+[The specification is for accessible data is here](https://input-output-hk.github.io/cardano-graphql/).
