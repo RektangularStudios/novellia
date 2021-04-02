@@ -4,6 +4,14 @@ The Novellia microservice exposes REST APIs for interacting with the Novellia Pl
 
 Initially, we neglect to create a CLI tool for interaction on the microservice's host. You can import the [Novellia API](https://github.com/RektangularStudios/novellia-api) OpenAPI specification into [Insomnia](https://insomnia.rest/) for manual testing.
 
+## Running the server
+
+Install Go: https://golang.org/doc/install
+
+Start the server
+- `go run ./server/main.go`
+
+
 ## What features are supported?
 
 For a comprehensive list, refer to the [Novellia SDK Documentation on our Wiki](https://rektangularstudios.com/wiki) (TODO)
