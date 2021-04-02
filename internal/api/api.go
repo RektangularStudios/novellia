@@ -5,20 +5,33 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/shurcooL/graphql"
+
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0"
 )
 
-type ApiService struct{}
+type ApiService struct{
+	graphqlClient *graphql.Client
+}
 
 // NewApiService creates a default api service
-func NewApiService() nvla.DefaultApiServicer {
-	return &ApiService{}
+func NewApiService(graphqlClient *graphql.Client) nvla.DefaultApiServicer {
+	return &ApiService{
+		graphqlClient: graphqlClient,
+	}
 }
 
 // GetWallet - Your GET endpoint
 func (s *ApiService) GetWallet(ctx context.Context, walletAddress string) (nvla.ImplResponse, error) {
 	// TODO - update GetWallet with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
+
+	/*
+	var q struct {
+		
+	}
+	s.graphqlClient.Query(ctx, )
+	*/
 
 	var tokens []nvla.Token
 	tokens = append(tokens,
