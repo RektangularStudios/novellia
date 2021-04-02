@@ -4,6 +4,6 @@ go 1.16
 
 require (
 	github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210401042001-2cb64a92fa6c
-	github.com/gorilla/handlers v1.5.1 // indirect
-	github.com/gorilla/mux v1.7.3 // indirect
+	github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a
+	golang.org/x/net v0.0.0-20210331212208-0fccb6fa2b5c // indirect
 )
