@@ -18,10 +18,14 @@ This stack is required for Novellia to connect with and retrieve data from the C
 
 Install Go: https://golang.org/doc/install
 
-Start the server
+Start the server without building
 - `go run ./server/main.go`
 
-Alternatively, you may run a pre-compiled binary.
+Or compile a binary for deployment
+- `go build -o novellia-server ./server/main.go`
+
+Then just execute binary to start the server
+- `./novellia-server`
 
 ## What features are supported?
 
@@ -87,3 +91,6 @@ As far as the game developer is concerned, Cardano barely exists. At most, they 
 Novellia connects to Cardano through GraphQL as exposed by [cardano-graphql](https://github.com/input-output-hk/cardano-graphql).
 
 [The specification is for accessible data is here](https://input-output-hk.github.io/cardano-graphql/).
+[The code for the specification is here](https://github.com/input-output-hk/cardano-graphql/blob/master/packages/api-cardano-db-hasura/schema.graphql)
+
+We are using [this library](https://github.com/shurcooL/graphql) for querying with reflection.

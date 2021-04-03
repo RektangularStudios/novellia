@@ -19,7 +19,7 @@ func main() {
 
 	graphqlClient := graphql.NewClient("https://relay1.rektangularstudios.com/graphql", nil)
 
-	DefaultApiService := api.NewApiService()
+	DefaultApiService := api.NewApiService(graphqlClient)
 	DefaultApiController := nvla.NewDefaultApiController(DefaultApiService)
 
 	router := nvla.NewRouter(DefaultApiController)

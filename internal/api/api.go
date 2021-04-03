@@ -27,8 +27,10 @@ func (s *ApiService) GetWallet(ctx context.Context, walletAddress string) (nvla.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 
 	/*
-	var q struct {
-		
+	var query struct {
+		PaymentAddress struct {
+			address graphql.String
+		}
 	}
 	s.graphqlClient.Query(ctx, )
 	*/
