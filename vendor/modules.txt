@@ -15,3 +15,6 @@ github.com/shurcooL/graphql/internal/jsonutil
 # golang.org/x/net v0.0.0-20210331212208-0fccb6fa2b5c
 ## explicit
 golang.org/x/net/context/ctxhttp
+# gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+## explicit
+gopkg.in/yaml.v3
