@@ -4,52 +4,12 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-
-	yaml "gopkg.in/yaml.v3"
+	
 	"github.com/shurcooL/graphql"
 
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0"
 	"github.com/RektangularStudios/novellia/internal/api"
 )
-
-type Config struct {
-	Server struct {
-		Host string `yaml:"host"`
-		Port string `yaml:"port"`
-	} `yaml:"server"`
-	CardanoGraphQL struct {
-		Host string `yaml:"host"`
-		Port string `yaml:"port"`
-	} `yaml:"cardano-graphql"`
-}
-
-func getConfigPath() (string, error) {
-	if (len(os.Args) != 2) {
-		return "", fmt.Errorf("expected config path as first argument")
-	}
-	
-	configPath := os.Args[1]
-	return configPath, nil
-}
-
-func loadConfig(configPath string) (*Config, error) {
-	var config Config
-
-	file, err := os.Open(configPath)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	decoder := yaml.NewDecoder(file)
-
-	err = decoder.Decode(&config)
-	if err != nil {
-		return nil, err
-	}
-
-	return &config, nil
-}
 
 func main() {
 	fmt.Printf("Novellia Server - Version %s\n", version)
