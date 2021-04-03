@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"context"
 	"errors"
 	"net/http"
@@ -32,10 +33,33 @@ func (s *ApiService) GetWallet(ctx context.Context, walletAddress string) (nvla.
 			address graphql.String
 		}
 	}
-	s.graphqlClient.Query(ctx, )
 	*/
 
+	/*
+	curl \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"query": "{ cardanoDbMeta { initialized syncPercentage }}"}' \
+  http://relay1.rektangularstudios.com:3100/graphql
+	*/
+
+	var query struct {
+		CardanoDbMeta struct {
+			initialized graphql.Boolean
+			//syncPercentage graphql.Float
+		}
+	}
+	err := s.graphqlClient.Query(ctx, &query, nil)
+	if err != nil {
+		return nvla.Response(500, nil), err
+	}
+
 	var tokens []nvla.Token
+	tokens = append(tokens,
+		nvla.Token{
+			PolicyId: fmt.Sprintf("%+v", query.CardanoDbMeta.initialized),
+	})
+	/*
 	tokens = append(tokens,
 		nvla.Token{
 			PolicyId:    "0xtNVLA",
@@ -49,6 +73,8 @@ func (s *ApiService) GetWallet(ctx context.Context, walletAddress string) (nvla.
 			Ticker:      "ADA",
 			Description: "Cardano's ADA Token",
 		})
+	*/
+
 	return nvla.Response(200, tokens), nil
 
 	//TODO: Uncomment the next line to return response nvla.Response(400, {}) or use other options such as http.Ok ...

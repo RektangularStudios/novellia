@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/shurcooL/graphql"
 
@@ -17,7 +18,7 @@ const (
 func main() {
 	fmt.Printf("Starting server on port %d", server_port)
 
-	graphqlClient := graphql.NewClient("https://relay1.rektangularstudios.com/graphql", nil)
+	graphqlClient := graphql.NewClient("http://relay1.rektangularstudios.com:3100", nil)
 
 	DefaultApiService := api.NewApiService(graphqlClient)
 	DefaultApiController := nvla.NewDefaultApiController(DefaultApiService)
