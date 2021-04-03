@@ -19,10 +19,10 @@ This stack is required for Novellia to connect with and retrieve data from the C
 Install Go: https://golang.org/doc/install
 
 Start the server without building
-- `go run ./server/main.go`
+- `go run ./server/*`
 
 Or compile a binary for deployment
-- `go build -o novellia-server ./server/main.go`
+- `go build -o novellia-server ./server/*`
 
 Then just execute binary to start the server
 - `./novellia-server`
