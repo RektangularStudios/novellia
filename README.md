@@ -18,14 +18,16 @@ This stack is required for Novellia to connect with and retrieve data from the C
 
 Install Go: https://golang.org/doc/install
 
+The first argument is the `configPath` which determines a YAML file to load. The choices for these are in `config/`.
+
 Start the server without building
-- `go run ./server/*`
+- `go run ./server/* ${PWD}/config/local.yaml`
 
 Or compile a binary for deployment
 - `go build -o novellia-server ./server/*`
 
 Then just execute binary to start the server
-- `./novellia-server`
+- `./novellia-server ${PWD}/config/local.yaml`
 
 ## What features are supported?
 

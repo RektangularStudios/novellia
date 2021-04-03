@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"context"
 	"errors"
 	"net/http"
@@ -42,7 +41,7 @@ func (s *ApiService) GetWallet(ctx context.Context, walletAddress string) (nvla.
   -d '{"query": "{ cardanoDbMeta { initialized syncPercentage }}"}' \
   http://relay1.rektangularstudios.com:3100/graphql
 	*/
-
+	/*
 	var query struct {
 		CardanoDbMeta struct {
 			initialized graphql.Boolean
@@ -59,7 +58,8 @@ func (s *ApiService) GetWallet(ctx context.Context, walletAddress string) (nvla.
 		nvla.Token{
 			PolicyId: fmt.Sprintf("%+v", query.CardanoDbMeta.initialized),
 	})
-	/*
+	*/
+	var tokens []nvla.Token
 	tokens = append(tokens,
 		nvla.Token{
 			PolicyId:    "0xtNVLA",
@@ -73,7 +73,7 @@ func (s *ApiService) GetWallet(ctx context.Context, walletAddress string) (nvla.
 			Ticker:      "ADA",
 			Description: "Cardano's ADA Token",
 		})
-	*/
+	
 
 	return nvla.Response(200, tokens), nil
 
