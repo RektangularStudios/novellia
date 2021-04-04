@@ -32,7 +32,6 @@ func (s *ServiceImpl) GetStatus(ctx context.Context) (bool, float32, error) {
 		return false, 0, err
 	}
 
-	// TODO: verify if casting like this is best practice
 	return bool(query.CardanoDbMeta.Initialized), float32(query.CardanoDbMeta.SyncPercentage), nil
 }
 
