@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"context"
 	"net/http"
 	"os"
 	
@@ -14,8 +13,6 @@ import (
 )
 
 func main() {
-	ctx := context.Background()
-
 	fmt.Printf("Novellia Server - Version %s\n", version)
 
 	configPath, err := getConfigPath()
@@ -36,9 +33,6 @@ func main() {
 	cardanoGraphQLClient := graphql.NewClient(cardanoGraphQLHostString, nil)
 
 	cardanoGraphQLService := cardano_graphql.New(cardanoGraphQLClient)
-
-	a,b,c := cardanoGraphQLService.Initialized(ctx)
-	fmt.Printf("\n%v, %v, %v\n", a,b,c)
 
 	DefaultApiService := api.NewApiService(cardanoGraphQLService)
 	DefaultApiController := nvla.NewDefaultApiController(DefaultApiService)

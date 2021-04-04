@@ -7,4 +7,6 @@ import (
 type Service interface {
 	// Returns the initialization status of the remote GraphQL instance, and the sync percentage
 	Initialized(ctx context.Context) (bool, float64, error)
+	// Returns the assets owned at a payment address
+	GetAssets(ctx context.Context, paymentAddress string) (error)
 }

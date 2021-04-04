@@ -19,8 +19,8 @@ func New(graphQLClient *graphql.Client) (*ServiceImpl) {
 func (s *ServiceImpl) Initialized(ctx context.Context) (bool, float64, error) {
 	var query struct {
 		CardanoDbMeta struct {
-			initialized graphql.Boolean
-			syncPercentage graphql.Float
+			Initialized graphql.Boolean
+			SyncPercentage graphql.Float
 		}
 	}
 
@@ -29,5 +29,11 @@ func (s *ServiceImpl) Initialized(ctx context.Context) (bool, float64, error) {
 		return false, 0, err
 	}
 
-	return bool(query.CardanoDbMeta.initialized), float64(query.CardanoDbMeta.syncPercentage), nil
+	// TODO: verify if casting like this is best practice
+	return bool(query.CardanoDbMeta.Initialized), float64(query.CardanoDbMeta.SyncPercentage), nil
+}
+
+func (s *ServiceImpl) GetAssets(ctx context.Context, paymentAddress string) (error) {
+	// TODO: fill stub
+	return nil
 }

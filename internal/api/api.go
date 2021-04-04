@@ -22,42 +22,8 @@ func NewApiService(cardanoGraphQLService cardano_graphql.Service) nvla.DefaultAp
 
 // GetWallet - Your GET endpoint
 func (s *ApiService) GetWallet(ctx context.Context, walletAddress string) (nvla.ImplResponse, error) {
-	// TODO - update GetWallet with the required logic for this service method.
-	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
+	// TODO: use service
 
-	/*
-	var query struct {
-		PaymentAddress struct {
-			address graphql.String
-		}
-	}
-	*/
-
-	/*
-	curl \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"query": "{ cardanoDbMeta { initialized syncPercentage }}"}' \
-  http://relay1.rektangularstudios.com:3100/graphql
-	*/
-	/*
-	var query struct {
-		CardanoDbMeta struct {
-			initialized graphql.Boolean
-			//syncPercentage graphql.Float
-		}
-	}
-	err := s.graphqlClient.Query(ctx, &query, nil)
-	if err != nil {
-		return nvla.Response(500, nil), err
-	}
-
-	var tokens []nvla.Token
-	tokens = append(tokens,
-		nvla.Token{
-			PolicyId: fmt.Sprintf("%+v", query.CardanoDbMeta.initialized),
-	})
-	*/
 	var tokens []nvla.Token
 	tokens = append(tokens,
 		nvla.Token{
