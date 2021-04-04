@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"context"
 	"net/http"
 	"os"
 	
@@ -9,9 +10,12 @@ import (
 
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0"
 	"github.com/RektangularStudios/novellia/internal/api"
+	cardano_graphql "github.com/RektangularStudios/novellia/internal/cardano/graphql"
 )
 
 func main() {
+	ctx := context.Background()
+
 	fmt.Printf("Novellia Server - Version %s\n", version)
 
 	configPath, err := getConfigPath()
@@ -31,7 +35,12 @@ func main() {
 	cardanoGraphQLHostString := fmt.Sprintf("%s:%s", config.CardanoGraphQL.Host, config.CardanoGraphQL.Port)
 	cardanoGraphQLClient := graphql.NewClient(cardanoGraphQLHostString, nil)
 
-	DefaultApiService := api.NewApiService(cardanoGraphQLClient)
+	cardanoGraphQLService := cardano_graphql.New(cardanoGraphQLClient)
+
+	a,b,c := cardanoGraphQLService.Initialized(ctx)
+	fmt.Printf("\n%v, %v, %v\n", a,b,c)
+
+	DefaultApiService := api.NewApiService(cardanoGraphQLService)
 	DefaultApiController := nvla.NewDefaultApiController(DefaultApiService)
 
 	router := nvla.NewRouter(DefaultApiController)
@@ -40,7 +49,7 @@ func main() {
 	server := http.Server {
 		Addr: hostString,
 		Handler: router,
-	}	
+	}
 	err = server.ListenAndServe()
 	if err != nil {
 		fmt.Printf("Error starting server: %v\n", err)

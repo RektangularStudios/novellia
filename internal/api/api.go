@@ -5,19 +5,18 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/shurcooL/graphql"
-
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0"
+	cardano_graphql "github.com/RektangularStudios/novellia/internal/cardano/graphql"
 )
 
 type ApiService struct{
-	graphqlClient *graphql.Client
+	cardanoGraphQLService cardano_graphql.Service
 }
 
 // NewApiService creates a default api service
-func NewApiService(graphqlClient *graphql.Client) nvla.DefaultApiServicer {
-	return &ApiService{
-		graphqlClient: graphqlClient,
+func NewApiService(cardanoGraphQLService cardano_graphql.Service) nvla.DefaultApiServicer {
+	return &ApiService {
+		cardanoGraphQLService: cardanoGraphQLService,
 	}
 }
 

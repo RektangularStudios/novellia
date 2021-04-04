@@ -2,5 +2,5 @@ server:
   host: 127.0.0.1
   port: 3555
 cardano-graphql:
-  host: relay1.rektangularstudios.com
+  host: http://novellia.rektangularstudios.com
   port: 3100
