@@ -3,25 +3,51 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
+	
+	"github.com/shurcooL/graphql"
 
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0"
 	"github.com/RektangularStudios/novellia/internal/api"
-)
-
-const (
-	server_port = 3555
+	cardano_graphql "github.com/RektangularStudios/novellia/internal/cardano/graphql"
 )
 
 func main() {
-	fmt.Printf("Starting server on port %d", server_port)
+	fmt.Printf("Novellia Server - Version %s\n", version)
 
-	DefaultApiService := api.NewApiService()
+	configPath, err := getConfigPath()
+	if err != nil {
+		fmt.Printf("Failed to get config path: %v\n", err)
+		os.Exit(configPathErr)
+	}
+
+	config, err := loadConfig(configPath)
+	if err != nil {
+		fmt.Printf("Failed to load config: %v\n", err)
+		os.Exit(configLoadErr)
+	}
+
+	fmt.Printf("Starting server with configuration (%s):\n %+v\n", configPath, config)
+
+	cardanoGraphQLHostString := fmt.Sprintf("%s:%s", config.CardanoGraphQL.Host, config.CardanoGraphQL.Port)
+	cardanoGraphQLClient := graphql.NewClient(cardanoGraphQLHostString, nil)
+
+	cardanoGraphQLService := cardano_graphql.New(cardanoGraphQLClient)
+
+	DefaultApiService := api.NewApiService(cardanoGraphQLService)
 	DefaultApiController := nvla.NewDefaultApiController(DefaultApiService)
 
 	router := nvla.NewRouter(DefaultApiController)
 
-	err := http.ListenAndServe(fmt.Sprintf(":%d", server_port), router)
-	if err != nil {
-		fmt.Printf("Error starting server")
+	hostString := fmt.Sprintf("%s:%s", config.Server.Host, config.Server.Port)
+	server := http.Server {
+		Addr: hostString,
+		Handler: router,
 	}
+	err = server.ListenAndServe()
+	if err != nil {
+		fmt.Printf("Error starting server: %v\n", err)
+	}
+
+	os.Exit(successCode)
 }

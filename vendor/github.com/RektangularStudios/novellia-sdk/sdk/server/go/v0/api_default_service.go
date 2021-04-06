@@ -12,12 +12,12 @@ package novellia_sdk
 
 import (
 	"context"
-	"errors"
 	"net/http"
+	"errors"
 )
 
 // DefaultApiService is a service that implents the logic for the DefaultApiServicer
-// This service should implement the business logic for every endpoint for the DefaultApi API.
+// This service should implement the business logic for every endpoint for the DefaultApi API. 
 // Include any external packages or services that will be required by this service.
 type DefaultApiService struct {
 }
@@ -25,6 +25,31 @@ type DefaultApiService struct {
 // NewDefaultApiService creates a default api service
 func NewDefaultApiService() DefaultApiServicer {
 	return &DefaultApiService{}
+}
+
+// GetCardanoStatus - Your GET endpoint
+func (s *DefaultApiService) GetCardanoStatus(ctx context.Context) (ImplResponse, error) {
+	// TODO - update GetCardanoStatus with the required logic for this service method.
+	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
+
+	//TODO: Uncomment the next line to return response Response(200, CardanoStatus{}) or use other options such as http.Ok ...
+	//return Response(200, CardanoStatus{}), nil
+
+	//TODO: Uncomment the next line to return response Response(500, {}) or use other options such as http.Ok ...
+	//return Response(500, nil),nil
+
+	return Response(http.StatusNotImplemented, nil), errors.New("GetCardanoStatus method not implemented")
+}
+
+// GetCardanoTip - Your GET endpoint
+func (s *DefaultApiService) GetCardanoTip(ctx context.Context) (ImplResponse, error) {
+	// TODO - update GetCardanoTip with the required logic for this service method.
+	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
+
+	//TODO: Uncomment the next line to return response Response(200, CardanoTip{}) or use other options such as http.Ok ...
+	//return Response(200, CardanoTip{}), nil
+
+	return Response(http.StatusNotImplemented, nil), errors.New("GetCardanoTip method not implemented")
 }
 
 // GetWallet - Your GET endpoint
@@ -41,7 +66,7 @@ func (s *DefaultApiService) GetWallet(ctx context.Context, walletAddress string)
 	return Response(http.StatusNotImplemented, nil), errors.New("GetWallet method not implemented")
 }
 
-// GetWorkflowMinterNvla -
+// GetWorkflowMinterNvla - 
 func (s *DefaultApiService) GetWorkflowMinterNvla(ctx context.Context) (ImplResponse, error) {
 	// TODO - update GetWorkflowMinterNvla with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
@@ -52,7 +77,7 @@ func (s *DefaultApiService) GetWorkflowMinterNvla(ctx context.Context) (ImplResp
 	return Response(http.StatusNotImplemented, nil), errors.New("GetWorkflowMinterNvla method not implemented")
 }
 
-// PostCardanoTransaction -
+// PostCardanoTransaction - 
 func (s *DefaultApiService) PostCardanoTransaction(ctx context.Context, cardanoTransaction CardanoTransaction) (ImplResponse, error) {
 	// TODO - update PostCardanoTransaction with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
@@ -66,7 +91,7 @@ func (s *DefaultApiService) PostCardanoTransaction(ctx context.Context, cardanoT
 	return Response(http.StatusNotImplemented, nil), errors.New("PostCardanoTransaction method not implemented")
 }
 
-// PostWorkflowMinterNvla -
+// PostWorkflowMinterNvla - 
 func (s *DefaultApiService) PostWorkflowMinterNvla(ctx context.Context, minterInfo MinterInfo) (ImplResponse, error) {
 	// TODO - update PostWorkflowMinterNvla with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
@@ -79,3 +104,4 @@ func (s *DefaultApiService) PostWorkflowMinterNvla(ctx context.Context, minterIn
 
 	return Response(http.StatusNotImplemented, nil), errors.New("PostWorkflowMinterNvla method not implemented")
 }
+

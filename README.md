@@ -4,6 +4,32 @@ The Novellia microservice exposes REST APIs for interacting with the Novellia Pl
 
 Initially, we neglect to create a CLI tool for interaction on the microservice's host. You can import the [Novellia API](https://github.com/RektangularStudios/novellia-api) OpenAPI specification into [Insomnia](https://insomnia.rest/) for manual testing.
 
+## Running the server
+
+### Pre-requisites
+
+1. a locally running [cardano-node](https://github.com/input-output-hk/cardano-node) which should not be a block producer, or even better, should not be part of a stake pool.
+2. a locally running [cardano-db-sync](https://github.com/input-output-hk/cardano-db-sync).
+3. a locally running [cardano-graphql](https://github.com/input-output-hk/cardano-graphql).
+
+This stack is required for Novellia to connect with and retrieve data from the Cardano blockchain.
+
+### Execution
+
+Install Go: https://golang.org/doc/install
+
+The first argument is the `configPath` which determines a YAML file to load. The choices for these are in `config/`.
+
+Start the server without building
+- `go run ./server/* ${PWD}/config/local.yaml`
+
+Or compile a binary for deployment
+- `go build -o novellia-server ./server/*`
+
+Then just execute binary to start the server
+- `./novellia-server ${PWD}/config/local.yaml`
+
+**You'll need to edit the local.yaml to point at your own instance running cardano-graphql**
 ## What features are supported?
 
 For a comprehensive list, refer to the [Novellia SDK Documentation on our Wiki](https://rektangularstudios.com/wiki) (TODO)
@@ -62,3 +88,12 @@ For this reason, it is expected that Novellia is easy to deploy without a local 
 4. Novellia returns a response to the game developer's application.
 
 As far as the game developer is concerned, Cardano barely exists. At most, they need to surface wallets through their product and indicate transaction fees as a kind of pseudo-tax.
+
+# GraphQL
+
+Novellia connects to Cardano through GraphQL as exposed by [cardano-graphql](https://github.com/input-output-hk/cardano-graphql).
+
+[The specification is for accessible data is here](https://input-output-hk.github.io/cardano-graphql/).
+[The code for the specification is here](https://github.com/input-output-hk/cardano-graphql/blob/master/packages/api-cardano-db-hasura/schema.graphql)
+
+We are using [this library](https://github.com/shurcooL/graphql) for querying with reflection.

@@ -10,8 +10,12 @@
 
 package novellia_sdk
 
-//Response return a ImplResponse struct filled
-func Response(code int, body interface{}) ImplResponse {
-	return ImplResponse{Code: code, Body: body}
-}
+// CardanoTip - Cardano chain tip information
+type CardanoTip struct {
 
+	// Latest Cardano block
+	Block int32 `json:"block"`
+
+	// Latest Cardano epoch
+	Epoch int32 `json:"epoch"`
+}

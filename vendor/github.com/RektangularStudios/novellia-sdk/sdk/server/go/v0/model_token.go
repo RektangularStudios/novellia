@@ -13,14 +13,14 @@ package novellia_sdk
 // Token - Generalizes the data required to describe a token in a Cardano wallet.
 type Token struct {
 
-	// Token policy ID registered on Cardano
-	PolicyId string `json:"policy_id"`
+	// Token asset ID registered on Cardano
+	AssetId string `json:"asset_id"`
 
-	// Amount of token held in Cardano wallet
-	Amount float32 `json:"amount"`
+	// Amount of token held in Cardano wallet (in discrete units, i.e. lovelace)
+	Amount int32 `json:"amount"`
 
-	// Ticker as interpreted by Novellia (e.g. NVLA, ADA)
-	Ticker string `json:"ticker,omitempty"`
+	// Name or ticker as interpreted by Novellia (e.g. NVLA, ADA)
+	Name string `json:"name,omitempty"`
 
 	// Short description of token as interpreted by Novellia
 	Description string `json:"description,omitempty"`

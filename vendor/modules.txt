@@ -1,11 +1,20 @@
-# github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210401042001-2cb64a92fa6c
+# github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210404214942-a1d9ec2ff714
 ## explicit
 github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0
 # github.com/felixge/httpsnoop v1.0.1
 github.com/felixge/httpsnoop
 # github.com/gorilla/handlers v1.5.1
-## explicit
 github.com/gorilla/handlers
 # github.com/gorilla/mux v1.7.3
-## explicit
 github.com/gorilla/mux
+# github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a
+## explicit
+github.com/shurcooL/graphql
+github.com/shurcooL/graphql/ident
+github.com/shurcooL/graphql/internal/jsonutil
+# golang.org/x/net v0.0.0-20210331212208-0fccb6fa2b5c
+## explicit
+golang.org/x/net/context/ctxhttp
+# gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+## explicit
+gopkg.in/yaml.v3
