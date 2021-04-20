@@ -1,5 +1,5 @@
-github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210404214942-a1d9ec2ff714 h1:TPdJ8jGfRvGFoSvE3J0Bd5lDDmEuxoKCxIQp+q6g1EM=
-github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210404214942-a1d9ec2ff714/go.mod h1:4uC/Sk07QugLd53RpEhP6U55VMk8BfnVCISSC+KKdy0=
+github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210420040029-25fe387daa2b h1:nVny6La72whF2vxrStkTjqMK1DkhXKn+1CrgdZN7R4o=
+github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210420040029-25fe387daa2b/go.mod h1:4uC/Sk07QugLd53RpEhP6U55VMk8BfnVCISSC+KKdy0=
 github.com/felixge/httpsnoop v1.0.1 h1:lvB5Jl89CsZtGIWuTcDM1E/vkVs49/Ml7JJe07l8SPQ=
 github.com/felixge/httpsnoop v1.0.1/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
 github.com/gorilla/handlers v1.5.1 h1:9lRY6j8DEeeBT10CvO9hGW0gmky0BprnvDI5vfhUHH4=
