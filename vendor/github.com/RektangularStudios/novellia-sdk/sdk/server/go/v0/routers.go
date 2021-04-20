@@ -18,6 +18,7 @@ import (
 	"strconv"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"mime/multipart"
 )
 
 // A Route defines the parameters for an api endpoint
