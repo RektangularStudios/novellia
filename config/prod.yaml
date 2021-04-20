@@ -1,6 +1,7 @@
 server:
-  host: 127.0.0.1
+  # leave host blank or server will only accept calls from localhost
+  host: 
   port: 3555
 cardano-graphql:
-  host: 127.0.0.1
+  host: http://127.0.0.1
   port: 3100

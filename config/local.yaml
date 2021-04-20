@@ -1,4 +1,5 @@
 server:
+  # you can only hit this from within localhost
   host: 127.0.0.1
   port: 3555
 # You'll need your own instance hosting cardano-graphql
