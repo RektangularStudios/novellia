@@ -23,72 +23,75 @@ func NewApiService(cardanoGraphQLService cardano_graphql.Service) nvla.DefaultAp
 
 // TODO
 // GetOrders - Your GET endpoint
-func (s *ApiService) GetOrders(ctx context.Context, productId string, marketId string, organizationId string, count string) (ImplResponse, error) {
+func (s *ApiService) GetOrders(ctx context.Context, productId string, marketId string, organizationId string, count string) (nvla.ImplResponse, error) {
 	// TODO - update GetOrders with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 
 	//TODO: Uncomment the next line to return response Response(200, []Order{}) or use other options such as http.Ok ...
 	//return Response(200, []Order{}), nil
 
-	return Response(http.StatusNotImplemented, nil), errors.New("GetOrders method not implemented")
+	return nvla.Response(http.StatusNotImplemented, nil), errors.New("GetOrders method not implemented")
 }
 
 // Gets listed products
-func (s *ApiService) GetProducts(ctx context.Context, marketId string, organizationId string, productId string) (ImplResponse, error) {
+func (s *ApiService) GetProducts(ctx context.Context, marketId string, organizationId string, productId string) (nvla.ImplResponse, error) {
 	// TODO: unmock, use query params
 
-	products := []{
-		nvla.Product{
-			nvla.ProductAsset: {
-				urls: [
+	products := []nvla.Product{
+		{
+			Asset: nvla.ProductAsset{
+				Urls: []string{
 					"https://siasky.net/AACQHdh6YsQfFshLfHjhjsQNCwKHbnaJ2CryhZRAs4HqNQ",
-					"https://api.rektangularstudios.com/ipfs/QmXR2TGqndCHmu4utjpzrSwaGtUVMvrjBQ8eKwpRAnPnTh"
+					"https://api.rektangularstudios.com/ipfs/QmXR2TGqndCHmu4utjpzrSwaGtUVMvrjBQ8eKwpRAnPnTh",
 					"https://api.rektangularstudios.com/static/cards/iscara_the_ten_thousand_guns/iscara_the_ten_thousand_guns.zip",
-				],
-				loader: "occulta_novellia_character",
+				},
+				Loader: "occulta_novellia_character",
 			},
-			nvla.ProductPricing: {
+			Pricing: nvla.ProductPricing{
 				CurrencyPolicyId: "ada",
-				UnitPrice: "20",
-				MaxOrderSize: "5",
+				UnitPrice: 20,
+				MaxOrderSize: 5,
 				PurchaseAddress: "0xDraculiDepositAddress",
 				DateAvailable: "2021-05-15",
 			},
-			nvla.ProductOrganization: {
+			Organization: nvla.ProductOrganization{
 				Name: "Rektangular Studios",
-				organizationId: 1,
+				OrganizationId: 1,
 			},
-			nvla.ProductMarket: {
+			Market: nvla.ProductMarket{
 				Name: "Occulta Novellia",
 				MarketId: 1,
 			},
-			nvla.ProductStock: {
+			Stock: nvla.ProductStock{
 				Available: 2400,
 				TotalSupply: 2500,
 			},
-			nvla.ProductMetadata: {
-				Tags: ["Game Character"],
+			Metadata: nvla.ProductMetadata{
+				Tags: []string{"Game Character"},
 				DateListed: "2021-05-01",
 			},
-			nvla.ProductArtist: {
+			Artist: nvla.ProductArtist{
 				Name: "ArtistName",
-				Urls: ["https://www.artstation.com/", "https://www.deviantart.com/"],
+				Urls: []string{
+					"https://www.artstation.com/",
+					"https://www.deviantart.com/",
+				},
 			},
-			nvla.ProductProduct: {
-				OverviewImageUrls: [
+			Product: nvla.ProductProduct{
+				OverviewImageUrls: []string{
 					"https://siasky.net/_Aqfe5wxnzn54sPn2cBPNnwmjQ2te4rXZfVNvUb79QhBWw",
 					"https://api.rektangularstudios.com/ipfs/QmQbju6V8vpjKS1AG9vw4mQucYoeiCY2dNSnrsWzfJAZue",
-					"https://api.rektangularstudios.com/static/cards/iscara_the_ten_thousand_guns/iscara_the_ten_thousand_guns_card.jpg"
-				],
+					"https://api.rektangularstudios.com/static/cards/iscara_the_ten_thousand_guns/iscara_the_ten_thousand_guns_card.jpg",
+				},
 				TokenPolicyId: "0xrandomNumbers.IscaraTheTenThousandGuns",
-				Description: "A character token for the upcoming surreal horror game Occulta Novellia. This token will grant access to a playable character."
-				Name: "Iscara the Ten Thousand Guns"
+				Description: "A character token for the upcoming surreal horror game Occulta Novellia. This token will grant access to a playable character.",
+				Name: "Iscara the Ten Thousand Guns",
 				ProductId: 2,
-			}
-		}
+			},
+		},
 	}
 
-	return Response(200, products), nil
+	return nvla.Response(200, products), nil
 }
 
 // Availability information about service availability
