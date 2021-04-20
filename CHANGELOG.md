@@ -13,7 +13,9 @@ Initial deployment
 
 ## v0.3.0
 - Add `/products`
+  - mocked with example response
 - Add `/orders`
+  - stubbed
 - Rename `/cardano/status` to `/status`
-  - add maintenance switch
+  - add maintenance switch (stubbed)
   - generalize for multiple service statuses
