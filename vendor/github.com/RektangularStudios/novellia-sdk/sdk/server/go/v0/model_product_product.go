@@ -19,12 +19,15 @@ type ProductProduct struct {
 	// Token policy ID to refer to blockchain
 	TokenPolicyId string `json:"token_policy_id"`
 
-	// Short description of token
-	Description string `json:"description"`
-
 	// Readable name of product
 	Name string `json:"name"`
 
 	// Unique identifier of product
 	ProductId int32 `json:"product_id"`
+
+	// Short description of product
+	DescriptionShort string `json:"description_short,omitempty"`
+
+	// Long description of product
+	DescriptionLong string `json:"description_long,omitempty"`
 }
