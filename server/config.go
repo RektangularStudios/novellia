@@ -15,6 +15,7 @@ type Config struct {
 		Host string `yaml:"host"`
 		Port string `yaml:"port"`
 	} `yaml:"cardano-graphql"`
+	Mocked bool
 }
 
 func getConfigPath() (string, error) {
