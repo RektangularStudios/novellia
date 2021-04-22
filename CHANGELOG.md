@@ -19,3 +19,4 @@ Initial deployment
 - Rename `/cardano/status` to `/status`
   - add maintenance switch (stubbed)
   - generalize for multiple service statuses
+- Add `mocked_api` for debugging without service dependencies
