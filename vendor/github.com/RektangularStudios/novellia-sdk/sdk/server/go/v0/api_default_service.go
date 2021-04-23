@@ -27,20 +27,6 @@ func NewDefaultApiService() DefaultApiServicer {
 	return &DefaultApiService{}
 }
 
-// GetCardanoStatus - Your GET endpoint
-func (s *DefaultApiService) GetCardanoStatus(ctx context.Context) (ImplResponse, error) {
-	// TODO - update GetCardanoStatus with the required logic for this service method.
-	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
-
-	//TODO: Uncomment the next line to return response Response(200, CardanoStatus{}) or use other options such as http.Ok ...
-	//return Response(200, CardanoStatus{}), nil
-
-	//TODO: Uncomment the next line to return response Response(500, {}) or use other options such as http.Ok ...
-	//return Response(500, nil),nil
-
-	return Response(http.StatusNotImplemented, nil), errors.New("GetCardanoStatus method not implemented")
-}
-
 // GetCardanoTip - Your GET endpoint
 func (s *DefaultApiService) GetCardanoTip(ctx context.Context) (ImplResponse, error) {
 	// TODO - update GetCardanoTip with the required logic for this service method.
@@ -50,6 +36,39 @@ func (s *DefaultApiService) GetCardanoTip(ctx context.Context) (ImplResponse, er
 	//return Response(200, CardanoTip{}), nil
 
 	return Response(http.StatusNotImplemented, nil), errors.New("GetCardanoTip method not implemented")
+}
+
+// GetOrders - Your GET endpoint
+func (s *DefaultApiService) GetOrders(ctx context.Context, productId string, marketId string, organizationId string, count string) (ImplResponse, error) {
+	// TODO - update GetOrders with the required logic for this service method.
+	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
+
+	//TODO: Uncomment the next line to return response Response(200, []Order{}) or use other options such as http.Ok ...
+	//return Response(200, []Order{}), nil
+
+	return Response(http.StatusNotImplemented, nil), errors.New("GetOrders method not implemented")
+}
+
+// GetProducts - Your GET endpoint
+func (s *DefaultApiService) GetProducts(ctx context.Context, marketId string, organizationId string, productId string) (ImplResponse, error) {
+	// TODO - update GetProducts with the required logic for this service method.
+	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
+
+	//TODO: Uncomment the next line to return response Response(200, []Product{}) or use other options such as http.Ok ...
+	//return Response(200, []Product{}), nil
+
+	return Response(http.StatusNotImplemented, nil), errors.New("GetProducts method not implemented")
+}
+
+// GetStatus - Your GET endpoint
+func (s *DefaultApiService) GetStatus(ctx context.Context) (ImplResponse, error) {
+	// TODO - update GetStatus with the required logic for this service method.
+	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
+
+	//TODO: Uncomment the next line to return response Response(200, Status{}) or use other options such as http.Ok ...
+	//return Response(200, Status{}), nil
+
+	return Response(http.StatusNotImplemented, nil), errors.New("GetStatus method not implemented")
 }
 
 // GetWallet - Your GET endpoint

@@ -29,15 +29,21 @@ func main() {
 
 	fmt.Printf("Starting server with configuration (%s):\n %+v\n", configPath, config)
 
-	cardanoGraphQLHostString := fmt.Sprintf("%s:%s", config.CardanoGraphQL.Host, config.CardanoGraphQL.Port)
-	cardanoGraphQLClient := graphql.NewClient(cardanoGraphQLHostString, nil)
+	var apiService nvla.DefaultApiServicer
+	if config.Mocked {
+		apiService = api.NewMockedApiService()
+	} else {
+		cardanoGraphQLHostString := fmt.Sprintf("%s:%s", config.CardanoGraphQL.Host, config.CardanoGraphQL.Port)
+		cardanoGraphQLClient := graphql.NewClient(cardanoGraphQLHostString, nil)
+	
+		cardanoGraphQLService := cardano_graphql.New(cardanoGraphQLClient)
+	
+		apiService = api.NewApiService(cardanoGraphQLService)	
+	}
 
-	cardanoGraphQLService := cardano_graphql.New(cardanoGraphQLClient)
+	apiController := nvla.NewDefaultApiController(apiService)
 
-	DefaultApiService := api.NewApiService(cardanoGraphQLService)
-	DefaultApiController := nvla.NewDefaultApiController(DefaultApiService)
-
-	router := nvla.NewRouter(DefaultApiController)
+	router := nvla.NewRouter(apiController)
 
 	hostString := fmt.Sprintf("%s:%s", config.Server.Host, config.Server.Port)
 	server := http.Server {

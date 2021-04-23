@@ -6,3 +6,4 @@ server:
 cardano-graphql:
   host: X
   port: X
+mocked: false

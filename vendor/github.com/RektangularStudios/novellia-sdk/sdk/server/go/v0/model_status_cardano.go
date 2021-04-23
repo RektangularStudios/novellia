@@ -10,12 +10,11 @@
 
 package novellia_sdk
 
-// CardanoStatus - Status of Cardano for determining availability of other endpoints
-type CardanoStatus struct {
+type StatusCardano struct {
 
-	// Whether Cardano APIs are available / Cardano is fully synced
+	// whether cardano-graphql is initialized
 	Initialized bool `json:"initialized"`
 
-	// Cardano sync percentage for progress estimation
+	// cardano-graphql sync percentage, used to gauge when APIs will be available
 	SyncPercentage float32 `json:"sync_percentage"`
 }

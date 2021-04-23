@@ -32,47 +32,59 @@ func NewDefaultApiController(s DefaultApiServicer) Router {
 func (c *DefaultApiController) Routes() Routes {
 	return Routes{ 
 		{
-			"GetCardanoStatus",
-			strings.ToUpper("Get"),
-			"/cardano/status",
-			c.GetCardanoStatus,
-		},
-		{
 			"GetCardanoTip",
 			strings.ToUpper("Get"),
-			"/cardano/tip",
+			"/novellia/cardano/tip",
 			c.GetCardanoTip,
+		},
+		{
+			"GetOrders",
+			strings.ToUpper("Get"),
+			"/novellia/orders",
+			c.GetOrders,
+		},
+		{
+			"GetProducts",
+			strings.ToUpper("Get"),
+			"/novellia/products",
+			c.GetProducts,
+		},
+		{
+			"GetStatus",
+			strings.ToUpper("Get"),
+			"/novellia/status",
+			c.GetStatus,
 		},
 		{
 			"GetWallet",
 			strings.ToUpper("Get"),
-			"/wallet/{wallet_address}",
+			"/novellia/wallet/{wallet_address}",
 			c.GetWallet,
 		},
 		{
 			"GetWorkflowMinterNvla",
 			strings.ToUpper("Get"),
-			"/workflow/minter/nvla",
+			"/novellia/workflow/minter/nvla",
 			c.GetWorkflowMinterNvla,
 		},
 		{
 			"PostCardanoTransaction",
 			strings.ToUpper("Post"),
-			"/cardano/transaction",
+			"/novellia/cardano/transaction",
 			c.PostCardanoTransaction,
 		},
 		{
 			"PostWorkflowMinterNvla",
 			strings.ToUpper("Post"),
-			"/workflow/minter/nvla",
+			"/novellia/workflow/minter/nvla",
 			c.PostWorkflowMinterNvla,
 		},
 	}
 }
 
-// GetCardanoStatus - Your GET endpoint
-func (c *DefaultApiController) GetCardanoStatus(w http.ResponseWriter, r *http.Request) { 
-	result, err := c.service.GetCardanoStatus(r.Context())
+// GetCardanoTip - Your GET endpoint
+func (c *DefaultApiController) GetCardanoTip(w http.ResponseWriter, r *http.Request) { 
+	result, err := c.service.GetCardanoTip(r.Context())
 	//If an error occured, encode the error with the status code
 	if err != nil {
 		EncodeJSONResponse(err.Error(), &result.Code, w)
@@ -83,9 +95,44 @@ func (c *DefaultApiController) GetCardanoStatus(w http.ResponseWriter, r *http.R
 	
 }
 
-// GetCardanoTip - Your GET endpoint
-func (c *DefaultApiController) GetCardanoTip(w http.ResponseWriter, r *http.Request) { 
-	result, err := c.service.GetCardanoTip(r.Context())
+// GetOrders - Your GET endpoint
+func (c *DefaultApiController) GetOrders(w http.ResponseWriter, r *http.Request) { 
+	query := r.URL.Query()
+	productId := query.Get("product_id")
+	marketId := query.Get("market_id")
+	organizationId := query.Get("organization_id")
+	count := query.Get("count")
+	result, err := c.service.GetOrders(r.Context(), productId, marketId, organizationId, count)
+	//If an error occured, encode the error with the status code
+	if err != nil {
+		EncodeJSONResponse(err.Error(), &result.Code, w)
+		return
+	}
+	//If no error, encode the body and the result code
+	EncodeJSONResponse(result.Body, &result.Code, w)
+	
+}
+
+// GetProducts - Your GET endpoint
+func (c *DefaultApiController) GetProducts(w http.ResponseWriter, r *http.Request) { 
+	query := r.URL.Query()
+	marketId := query.Get("market_id")
+	organizationId := query.Get("organization_id")
+	productId := query.Get("product_id")
+	result, err := c.service.GetProducts(r.Context(), marketId, organizationId, productId)
+	//If an error occured, encode the error with the status code
+	if err != nil {
+		EncodeJSONResponse(err.Error(), &result.Code, w)
+		return
+	}
+	//If no error, encode the body and the result code
+	EncodeJSONResponse(result.Body, &result.Code, w)
+	
+}
+
+// GetStatus - Your GET endpoint
+func (c *DefaultApiController) GetStatus(w http.ResponseWriter, r *http.Request) { 
+	result, err := c.service.GetStatus(r.Context())
 	//If an error occured, encode the error with the status code
 	if err != nil {
 		EncodeJSONResponse(err.Error(), &result.Code, w)
