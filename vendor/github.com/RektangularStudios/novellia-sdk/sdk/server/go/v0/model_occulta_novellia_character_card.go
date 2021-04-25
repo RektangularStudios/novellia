@@ -10,9 +10,12 @@
 
 package novellia_sdk
 
-type ProductMarket struct {
+// OccultaNovelliaCharacterCard - Metadata relating to card / distribution
+type OccultaNovelliaCharacterCard struct {
 
-	Name string `json:"name"`
+	// The character number
+	Number int32 `json:"number"`
 
-	MarketId string `json:"market_id"`
+	// The set this character was released in
+	ReleaseSet string `json:"release_set"`
 }
