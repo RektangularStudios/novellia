@@ -20,3 +20,6 @@ Initial deployment
   - add maintenance switch (stubbed)
   - generalize for multiple service statuses
 - Add `mocked_api` for debugging without service dependencies
+
+## v0.4.0
+- Add updated `/orders` for interaction with payment processor

@@ -4,4 +4,6 @@ server:
 cardano-graphql:
   host: X
   port: X
+now-payments:
+  api-key: X
 mocked: true

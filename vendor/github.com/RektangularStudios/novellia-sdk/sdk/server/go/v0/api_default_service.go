@@ -39,12 +39,12 @@ func (s *DefaultApiService) GetCardanoTip(ctx context.Context) (ImplResponse, er
 }
 
 // GetOrders - Your GET endpoint
-func (s *DefaultApiService) GetOrders(ctx context.Context, productId string, marketId string, organizationId string, count string) (ImplResponse, error) {
+func (s *DefaultApiService) GetOrders(ctx context.Context, orderId string) (ImplResponse, error) {
 	// TODO - update GetOrders with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 
-	//TODO: Uncomment the next line to return response Response(200, []Order{}) or use other options such as http.Ok ...
-	//return Response(200, []Order{}), nil
+	//TODO: Uncomment the next line to return response Response(200, Order{}) or use other options such as http.Ok ...
+	//return Response(200, Order{}), nil
 
 	return Response(http.StatusNotImplemented, nil), errors.New("GetOrders method not implemented")
 }
@@ -108,6 +108,17 @@ func (s *DefaultApiService) PostCardanoTransaction(ctx context.Context, cardanoT
 	//return Response(400, nil),nil
 
 	return Response(http.StatusNotImplemented, nil), errors.New("PostCardanoTransaction method not implemented")
+}
+
+// PostOrders - 
+func (s *DefaultApiService) PostOrders(ctx context.Context, orderCreated OrderCreated) (ImplResponse, error) {
+	// TODO - update PostOrders with the required logic for this service method.
+	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
+
+	//TODO: Uncomment the next line to return response Response(200, {}) or use other options such as http.Ok ...
+	//return Response(200, nil),nil
+
+	return Response(http.StatusNotImplemented, nil), errors.New("PostOrders method not implemented")
 }
 
 // PostWorkflowMinterNvla - 

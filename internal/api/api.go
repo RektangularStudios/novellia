@@ -21,16 +21,41 @@ func NewApiService(cardanoGraphQLService cardano_graphql.Service) nvla.DefaultAp
 	}
 }
 
-// TODO
-// GetOrders - Your GET endpoint
-func (s *ApiService) GetOrders(ctx context.Context, productId string, marketId string, organizationId string, count string) (nvla.ImplResponse, error) {
-	// TODO - update GetOrders with the required logic for this service method.
-	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
+// Gets an order by id
+func (s *ApiService) GetOrders(ctx context.Context, productId string) (nvla.ImplResponse, error) {
+	order := nvla.Order{
+		Products: []nvla.OrderProducts{
+			nvla.OrderProducts{
+				ProductId: "PROD-01D78XYFJ1PRM1WPBAOU8JQMNV",
+				Quantity: 4,
+			},
+			nvla.OrderProducts{
+				ProductId: "PROD-01D78XYFJ1PRM1WPBCBT3VHMNV",
+				Quantity: 2,
+			},
+		},
+		Customer: nvla.OrderCustomer{
+			DeliveryAddress: "addr1q80u75kavwd5sc7j52x0k8nrqd46540vcjgsvl4fhxjqqs60vcjwf9llp7rv006f0dqyffltyyyzpzl9vct4mp7wjdaspwq39a",
+		},
+		Payment: nvla.OrderPayment{
+			PaymentAddress: "addr1q80u75kavwd5sc7j52x0k8nrqd46540vcjgsvl4fhxjqqs60vcjwf9llp7rv006f0dqyffltyyyzpzl9vct4mp7wjdaspwq39a",
+			PriceCurrencyId: "ada",
+			PriceAmount: 20,
+			Status: "AWAITING_PAYMENT",
+		},
+		OrderId: "ORDER-01D78XYFJ1PRM1WPBCBT3VHMNV",
+	}
 
-	//TODO: Uncomment the next line to return response Response(200, []Order{}) or use other options such as http.Ok ...
-	//return Response(200, []Order{}), nil
+	return nvla.Response(200, order), nil
+}
 
-	return nvla.Response(http.StatusNotImplemented, nil), errors.New("GetOrders method not implemented")
+// Creates an order and returns the order_id
+func (s *ApiService) PostOrders(context.Context, nvla.OrderCreated) (nvla.ImplResponse, error) {
+	orderCreated := nvla.OrderCreated{
+		OrderId: "ORDER-01D78XYFJ1PRM1WPBCBT3VHMNV",
+	}
+
+	return nvla.Response(200, orderCreated), nil
 }
 
 // Gets listed products
