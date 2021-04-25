@@ -111,7 +111,7 @@ func (s *DefaultApiService) PostCardanoTransaction(ctx context.Context, cardanoT
 }
 
 // PostOrders - 
-func (s *DefaultApiService) PostOrders(ctx context.Context, order Order) (ImplResponse, error) {
+func (s *DefaultApiService) PostOrders(ctx context.Context, orderCreated OrderCreated) (ImplResponse, error) {
 	// TODO - update PostOrders with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 

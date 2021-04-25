@@ -195,13 +195,13 @@ func (c *DefaultApiController) PostCardanoTransaction(w http.ResponseWriter, r *
 
 // PostOrders - 
 func (c *DefaultApiController) PostOrders(w http.ResponseWriter, r *http.Request) { 
-	order := &Order{}
-	if err := json.NewDecoder(r.Body).Decode(&order); err != nil {
+	orderCreated := &OrderCreated{}
+	if err := json.NewDecoder(r.Body).Decode(&orderCreated); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	
-	result, err := c.service.PostOrders(r.Context(), *order)
+	result, err := c.service.PostOrders(r.Context(), *orderCreated)
 	//If an error occured, encode the error with the status code
 	if err != nil {
 		EncodeJSONResponse(err.Error(), &result.Code, w)

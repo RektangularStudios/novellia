@@ -18,8 +18,8 @@ type OrderPayment struct {
 	// Policy ID of currency
 	PriceCurrencyId string `json:"price_currency_id"`
 
-	// Amount due in currency
-	PriceAmount string `json:"price_amount"`
+	// Amount due in currency. Use `number` for fiat, but ADA is lovelace integral
+	PriceAmount float32 `json:"price_amount"`
 
 	// Payment status (i.e. received, processing, ...)
 	Status string `json:"status"`
