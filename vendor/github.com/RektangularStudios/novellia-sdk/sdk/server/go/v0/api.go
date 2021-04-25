@@ -39,7 +39,7 @@ type DefaultApiRouter interface {
 // and updated with the logic required for the API.
 type DefaultApiServicer interface { 
 	GetCardanoTip(context.Context) (ImplResponse, error)
-	GetOrders(context.Context, float32) (ImplResponse, error)
+	GetOrders(context.Context, string) (ImplResponse, error)
 	GetProducts(context.Context, string, string, string) (ImplResponse, error)
 	GetStatus(context.Context) (ImplResponse, error)
 	GetWallet(context.Context, string) (ImplResponse, error)

@@ -39,7 +39,7 @@ func (s *DefaultApiService) GetCardanoTip(ctx context.Context) (ImplResponse, er
 }
 
 // GetOrders - Your GET endpoint
-func (s *DefaultApiService) GetOrders(ctx context.Context, orderId float32) (ImplResponse, error) {
+func (s *DefaultApiService) GetOrders(ctx context.Context, orderId string) (ImplResponse, error) {
 	// TODO - update GetOrders with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 
