@@ -15,7 +15,7 @@ func NewMockedApiService() nvla.DefaultApiServicer {
 	return &MockedApiService {}
 }
 
-// Gets an order
+// Gets an order by id
 func (s *MockedApiService) GetOrders(ctx context.Context, productId string) (nvla.ImplResponse, error) {
 	order := nvla.Order{
 		Products: []nvla.OrderProducts{
@@ -35,7 +35,7 @@ func (s *MockedApiService) GetOrders(ctx context.Context, productId string) (nvl
 			PaymentAddress: "addr1q80u75kavwd5sc7j52x0k8nrqd46540vcjgsvl4fhxjqqs60vcjwf9llp7rv006f0dqyffltyyyzpzl9vct4mp7wjdaspwq39a",
 			PriceCurrencyId "ada",
 			PriceAmount 20,
-			Status string `json:"status"`
+			Status string `json:"status"`,
 		}
 		OrderId: "ORDER-01D78XYFJ1PRM1WPBCBT3VHMNV",
 	}
@@ -43,31 +43,13 @@ func (s *MockedApiService) GetOrders(ctx context.Context, productId string) (nvl
 	return nvla.Response(200, order), nil
 }
 
+// Creates an order and returns the order_id
 func (s *MockedApiService) PostOrders(context.Context, Order) (ImplResponse, error) {
-	order := nvla.Order{
-		Products: []nvla.OrderProducts{
-			{
-				ProductId: "PROD-01D78XYFJ1PRM1WPBAOU8JQMNV",
-				Quantity 4,
-			},
-			{
-				ProductId: "PROD-01D78XYFJ1PRM1WPBCBT3VHMNV",
-				Quantity 2,
-			},
-		}
-		Customer: nvla.OrderCustomer{
-			DeliveryAddress: "addr1q80u75kavwd5sc7j52x0k8nrqd46540vcjgsvl4fhxjqqs60vcjwf9llp7rv006f0dqyffltyyyzpzl9vct4mp7wjdaspwq39a",
-		}
-		Payment: nvla.OrderPayment{
-			PaymentAddress: "addr1q80u75kavwd5sc7j52x0k8nrqd46540vcjgsvl4fhxjqqs60vcjwf9llp7rv006f0dqyffltyyyzpzl9vct4mp7wjdaspwq39a",
-			PriceCurrencyId "ada",
-			PriceAmount 20,
-			Status string `json:"status"`
-		}
+	orderCreated := nvla.OrderCreated{
 		OrderId: "ORDER-01D78XYFJ1PRM1WPBCBT3VHMNV",
 	}
 
-	order.
+	return nvla.Response(200, orderCreated), nil
 }
 
 // Gets listed products
