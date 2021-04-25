@@ -28,6 +28,7 @@ type DefaultApiRouter interface {
 	GetWallet(http.ResponseWriter, *http.Request)
 	GetWorkflowMinterNvla(http.ResponseWriter, *http.Request)
 	PostCardanoTransaction(http.ResponseWriter, *http.Request)
+	PostOrders(http.ResponseWriter, *http.Request)
 	PostWorkflowMinterNvla(http.ResponseWriter, *http.Request)
 }
 
@@ -38,11 +39,12 @@ type DefaultApiRouter interface {
 // and updated with the logic required for the API.
 type DefaultApiServicer interface { 
 	GetCardanoTip(context.Context) (ImplResponse, error)
-	GetOrders(context.Context, string, string, string, string) (ImplResponse, error)
+	GetOrders(context.Context, float32) (ImplResponse, error)
 	GetProducts(context.Context, string, string, string) (ImplResponse, error)
 	GetStatus(context.Context) (ImplResponse, error)
 	GetWallet(context.Context, string) (ImplResponse, error)
 	GetWorkflowMinterNvla(context.Context) (ImplResponse, error)
 	PostCardanoTransaction(context.Context, CardanoTransaction) (ImplResponse, error)
+	PostOrders(context.Context, Order) (ImplResponse, error)
 	PostWorkflowMinterNvla(context.Context, MinterInfo) (ImplResponse, error)
 }

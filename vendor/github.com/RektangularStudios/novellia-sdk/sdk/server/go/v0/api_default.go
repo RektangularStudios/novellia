@@ -74,6 +74,12 @@ func (c *DefaultApiController) Routes() Routes {
 			c.PostCardanoTransaction,
 		},
 		{
+			"PostOrders",
+			strings.ToUpper("Post"),
+			"/novellia/orders",
+			c.PostOrders,
+		},
+		{
 			"PostWorkflowMinterNvla",
 			strings.ToUpper("Post"),
 			"/novellia/workflow/minter/nvla",
@@ -98,11 +104,8 @@ func (c *DefaultApiController) GetCardanoTip(w http.ResponseWriter, r *http.Requ
 // GetOrders - Your GET endpoint
 func (c *DefaultApiController) GetOrders(w http.ResponseWriter, r *http.Request) { 
 	query := r.URL.Query()
-	productId := query.Get("product_id")
-	marketId := query.Get("market_id")
-	organizationId := query.Get("organization_id")
-	count := query.Get("count")
-	result, err := c.service.GetOrders(r.Context(), productId, marketId, organizationId, count)
+	orderId := query.Get("order_id")
+	result, err := c.service.GetOrders(r.Context(), orderId)
 	//If an error occured, encode the error with the status code
 	if err != nil {
 		EncodeJSONResponse(err.Error(), &result.Code, w)
@@ -180,6 +183,25 @@ func (c *DefaultApiController) PostCardanoTransaction(w http.ResponseWriter, r *
 	}
 	
 	result, err := c.service.PostCardanoTransaction(r.Context(), *cardanoTransaction)
+	//If an error occured, encode the error with the status code
+	if err != nil {
+		EncodeJSONResponse(err.Error(), &result.Code, w)
+		return
+	}
+	//If no error, encode the body and the result code
+	EncodeJSONResponse(result.Body, &result.Code, w)
+	
+}
+
+// PostOrders - 
+func (c *DefaultApiController) PostOrders(w http.ResponseWriter, r *http.Request) { 
+	order := &Order{}
+	if err := json.NewDecoder(r.Body).Decode(&order); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	
+	result, err := c.service.PostOrders(r.Context(), *order)
 	//If an error occured, encode the error with the status code
 	if err != nil {
 		EncodeJSONResponse(err.Error(), &result.Code, w)

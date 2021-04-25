@@ -10,15 +10,8 @@
 
 package novellia_sdk
 
-// Order - Describes a single order
-type Order struct {
+type OrderCustomer struct {
 
-	Products []OrderProducts `json:"products"`
-
-	Customer OrderCustomer `json:"customer"`
-
-	Payment OrderPayment `json:"payment,omitempty"`
-
-	// Order ID for future reference
-	OrderId string `json:"order_id,omitempty"`
+	// Address to deliver tokens to
+	DeliveryAddress string `json:"delivery_address"`
 }
