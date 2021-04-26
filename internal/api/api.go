@@ -23,101 +23,17 @@ func NewApiService(cardanoGraphQLService cardano_graphql.Service) nvla.DefaultAp
 
 // Gets an order by id
 func (s *ApiService) GetOrders(ctx context.Context, productId string) (nvla.ImplResponse, error) {
-	order := nvla.Order{
-		Products: []nvla.OrderProducts{
-			nvla.OrderProducts{
-				ProductId: "PROD-01D78XYFJ1PRM1WPBAOU8JQMNV",
-				Quantity: 4,
-			},
-			nvla.OrderProducts{
-				ProductId: "PROD-01D78XYFJ1PRM1WPBCBT3VHMNV",
-				Quantity: 2,
-			},
-		},
-		Customer: nvla.OrderCustomer{
-			DeliveryAddress: "addr1q80u75kavwd5sc7j52x0k8nrqd46540vcjgsvl4fhxjqqs60vcjwf9llp7rv006f0dqyffltyyyzpzl9vct4mp7wjdaspwq39a",
-		},
-		Payment: nvla.OrderPayment{
-			PaymentAddress: "addr1q80u75kavwd5sc7j52x0k8nrqd46540vcjgsvl4fhxjqqs60vcjwf9llp7rv006f0dqyffltyyyzpzl9vct4mp7wjdaspwq39a",
-			PriceCurrencyId: "ada",
-			PriceAmount: 20,
-			Status: "AWAITING_PAYMENT",
-		},
-		OrderId: "ORDER-01D78XYFJ1PRM1WPBCBT3VHMNV",
-	}
-
-	return nvla.Response(200, order), nil
+	return nvla.Response(http.StatusNotImplemented, nil), errors.New("GetOrders method not implemented")
 }
 
 // Creates an order and returns the order_id
 func (s *ApiService) PostOrders(context.Context, nvla.OrderCreated) (nvla.ImplResponse, error) {
-	orderCreated := nvla.OrderCreated{
-		OrderId: "ORDER-01D78XYFJ1PRM1WPBCBT3VHMNV",
-	}
-
-	return nvla.Response(200, orderCreated), nil
+	return nvla.Response(http.StatusNotImplemented, nil), errors.New("PostOrders method not implemented")
 }
 
 // Gets listed products
 func (s *ApiService) GetProducts(ctx context.Context, marketId string, organizationId string, productId string) (nvla.ImplResponse, error) {
-	// TODO: unmock, use query params
-
-	products := []nvla.Product{
-		{
-			Asset: nvla.ProductAsset{
-				Urls: []string{
-					"https://siasky.net/AACQHdh6YsQfFshLfHjhjsQNCwKHbnaJ2CryhZRAs4HqNQ",
-					"https://api.rektangularstudios.com/ipfs/QmXR2TGqndCHmu4utjpzrSwaGtUVMvrjBQ8eKwpRAnPnTh",
-					"https://api.rektangularstudios.com/static/cards/iscara_the_ten_thousand_guns/iscara_the_ten_thousand_guns.zip",
-				},
-				Loader: "occulta_novellia_character",
-			},
-			Pricing: nvla.ProductPricing{
-				CurrencyPolicyId: "ada",
-				UnitPrice: 20,
-				MaxOrderSize: 5,
-				PurchaseAddress: "0xDraculiDepositAddress",
-				DateAvailable: "2021-05-15",
-			},
-			Organization: nvla.ProductOrganization{
-				Name: "Rektangular Studios",
-				OrganizationId: 1,
-			},
-			Market: nvla.ProductMarket{
-				Name: "Occulta Novellia",
-				MarketId: 1,
-			},
-			Stock: nvla.ProductStock{
-				Available: 2400,
-				TotalSupply: 2500,
-			},
-			Metadata: nvla.ProductMetadata{
-				Tags: []string{"Game Character"},
-				DateListed: "2021-05-01",
-			},
-			Artist: nvla.ProductArtist{
-				Name: "ArtistName",
-				Urls: []string{
-					"https://www.artstation.com/",
-					"https://www.deviantart.com/",
-				},
-			},
-			Product: nvla.ProductProduct{
-				OverviewImageUrls: []string{
-					"https://siasky.net/_Aqfe5wxnzn54sPn2cBPNnwmjQ2te4rXZfVNvUb79QhBWw",
-					"https://api.rektangularstudios.com/ipfs/QmQbju6V8vpjKS1AG9vw4mQucYoeiCY2dNSnrsWzfJAZue",
-					"https://api.rektangularstudios.com/static/cards/iscara_the_ten_thousand_guns/iscara_the_ten_thousand_guns_card.jpg",
-				},
-				TokenPolicyId: "0xrandomNumbers.IscaraTheTenThousandGuns",
-				DescriptionShort: "Occulta Novellia Character",
-				DescriptionLong: "A character token for the upcoming surreal horror game Occulta Novellia. This token will grant access to a playable character.",
-				Name: "Iscara the Ten Thousand Guns",
-				ProductId: 2,
-			},
-		},
-	}
-
-	return nvla.Response(200, products), nil
+	return nvla.Response(http.StatusNotImplemented, nil), errors.New("GetProducts method not implemented")
 }
 
 // Availability information about service availability
