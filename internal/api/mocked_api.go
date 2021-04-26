@@ -206,7 +206,7 @@ func (s *MockedApiService) GetProducts(ctx context.Context, marketId string, org
 		},
 	}
 
-	return nvla.Response(200, product), nil
+	return nvla.Response(200, []nvla.Product{product}), nil
 }
 
 // Availability information about service availability
