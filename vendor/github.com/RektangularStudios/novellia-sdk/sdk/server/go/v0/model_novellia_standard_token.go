@@ -43,5 +43,5 @@ type NovelliaStandardToken struct {
 	NativeToken NativeToken `json:"native_token"`
 
 	// Identifies the version of the specification in use.
-	NovelliaVersion string `json:"novellia_version"`
+	NovelliaVersion int32 `json:"novellia_version"`
 }
