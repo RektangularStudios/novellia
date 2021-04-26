@@ -25,9 +25,8 @@ type Product struct {
 
 	Immutable ProductImmutable `json:"immutable,omitempty"`
 
-	// Unique identfier for product
-	ProductId string `json:"product_id"`
-
 	// List of entities to give attribution to for product
 	Attribution []Attribution `json:"attribution,omitempty"`
+
+	Product ProductProduct `json:"product,omitempty"`
 }
