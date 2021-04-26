@@ -1,4 +1,4 @@
-# github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210426001739-8f339cd25fca
+# github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210426003819-6bb35fdc64b2
 ## explicit
 github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0
 # github.com/felixge/httpsnoop v1.0.1

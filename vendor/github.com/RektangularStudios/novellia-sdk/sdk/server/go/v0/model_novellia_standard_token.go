@@ -36,7 +36,7 @@ type NovelliaStandardToken struct {
 
 	Description DescriptionSet `json:"description"`
 
-	Resource OffChainResource `json:"resource"`
+	Resource []OffChainResource `json:"resource"`
 
 	Commission []Commission `json:"commission,omitempty"`
 
