@@ -27,7 +27,7 @@ func (s *ApiService) GetOrders(ctx context.Context, productId string) (nvla.Impl
 }
 
 // Creates an order and returns the order_id
-func (s *ApiService) PostOrders(context.Context, nvla.OrderCreated) (nvla.ImplResponse, error) {
+func (s *ApiService) PostOrders(context.Context, nvla.Order) (nvla.ImplResponse, error) {
 	return nvla.Response(http.StatusNotImplemented, nil), errors.New("PostOrders method not implemented")
 }
 

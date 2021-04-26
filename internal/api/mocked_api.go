@@ -44,7 +44,7 @@ func (s *MockedApiService) GetOrders(ctx context.Context, productId string) (nvl
 }
 
 // Creates an order and returns the order_id
-func (s *MockedApiService) PostOrders(context.Context, nvla.OrderCreated) (nvla.ImplResponse, error) {
+func (s *MockedApiService) PostOrders(context.Context, nvla.Order) (nvla.ImplResponse, error) {
 	orderCreated := nvla.OrderCreated{
 		OrderId: "ORDER-01D78XYFJ1PRM1WPBCBT3VHMNV",
 	}
