@@ -38,7 +38,7 @@ type NovelliaStandardToken struct {
 
 	Resource OffChainResource `json:"resource"`
 
-	Commission Commission `json:"commission,omitempty"`
+	Commission []Commission `json:"commission,omitempty"`
 
 	NativeToken NativeToken `json:"native_token"`
 
