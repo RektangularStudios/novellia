@@ -81,6 +81,11 @@ func (s *MockedApiService) GetProducts(ctx context.Context, marketId string, org
 		"https://api.rektangularstudios.com/static/TNYRckal1S2e/character.json",
 	}
 	
+	descriptionSet := nvla.DescriptionSet{
+		Short: "Occulta Novellia Character",
+		Long: "# Take back gaming!\nOcculta Novellia character gameplay information such as stats and lore.",
+	}
+
 	// to be combined like "PolicyId.AssetId"
 	nativeToken := nvla.NativeToken{
 		PolicyId: "0xMyMultisigScriptHash",
@@ -98,10 +103,7 @@ func (s *MockedApiService) GetProducts(ctx context.Context, marketId string, org
 		Name: "Iscara the Ten Thousand Guns",
 		// TODO: verify this doesn't need to follow ipfs://ipfs/... stutter (will need to mint a token and see which clients break)
 		Image: "ipfs://QmXaLtSG1PPJAUm9PYv6KhRiG5tqfZGvRGvaFfdkaRfhp2",
-		Description: nvla.DescriptionSet{
-			Short: "Occulta Novellia Character",
-			Long: "# Take back gaming!\nOcculta Novellia character gameplay information such as stats and lore.",
-		},
+		Description: descriptionSet,
 		Commission: []nvla.Commission{
 			nvla.Commission{
 				Name: "Rektangular Studios Inc.",
@@ -159,6 +161,11 @@ func (s *MockedApiService) GetProducts(ctx context.Context, marketId string, org
 	}
 	
 	product := nvla.Product{
+		Product: nvla.ProductProduct{
+			Name: "Iscara the Ten Thousand Guns",
+			ProductId: "PROD-01F45Q1NE112Y61FD1NSE9NZXN",
+			Description: descriptionSet,
+		},
 		Pricing: nvla.ProductPricing{
 			PriceCurrencyId: "ada",
 			PriceUnitAmount: 20,
@@ -185,9 +192,8 @@ func (s *MockedApiService) GetProducts(ctx context.Context, marketId string, org
 			DateAvailable: "2021-05-17T14:00:00-08:00",
 		},
 		Immutable: nvla.ProductImmutable{
-			NovelliaStandardToken: novelliaStandardToken,
+			NovelliaStandardToken: &novelliaStandardToken,
 		},
-		ProductId: "PROD-01F45Q1NE112Y61FD1NSE9NZXN",
 		Attribution: []nvla.Attribution{
 			nvla.Attribution{
 				AuthorName: "John Doe",
