@@ -10,9 +10,12 @@
 
 package novellia_sdk
 
-type ProductMarket struct {
+// OccultaNovelliaCharacterProgression - Character leveling progression between card variants
+type OccultaNovelliaCharacterProgression struct {
 
-	Name string `json:"name"`
+	// Character progression class
+	Class string `json:"class"`
 
-	MarketId string `json:"market_id"`
+	// Stage of character in class progression (1,2,3)
+	Stage int32 `json:"stage"`
 }

@@ -10,9 +10,12 @@
 
 package novellia_sdk
 
-type ProductMarket struct {
+// DescriptionSet - Set of descriptions
+type DescriptionSet struct {
 
-	Name string `json:"name"`
+	// A short description makes a good header
+	Short string `json:"short"`
 
-	MarketId string `json:"market_id"`
+	// A long description makes a good paragraph body. Supports Markdown.
+	Long string `json:"long"`
 }

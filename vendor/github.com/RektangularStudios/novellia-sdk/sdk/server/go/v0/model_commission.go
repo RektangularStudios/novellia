@@ -10,9 +10,15 @@
 
 package novellia_sdk
 
-type ProductMarket struct {
+// Commission - A recommended commission for clients that will abide by it
+type Commission struct {
 
+	// Name of entity taking commissions
 	Name string `json:"name"`
 
-	MarketId string `json:"market_id"`
+	// Address to deposit commissions
+	Address string `json:"address"`
+
+	// Recommended commission percentage
+	Percent float32 `json:"percent,omitempty"`
 }

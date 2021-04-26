@@ -10,9 +10,12 @@
 
 package novellia_sdk
 
-type ProductMarket struct {
+// NativeToken - Definitions required to reference a native token
+type NativeToken struct {
 
-	Name string `json:"name"`
+	// On-chain policy-id
+	PolicyId string `json:"policy_id"`
 
-	MarketId string `json:"market_id"`
+	// On-chain asset-id
+	AssetId string `json:"asset_id"`
 }
