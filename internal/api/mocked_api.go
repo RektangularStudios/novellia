@@ -154,7 +154,7 @@ func (s *MockedApiService) getMockNovelliaStandardTokenProduct() nvla.Product {
 			nvla.OffChainResource{
 				ResourceId: "OccultaNovelliaCharacter",
 				Description: "Occulta Novellia character play information such as stats and moves",
-				Priority: 1,
+				Priority: 0,
 				Multihash: "QmTf7ycZi6tDp7m9SFUMm9VFfgNFoVa5a1QWWvzoYceVzf",
 				HashSourceType: "ipfs",
 				Url: character_urls,
