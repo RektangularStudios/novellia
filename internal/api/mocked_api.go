@@ -230,7 +230,7 @@ func (s* MockedApiService) getMockNovelliaProduct() nvla.Product {
 	novelliaProduct := nvla.NovelliaProduct{
 		Copyright: "Copyright Rektangular Studios Inc.; all rights reserved",
 		Publisher: []string{"https://rektangularstudios.com"},
-		Name: "Booster",
+		Name: "Booster Pack",
 		Description: descriptionSet,
 		Tags: []string{
 			"Game Item",
@@ -296,13 +296,16 @@ func (s* MockedApiService) getMockNovelliaProduct() nvla.Product {
 			ProductId: "PROD-01F4A66RHHQ5NECHQSY7AFVV3G",
 		},
 	}
+
+	return product
 }
 
 // Gets listed products
 func (s *MockedApiService) GetProducts(ctx context.Context, marketId string, organizationId string, productId string) (nvla.ImplResponse, error) {
-	
+	novelliaStandardTokenProduct := s.getMockNovelliaStandardTokenProduct()
+	novelliaProduct := s.getMockNovelliaProduct()
 
-	return nvla.Response(200, []nvla.Product{product}), nil
+	return nvla.Response(200, []nvla.Product{novelliaStandardTokenProduct, novelliaProduct}), nil
 }
 
 // Availability information about service availability
