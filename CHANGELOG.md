@@ -23,3 +23,6 @@ Initial deployment
 
 ## v0.4.0
 - Add updated `/orders` for interaction with payment processor
+
+## v0.5.0
+- Add support for non-token products to `/products`
