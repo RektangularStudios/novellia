@@ -28,9 +28,9 @@ type NovelliaProduct struct {
 	// Tags for sorting and filtering. \"nsfw\" indicates NSFW content
 	Tags []string `json:"tags"`
 
-	Commission Commission `json:"commission,omitempty"`
+	Commission []Commission `json:"commission,omitempty"`
 
 	Description DescriptionSet `json:"description"`
 
-	Resource OffChainResource `json:"resource"`
+	Resource []OffChainResource `json:"resource"`
 }
