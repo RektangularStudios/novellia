@@ -30,6 +30,14 @@ Then just execute binary to start the server
 - `./novellia-server ${PWD}/config/local.yaml`
 
 **You'll need to edit the local.yaml to point at your own instance running cardano-graphql**
+
+### Executing Mock Server
+
+Same as above, except you don't need a real instance to supply all the depended services. A `mocked` switch can be set within the configuration YAML.
+
+Start mock server (after building)
+- `./novellia-server ${PWD}/config/mock.yaml`
+
 ## What features are supported?
 
 For a comprehensive list, refer to the [Novellia SDK Documentation on our Wiki](https://rektangularstudios.com/wiki) (TODO)
