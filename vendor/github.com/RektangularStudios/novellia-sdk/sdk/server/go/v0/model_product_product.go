@@ -10,13 +10,17 @@
 
 package novellia_sdk
 
+// ProductProduct - Immutable 
 type ProductProduct struct {
 
-	// Product readable name
-	Name string `json:"name"`
+	Extended721Token *Extended721Token `json:"extended_721_token,omitempty"`
 
-	Description DescriptionSet `json:"description"`
+	NovelliaStandardToken *NovelliaStandardToken `json:"novellia_standard_token,omitempty"`
 
-	// Unique identfier for product
+	NativeToken *NativeToken `json:"native_token,omitempty"`
+
+	NovelliaProduct *NovelliaProduct `json:"novellia_product,omitempty"`
+
+	// Unique identifier of product
 	ProductId string `json:"product_id"`
 }
