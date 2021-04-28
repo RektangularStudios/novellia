@@ -23,10 +23,8 @@ type Product struct {
 
 	Metadata ProductMetadata `json:"metadata"`
 
-	Immutable ProductImmutable `json:"immutable,omitempty"`
+	Product ProductProduct `json:"product,omitempty"`
 
 	// List of entities to give attribution to for product
 	Attribution []Attribution `json:"attribution,omitempty"`
-
-	Product ProductProduct `json:"product,omitempty"`
 }

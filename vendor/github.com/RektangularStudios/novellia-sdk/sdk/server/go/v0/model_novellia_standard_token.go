@@ -16,7 +16,7 @@ type NovelliaStandardToken struct {
 	// Attribution of rights.
 	Copyright string `json:"copyright"`
 
-	// List of publishers or entities involved in token creation. Useful for onlookers to determine token origin.
+	// List of publishers or entities involved in token creation. Useful for onlookers to determine token origin. These can be URLs.
 	Publisher []string `json:"publisher"`
 
 	// Token version. May have future use such as for clients optionally using later metadata iterations.
@@ -44,4 +44,7 @@ type NovelliaStandardToken struct {
 
 	// Identifies the version of the specification in use.
 	NovelliaVersion int32 `json:"novellia_version"`
+
+	// Tags for sorting and filtering. \"nsfw\" indicates NSFW content
+	Tags []string `json:"tags"`
 }
