@@ -10,6 +10,7 @@ import (
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0"
 	"github.com/RektangularStudios/novellia/internal/api"
 	cardano_graphql "github.com/RektangularStudios/novellia/internal/cardano/graphql"
+	"github.com/jackc/pgx"
 )
 
 func main() {
