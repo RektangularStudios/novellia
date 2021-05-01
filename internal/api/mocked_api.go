@@ -35,8 +35,10 @@ func (s *MockedApiService) GetOrders(ctx context.Context, productId string) (nvl
 			PaymentAddress: "addr1q80u75kavwd5sc7j52x0k8nrqd46540vcjgsvl4fhxjqqs60vcjwf9llp7rv006f0dqyffltyyyzpzl9vct4mp7wjdaspwq39a",
 			PriceCurrencyId: "ada",
 			PriceAmount: 20,
-			Status: "AWAITING_PAYMENT",
+			PaymentStatus: "AWAITING_PAYMENT",
 		},
+		OrderStatus: "AWAITING_PAYMENT",
+		Description: "Occulta Novellia Presale Order",
 		OrderId: "ORDER-01D78XYFJ1PRM1WPBCBT3VHMNV",
 	}
 

@@ -1,5 +1,3 @@
-github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210427173510-f4dde760d870 h1:XNtsSWwOX+luStLt9Fv8AFtcHcGZdSswC/qWJwkUIhA=
-github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210427173510-f4dde760d870/go.mod h1:4uC/Sk07QugLd53RpEhP6U55VMk8BfnVCISSC+KKdy0=
 github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210501212729-0b4b396e9ffa h1:i0D4hYBhkQGm2em7OTwpszsq4zG2APvQ72Wf1UiJq0I=
 github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210501212729-0b4b396e9ffa/go.mod h1:4uC/Sk07QugLd53RpEhP6U55VMk8BfnVCISSC+KKdy0=
 github.com/felixge/httpsnoop v1.0.1 h1:lvB5Jl89CsZtGIWuTcDM1E/vkVs49/Ml7JJe07l8SPQ=
