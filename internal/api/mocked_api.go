@@ -18,12 +18,12 @@ func NewMockedApiService() nvla.DefaultApiServicer {
 // Gets an order by id
 func (s *MockedApiService) GetOrders(ctx context.Context, productId string) (nvla.ImplResponse, error) {
 	order := nvla.Order{
-		Products: []nvla.OrderProducts{
-			nvla.OrderProducts{
+		Items: []nvla.OrderItems{
+			nvla.OrderItems{
 				ProductId: "PROD-01D78XYFJ1PRM1WPBAOU8JQMNV",
 				Quantity: 4,
 			},
-			nvla.OrderProducts{
+			nvla.OrderItems{
 				ProductId: "PROD-01D78XYFJ1PRM1WPBCBT3VHMNV",
 				Quantity: 2,
 			},
@@ -184,10 +184,6 @@ func (s *MockedApiService) getMockNovelliaStandardTokenProduct() nvla.Product {
 			TotalSupply: 2500,
 		},
 		Metadata: nvla.ProductMetadata{
-			Tags: []string{
-				"Game Item",
-				"Game Character",
-			},
 			// PST time (-08:00) at 2:00 PM
 			DateListed: "2021-05-03T14:00:00-08:00",
 			DateAvailable: "2021-05-17T14:00:00-08:00",
@@ -286,9 +282,6 @@ func (s* MockedApiService) getMockNovelliaProduct() nvla.Product {
 			Available: 500,
 		},
 		Metadata: nvla.ProductMetadata{
-			Tags: []string{
-				"Game Character",
-			},
 			// PST time (-08:00) at 2:00 PM
 			DateListed: "2021-05-03T14:00:00-08:00",
 			DateAvailable: "2021-05-17T14:00:00-08:00",
