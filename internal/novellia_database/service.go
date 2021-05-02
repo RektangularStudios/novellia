@@ -57,24 +57,17 @@ func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, products []nvla.Pr
 	}
 
 	rows, err := s.conn.Query(ctx, productQuery)
-	fmt.Println(err)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	
-	/*
-	for _, field := range rows.FieldDescriptions() {
-		fmt.Printf("%+v", string(field.Name[:]))
-	}
-	*/
 
 	for rows.Next() {
 		var p nvla.Product
 		var t nvla.NovelliaStandardToken
 		p.Product.NovelliaStandardToken = &t
-		var dateListed pgtype.Date
-		var dateAvailable pgtype.Date
+		var dateListed pgtype.Timestamptz
+		var dateAvailable pgtype.Timestamptz
 
 		// TODO: handle case where native token does not exist (i.e. NovelliaProduct)
 		err = rows.Scan(
@@ -104,11 +97,8 @@ func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, products []nvla.Pr
 		}
 
 		// convert dates to strings
-		
-		&p.Metadata.DateListed, &p.Metadata.DateAvailable,
-
-		fmt.Println(err)
-		fmt.Printf("\nrow: %+v\n%+v\n\n", p, t)
+		p.Metadata.DateListed = dateListed.Time.String()
+		p.Metadata.DateAvailable = dateAvailable.Time.String()
 
 		// add product to slice
 		products = append(products, p)
@@ -117,22 +107,117 @@ func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, products []nvla.Pr
 	return products, nil
 }
 
-/*
 // queries commission information and adds it to the provided products slice
 func (s *ServiceImpl) QueryAndAddCommission(ctx context.Context, products []nvla.Product) ([]nvla.Product, error) {
+	commissionQuery, err := s.ReadQueryFile(queryCommissionFilename)
+	if err != nil {
+		return nil, err
+	}
 
+	rows, err := s.conn.Query(ctx, commissionQuery)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var c nvla.Commission
+		var product_id string
+		err = rows.Scan(
+			&product_id,
+			&c.Name,
+			&c.Address,
+			&c.Percent,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("query and add commission failed: %v", err)
+		}
+
+		for _, p := range products {
+			if p.Product.ProductId == product_id {
+				p.Product.NovelliaStandardToken.Commission = append(p.Product.NovelliaStandardToken.Commission, c)
+			}
+		}
+	}
+
+	return products, nil
 }
 
 // queries attribution information and adds it to the provided products slice
 func (s *ServiceImpl) QueryAndAddAttribution(ctx context.Context, products []nvla.Product) ([]nvla.Product, error) {
+	attributionQuery, err := s.ReadQueryFile(queryAttributionFilename)
+	if err != nil {
+		return nil, err
+	}
 
+	rows, err := s.conn.Query(ctx, attributionQuery)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var a nvla.Attribution
+		var product_id string
+		err = rows.Scan(
+			&product_id,
+			&a.AuthorName,
+			&a.Url,
+			&a.WorkAttributed,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("query and add attribution failed: %v", err)
+		}
+
+		for _, p := range products {
+			if p.Product.ProductId == product_id {
+				p.Attribution = append(p.Attribution, a)
+			}
+		}
+	}
+
+	return products, nil
 }
 
 // queries remote resource information and adds it to the provided products slice
 func (s *ServiceImpl) QueryAndAddRemoteResource(ctx context.Context, products []nvla.Product) ([]nvla.Product, error) {
+	remoteResourceQuery, err := s.ReadQueryFile(queryRemoteResourceFilename)
+	if err != nil {
+		return nil, err
+	}
 
+	rows, err := s.conn.Query(ctx, remoteResourceQuery)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var r nvla.OffChainResource
+		var product_id string
+		err = rows.Scan(
+			&product_id,
+			&r.ResourceId,
+			&r.Description,
+			&r.Priority,
+			&r.Multihash,
+			&r.HashSourceType,
+			&r.Url,
+			&r.ContentType,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("query and add remote resource failed: %v", err)
+		}
+
+		for _, p := range products {
+			if p.Product.ProductId == product_id {
+				p.Product.NovelliaStandardToken.Resource = append(p.Product.NovelliaStandardToken.Resource, r)
+			}
+		}
+	}
+
+	return products, nil
 }
-*/
 
 func (s *ServiceImpl) Close(ctx context.Context) {
 	s.conn.Close(ctx)

@@ -39,7 +39,28 @@ func (s *ApiService) PostOrders(context.Context, nvla.Order) (nvla.ImplResponse,
 
 // Gets listed products
 func (s *ApiService) GetProducts(ctx context.Context, marketId string, organizationId string, productId string) (nvla.ImplResponse, error) {
-	return nvla.Response(http.StatusNotImplemented, nil), errors.New("GetProducts method not implemented")
+	products, err := s.novelliaDatabaseService.QueryAndAddProduct(ctx, make([]nvla.Product, 0))
+	if err != nil {
+		err = fmt.Errorf("get products failed at product query: %+v", err)
+		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
+	}
+	products, err = s.novelliaDatabaseService.QueryAndAddCommission(ctx, products)
+	if err != nil {
+		err = fmt.Errorf("get products failed at commission query: %+v", err)
+		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
+	}
+	products, err = s.novelliaDatabaseService.QueryAndAddAttribution(ctx, products)
+	if err != nil {
+		err = fmt.Errorf("get products failed at attribution query: %+v", err)
+		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
+	}
+	products, err = s.novelliaDatabaseService.QueryAndAddRemoteResource(ctx, products)
+	if err != nil {
+		err = fmt.Errorf("get products failed at remote resource query: %+v", err)
+		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
+	}
+
+	return nvla.Response(200, products), nil
 }
 
 // Availability information about service availability

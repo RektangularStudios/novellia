@@ -8,5 +8,8 @@ import (
 type Service interface {
 	ReadQueryFile(path string) (string, error)
 	QueryAndAddProduct(ctx context.Context, products []nvla.Product) ([]nvla.Product, error)
+	QueryAndAddCommission(ctx context.Context, products []nvla.Product) ([]nvla.Product, error)
+	QueryAndAddAttribution(ctx context.Context, products []nvla.Product) ([]nvla.Product, error)
+	QueryAndAddRemoteResource(ctx context.Context, products []nvla.Product) ([]nvla.Product, error)	
 	Close(ctx context.Context)
 }
