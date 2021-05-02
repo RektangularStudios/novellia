@@ -18,12 +18,12 @@ func NewMockedApiService() nvla.DefaultApiServicer {
 // Gets an order by id
 func (s *MockedApiService) GetOrders(ctx context.Context, productId string) (nvla.ImplResponse, error) {
 	order := nvla.Order{
-		Products: []nvla.OrderProducts{
-			nvla.OrderProducts{
+		Items: []nvla.OrderItems{
+			nvla.OrderItems{
 				ProductId: "PROD-01D78XYFJ1PRM1WPBAOU8JQMNV",
 				Quantity: 4,
 			},
-			nvla.OrderProducts{
+			nvla.OrderItems{
 				ProductId: "PROD-01D78XYFJ1PRM1WPBCBT3VHMNV",
 				Quantity: 2,
 			},
@@ -35,8 +35,10 @@ func (s *MockedApiService) GetOrders(ctx context.Context, productId string) (nvl
 			PaymentAddress: "addr1q80u75kavwd5sc7j52x0k8nrqd46540vcjgsvl4fhxjqqs60vcjwf9llp7rv006f0dqyffltyyyzpzl9vct4mp7wjdaspwq39a",
 			PriceCurrencyId: "ada",
 			PriceAmount: 20,
-			Status: "AWAITING_PAYMENT",
+			PaymentStatus: "AWAITING_PAYMENT",
 		},
+		OrderStatus: "AWAITING_PAYMENT",
+		Description: "Occulta Novellia Presale Order",
 		OrderId: "ORDER-01D78XYFJ1PRM1WPBCBT3VHMNV",
 	}
 
@@ -182,10 +184,6 @@ func (s *MockedApiService) getMockNovelliaStandardTokenProduct() nvla.Product {
 			TotalSupply: 2500,
 		},
 		Metadata: nvla.ProductMetadata{
-			Tags: []string{
-				"Game Item",
-				"Game Character",
-			},
 			// PST time (-08:00) at 2:00 PM
 			DateListed: "2021-05-03T14:00:00-08:00",
 			DateAvailable: "2021-05-17T14:00:00-08:00",
@@ -284,9 +282,6 @@ func (s* MockedApiService) getMockNovelliaProduct() nvla.Product {
 			Available: 500,
 		},
 		Metadata: nvla.ProductMetadata{
-			Tags: []string{
-				"Game Character",
-			},
 			// PST time (-08:00) at 2:00 PM
 			DateListed: "2021-05-03T14:00:00-08:00",
 			DateAvailable: "2021-05-17T14:00:00-08:00",
