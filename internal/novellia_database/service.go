@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"github.com/jackc/pgx/v4"
+	"github.com/jackc/pgtype"
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0"
 )
 
