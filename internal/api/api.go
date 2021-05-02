@@ -8,16 +8,22 @@ import (
 
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0"
 	cardano_graphql "github.com/RektangularStudios/novellia/internal/cardano/graphql"
+	"github.com/RektangularStudios/novellia/internal/novellia_database"
 )
 
 type ApiService struct{
 	cardanoGraphQLService cardano_graphql.Service
+	novelliaDatabaseService novellia_database.Service
 }
 
 // NewApiService creates an api service
-func NewApiService(cardanoGraphQLService cardano_graphql.Service) nvla.DefaultApiServicer {
+func NewApiService(
+	cardanoGraphQLService cardano_graphql.Service,
+	novelliaDatabaseService novellia_database.Service,
+) nvla.DefaultApiServicer {
 	return &ApiService {
 		cardanoGraphQLService: cardanoGraphQLService,
+		novelliaDatabaseService: novelliaDatabaseService,
 	}
 }
 

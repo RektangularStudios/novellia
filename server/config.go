@@ -20,6 +20,7 @@ type Config struct {
 		Host string `yaml:"host"`
 		Username string `yaml:"username"`
 		Password string `yaml:"password"`
+		QueriesPath string `yaml:"queries-path"`
 	}
 	Mocked bool
 }

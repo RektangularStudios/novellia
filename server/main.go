@@ -48,6 +48,7 @@ func main() {
 			config.Postgres.Password,
 			config.Postgres.Host,
 			config.Postgres.Database,
+			config.Postgres.QueriesPath,
 		)
 		if err != nil {
 			fmt.Printf("Failed to make Novellia database service: %+v\n", err)
@@ -55,12 +56,16 @@ func main() {
 		}
 		defer novelliaDatabaseService.Close(ctx)
 
-		err = novelliaDatabaseService.ListProductAttribution(ctx)
+		var p nvla.Product
+		_, err = novelliaDatabaseService.QueryAndAddProduct(ctx, []nvla.Product{p})
 		if err != nil {
 			fmt.Printf("Failed to get rows: %+v\n", err)
 		}
 
-		apiService = api.NewApiService(cardanoGraphQLService)	
+		apiService = api.NewApiService(
+			cardanoGraphQLService,
+			novelliaDatabaseService,
+		)	
 	}
 
 	apiController := nvla.NewDefaultApiController(apiService)
