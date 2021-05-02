@@ -1,20 +1,66 @@
-# github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210501212729-0b4b396e9ffa
+# github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210502035112-a9d986a11e83
 ## explicit
 github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0
 # github.com/felixge/httpsnoop v1.0.1
 github.com/felixge/httpsnoop
+# github.com/gofrs/uuid v4.0.0+incompatible
+## explicit
 # github.com/gorilla/handlers v1.5.1
 github.com/gorilla/handlers
 # github.com/gorilla/mux v1.7.3
 github.com/gorilla/mux
+# github.com/jackc/chunkreader/v2 v2.0.1
+github.com/jackc/chunkreader/v2
+# github.com/jackc/pgconn v1.8.1
+github.com/jackc/pgconn
+github.com/jackc/pgconn/internal/ctxwatch
+github.com/jackc/pgconn/stmtcache
+# github.com/jackc/pgio v1.0.0
+github.com/jackc/pgio
+# github.com/jackc/pgpassfile v1.0.0
+github.com/jackc/pgpassfile
+# github.com/jackc/pgproto3/v2 v2.0.6
+github.com/jackc/pgproto3/v2
+# github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b
+github.com/jackc/pgservicefile
+# github.com/jackc/pgtype v1.7.0
+## explicit
+github.com/jackc/pgtype
+# github.com/jackc/pgx/v4 v4.11.0
+## explicit
+github.com/jackc/pgx/v4
+github.com/jackc/pgx/v4/internal/sanitize
+# github.com/lib/pq v1.10.1
+## explicit
+# github.com/pkg/errors v0.9.1
+## explicit
+# github.com/shopspring/decimal v1.2.0
+## explicit
 # github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a
 ## explicit
 github.com/shurcooL/graphql
 github.com/shurcooL/graphql/ident
 github.com/shurcooL/graphql/internal/jsonutil
+# golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b
+## explicit
+golang.org/x/crypto/pbkdf2
 # golang.org/x/net v0.0.0-20210331212208-0fccb6fa2b5c
 ## explicit
 golang.org/x/net/context/ctxhttp
+# golang.org/x/text v0.3.3
+golang.org/x/text/cases
+golang.org/x/text/internal
+golang.org/x/text/internal/language
+golang.org/x/text/internal/language/compact
+golang.org/x/text/internal/tag
+golang.org/x/text/language
+golang.org/x/text/runes
+golang.org/x/text/secure/bidirule
+golang.org/x/text/secure/precis
+golang.org/x/text/transform
+golang.org/x/text/unicode/bidi
+golang.org/x/text/unicode/norm
+golang.org/x/text/width
 # gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 ## explicit
 gopkg.in/yaml.v3

@@ -30,3 +30,7 @@ Initial deployment
 ## v0.6.0
 - Minor breaking changes to SDK (mostly just field names)
   - added `rarity` to Occulta Novellia Character model
+
+## v0.6.1
+- Added connection to Postgres
+  - Querying of live product data on `/products` endpoint

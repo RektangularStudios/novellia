@@ -105,3 +105,8 @@ Novellia connects to Cardano through GraphQL as exposed by [cardano-graphql](htt
 [The code for the specification is here](https://github.com/input-output-hk/cardano-graphql/blob/master/packages/api-cardano-db-hasura/schema.graphql)
 
 We are using [this library](https://github.com/shurcooL/graphql) for querying with reflection.
+
+# Config File Safety
+
+Make sure keys do not end up in git. Ignore the `local.yaml`.
+- `git update-index --skip-worktree ./config/local.yaml`
