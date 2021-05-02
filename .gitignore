@@ -1,1 +1,4 @@
 novellia-server
+
+# safety, require explicitly adding config directory
+/config
