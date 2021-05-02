@@ -23,3 +23,10 @@ Initial deployment
 
 ## v0.4.0
 - Add updated `/orders` for interaction with payment processor
+
+## v0.5.0
+- Add support for non-token products to `/products`
+
+## v0.6.0
+- Minor breaking changes to SDK (mostly just field names)
+  - added `rarity` to Occulta Novellia Character model
