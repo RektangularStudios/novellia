@@ -80,7 +80,7 @@ func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, products []nvla.Pr
 			// product
 			&p.Product.ProductId, &p.Product.NovelliaStandardToken.Name,
 			&p.Pricing.PriceCurrencyId, &p.Pricing.PriceUnitAmount, &p.Pricing.MaxOrderSize,
-			
+			&dateListed, &dateAvailable,
 			// organization
 			&p.Organization.OrganizationId, &p.Organization.Name,
 			// market
@@ -103,6 +103,7 @@ func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, products []nvla.Pr
 		}
 
 		// convert dates to strings
+		
 		&p.Metadata.DateListed, &p.Metadata.DateAvailable,
 
 		fmt.Println(err)
