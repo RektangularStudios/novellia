@@ -6,6 +6,11 @@ server:
 cardano-graphql:
   host: X
   port: X
+postgres:
+  database: X
+  host: X
+  username: X
+  password: X
 now-payments:
   api-key: X
 mocked: false

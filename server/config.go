@@ -15,6 +15,12 @@ type Config struct {
 		Host string `yaml:"host"`
 		Port string `yaml:"port"`
 	} `yaml:"cardano-graphql"`
+	Postgres struct {
+		Database string `yaml:"database"`
+		Host string `yaml:"host"`
+		Username string `yaml:"username"`
+		Password string `yaml:"password"`
+	}
 	Mocked bool
 }
 

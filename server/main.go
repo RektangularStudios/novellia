@@ -4,16 +4,19 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"context"
 	
 	"github.com/shurcooL/graphql"
 
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0"
 	"github.com/RektangularStudios/novellia/internal/api"
+	"github.com/RektangularStudios/novellia/internal/novellia_database"
 	cardano_graphql "github.com/RektangularStudios/novellia/internal/cardano/graphql"
-	"github.com/jackc/pgx"
 )
 
 func main() {
+	ctx := context.Background()
+
 	fmt.Printf("Novellia Server - Version %s\n", version)
 
 	configPath, err := getConfigPath()
@@ -39,6 +42,24 @@ func main() {
 	
 		cardanoGraphQLService := cardano_graphql.New(cardanoGraphQLClient)
 	
+		novelliaDatabaseService, err := novellia_database.New(
+			ctx,
+			config.Postgres.Username,
+			config.Postgres.Password,
+			config.Postgres.Host,
+			config.Postgres.Database,
+		)
+		if err != nil {
+			fmt.Printf("Failed to make Novellia database service: %+v\n", err)
+			os.Exit(novelliaDatabaseErr)
+		}
+		defer novelliaDatabaseService.Close(ctx)
+
+		err = novelliaDatabaseService.ListProductAttribution(ctx)
+		if err != nil {
+			fmt.Printf("Failed to get rows: %+v\n", err)
+		}
+
 		apiService = api.NewApiService(cardanoGraphQLService)	
 	}
 

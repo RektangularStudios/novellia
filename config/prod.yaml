@@ -7,4 +7,9 @@ cardano-graphql:
   port: 3100
 now-payments:
   api-key: X
+postgres:
+  db:
+  host:
+  user:
+  password:
 mocked: false

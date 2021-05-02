@@ -1,8 +1,6 @@
 # github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210502035112-a9d986a11e83
 ## explicit
 github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0
-# github.com/cockroachdb/apd v1.1.0
-## explicit
 # github.com/felixge/httpsnoop v1.0.1
 github.com/felixge/httpsnoop
 # github.com/gofrs/uuid v4.0.0+incompatible
@@ -11,21 +9,30 @@ github.com/felixge/httpsnoop
 github.com/gorilla/handlers
 # github.com/gorilla/mux v1.7.3
 github.com/gorilla/mux
-# github.com/jackc/fake v0.0.0-20150926172116-812a484cc733
+# github.com/jackc/chunkreader/v2 v2.0.1
+github.com/jackc/chunkreader/v2
+# github.com/jackc/pgconn v1.8.1
+github.com/jackc/pgconn
+github.com/jackc/pgconn/internal/ctxwatch
+github.com/jackc/pgconn/stmtcache
+# github.com/jackc/pgio v1.0.0
+github.com/jackc/pgio
+# github.com/jackc/pgpassfile v1.0.0
+github.com/jackc/pgpassfile
+# github.com/jackc/pgproto3/v2 v2.0.6
+github.com/jackc/pgproto3/v2
+# github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b
+github.com/jackc/pgservicefile
+# github.com/jackc/pgtype v1.7.0
+github.com/jackc/pgtype
+# github.com/jackc/pgx/v4 v4.11.0
 ## explicit
-# github.com/jackc/pgx v3.6.2+incompatible
-## explicit
-github.com/jackc/pgx
-github.com/jackc/pgx/chunkreader
-github.com/jackc/pgx/internal/sanitize
-github.com/jackc/pgx/pgio
-github.com/jackc/pgx/pgproto3
-github.com/jackc/pgx/pgtype
+github.com/jackc/pgx/v4
+github.com/jackc/pgx/v4/internal/sanitize
 # github.com/lib/pq v1.10.1
 ## explicit
 # github.com/pkg/errors v0.9.1
 ## explicit
-github.com/pkg/errors
 # github.com/shopspring/decimal v1.2.0
 ## explicit
 # github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a
