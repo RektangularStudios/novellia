@@ -1,4 +1,4 @@
-# github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210501212729-0b4b396e9ffa
+# github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210502035112-a9d986a11e83
 ## explicit
 github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0
 # github.com/cockroachdb/apd v1.1.0
