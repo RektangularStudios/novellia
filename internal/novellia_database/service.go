@@ -19,6 +19,7 @@ const (
 
 type ServiceImpl struct {
 	queriesPath string
+	queries map[string]string
 	conn *pgx.Conn
 }
 
@@ -37,8 +38,12 @@ func New(ctx context.Context, username, password, host, database_name string, qu
 	}, nil
 }
 
-// reads a text file using the queriesPath as the base path
-func (s *ServiceImpl) ReadQueryFile(filename string) (string, error) {
+// reads a text file using the queriesPath as the base path, and caches it into the service
+func (s *ServiceImpl) readQueryFile(filename string) (string, error) {
+	if _, ok := s.queries[filename]; ok {
+		return "", fmt.Errorf("already read query %s", filename)
+	}
+
 	queryPath := filepath.Join(s.queriesPath, filename)
 
 	bytes, err := ioutil.ReadFile(queryPath)
@@ -46,12 +51,21 @@ func (s *ServiceImpl) ReadQueryFile(filename string) (string, error) {
 		return "", fmt.Errorf("failed to read query file %s: %v", filename, err)
 	}
 
+	s.queries[filename] = string(bytes)
 	return string(bytes), nil
+}
+
+// tries to read cached query, otherwise reads it from disk
+func (s *ServiceImpl) getQueryFile(filename string) (string, error) {
+	if query, ok := s.queries[filename]; ok {
+    return query, nil
+	}
+	return s.readQueryFile(filename)
 }
 
 // queries product information and adds it to the provided products slice
 func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, products []nvla.Product) ([]nvla.Product, error) {
-	productQuery, err := s.ReadQueryFile(queryProductFilename)
+	productQuery, err := s.getQueryFile(queryProductFilename)
 	if err != nil {
 		return nil, err
 	}
@@ -85,6 +99,7 @@ func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, products []nvla.Pr
 			&t.Copyright,
 			&t.Publisher,
 			&t.Version,
+			&t.Id,
 			&t.Tags,
 			&t.Description.Short,
 			&t.Description.Long,
@@ -109,7 +124,7 @@ func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, products []nvla.Pr
 
 // queries commission information and adds it to the provided products slice
 func (s *ServiceImpl) QueryAndAddCommission(ctx context.Context, products []nvla.Product) ([]nvla.Product, error) {
-	commissionQuery, err := s.ReadQueryFile(queryCommissionFilename)
+	commissionQuery, err := s.getQueryFile(queryCommissionFilename)
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +160,7 @@ func (s *ServiceImpl) QueryAndAddCommission(ctx context.Context, products []nvla
 
 // queries attribution information and adds it to the provided products slice
 func (s *ServiceImpl) QueryAndAddAttribution(ctx context.Context, products []nvla.Product) ([]nvla.Product, error) {
-	attributionQuery, err := s.ReadQueryFile(queryAttributionFilename)
+	attributionQuery, err := s.getQueryFile(queryAttributionFilename)
 	if err != nil {
 		return nil, err
 	}
@@ -181,7 +196,7 @@ func (s *ServiceImpl) QueryAndAddAttribution(ctx context.Context, products []nvl
 
 // queries remote resource information and adds it to the provided products slice
 func (s *ServiceImpl) QueryAndAddRemoteResource(ctx context.Context, products []nvla.Product) ([]nvla.Product, error) {
-	remoteResourceQuery, err := s.ReadQueryFile(queryRemoteResourceFilename)
+	remoteResourceQuery, err := s.getQueryFile(queryRemoteResourceFilename)
 	if err != nil {
 		return nil, err
 	}
