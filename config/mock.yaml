@@ -1,9 +1,1 @@
-server:
-  host: 127.0.0.1
-  port: 3555
-cardano-graphql:
-  host: X
-  port: X
-now-payments:
-  api-key: X
 mocked: true
