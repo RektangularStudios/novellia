@@ -6,8 +6,8 @@ cardano-graphql:
   host: http://127.0.0.1
   port: 3100
 postgres:
-  db:
+  database:
   host:
-  user:
+  username:
   password:
 mocked: false
