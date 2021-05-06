@@ -80,6 +80,12 @@ func (c *DefaultApiController) Routes() Routes {
 			c.PostOrders,
 		},
 		{
+			"PostProducts",
+			strings.ToUpper("Post"),
+			"/novellia/products",
+			c.PostProducts,
+		},
+		{
 			"PostWorkflowMinterNvla",
 			strings.ToUpper("Post"),
 			"/novellia/workflow/minter/nvla",
@@ -121,8 +127,7 @@ func (c *DefaultApiController) GetProducts(w http.ResponseWriter, r *http.Reques
 	query := r.URL.Query()
 	marketId := query.Get("market_id")
 	organizationId := query.Get("organization_id")
-	productId := query.Get("product_id")
-	result, err := c.service.GetProducts(r.Context(), marketId, organizationId, productId)
+	result, err := c.service.GetProducts(r.Context(), marketId, organizationId)
 	//If an error occured, encode the error with the status code
 	if err != nil {
 		EncodeJSONResponse(err.Error(), &result.Code, w)
@@ -202,6 +207,25 @@ func (c *DefaultApiController) PostOrders(w http.ResponseWriter, r *http.Request
 	}
 	
 	result, err := c.service.PostOrders(r.Context(), *order)
+	//If an error occured, encode the error with the status code
+	if err != nil {
+		EncodeJSONResponse(err.Error(), &result.Code, w)
+		return
+	}
+	//If no error, encode the body and the result code
+	EncodeJSONResponse(result.Body, &result.Code, w)
+	
+}
+
+// PostProducts - 
+func (c *DefaultApiController) PostProducts(w http.ResponseWriter, r *http.Request) { 
+	productsList := &ProductsList{}
+	if err := json.NewDecoder(r.Body).Decode(&productsList); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	
+	result, err := c.service.PostProducts(r.Context(), *productsList)
 	//If an error occured, encode the error with the status code
 	if err != nil {
 		EncodeJSONResponse(err.Error(), &result.Code, w)
