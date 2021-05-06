@@ -16,7 +16,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"mime/multipart"
 )
@@ -37,29 +36,48 @@ type Router interface {
 	Routes() Routes
 }
 
+func CORSMiddleware(r *mux.Router) mux.MiddlewareFunc {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+			if origin := req.Header.Get("Origin"); origin != "" {
+					rw.Header().Set("Access-Control-Allow-Origin", origin)
+					rw.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+					rw.Header().Set("Access-Control-Allow-Headers", "Accept, Accept-Language, Content-Type")
+			}
+			// Stop here if its Preflighted OPTIONS request
+			if req.Method == "OPTIONS" {
+					return
+			}
+
+			next.ServeHTTP(rw, req)
+		})
+	}
+}
+
 // NewRouter creates a new router for any number of api routers
 func NewRouter(routers ...Router) *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
+	router.Use(CORSMiddleware(router))
+
 	for _, api := range routers {
 		for _, route := range api.Routes() {
 			var handler http.Handler
 			handler = route.HandlerFunc
 			handler = Logger(handler, route.Name)
-			handler = handlers.CORS()(handler)
 
 			router.
-				Methods(route.Method).
+				Methods(route.Method, "OPTIONS").
 				Path(route.Pattern).
 				Name(route.Name).
 				Handler(handler)
 		}
 	}
-
 	return router
 }
 
 // EncodeJSONResponse uses the json encoder to write an interface to the http response with an optional status code
 func EncodeJSONResponse(i interface{}, status *int, w http.ResponseWriter) error {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if status != nil {
 		w.WriteHeader(*status)

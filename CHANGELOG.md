@@ -35,6 +35,6 @@ Initial deployment
 - Added connection to Postgres
   - Querying of live product data on `/products` endpoint
 
-## V0.7.0
+## v0.7.0
 - Automatically sort returned products by `id`
 - `/products` supports fetching list of product IDs and returning details for specific ones
