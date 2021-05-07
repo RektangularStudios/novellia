@@ -50,12 +50,12 @@ func (s *DefaultApiService) GetOrders(ctx context.Context, orderId string) (Impl
 }
 
 // GetProducts - Your GET endpoint
-func (s *DefaultApiService) GetProducts(ctx context.Context, marketId string, organizationId string, productId string) (ImplResponse, error) {
+func (s *DefaultApiService) GetProducts(ctx context.Context, marketId string, organizationId string) (ImplResponse, error) {
 	// TODO - update GetProducts with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 
-	//TODO: Uncomment the next line to return response Response(200, []Product{}) or use other options such as http.Ok ...
-	//return Response(200, []Product{}), nil
+	//TODO: Uncomment the next line to return response Response(200, ProductsList{}) or use other options such as http.Ok ...
+	//return Response(200, ProductsList{}), nil
 
 	return Response(http.StatusNotImplemented, nil), errors.New("GetProducts method not implemented")
 }
@@ -119,6 +119,17 @@ func (s *DefaultApiService) PostOrders(ctx context.Context, order Order) (ImplRe
 	//return Response(200, OrderCreated{}), nil
 
 	return Response(http.StatusNotImplemented, nil), errors.New("PostOrders method not implemented")
+}
+
+// PostProducts - 
+func (s *DefaultApiService) PostProducts(ctx context.Context, productsList ProductsList) (ImplResponse, error) {
+	// TODO - update PostProducts with the required logic for this service method.
+	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
+
+	//TODO: Uncomment the next line to return response Response(200, []Product{}) or use other options such as http.Ok ...
+	//return Response(200, []Product{}), nil
+
+	return Response(http.StatusNotImplemented, nil), errors.New("PostProducts method not implemented")
 }
 
 // PostWorkflowMinterNvla - 

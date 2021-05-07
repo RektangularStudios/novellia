@@ -1,12 +1,8 @@
-# github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210502035112-a9d986a11e83
+# github.com/RektangularStudios/novellia-sdk/sdk/server/go v0.0.0-20210506183948-a4e46208c576
 ## explicit
 github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0
-# github.com/felixge/httpsnoop v1.0.1
-github.com/felixge/httpsnoop
 # github.com/gofrs/uuid v4.0.0+incompatible
 ## explicit
-# github.com/gorilla/handlers v1.5.1
-github.com/gorilla/handlers
 # github.com/gorilla/mux v1.7.3
 github.com/gorilla/mux
 # github.com/jackc/chunkreader/v2 v2.0.1

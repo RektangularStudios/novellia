@@ -55,6 +55,12 @@ func main() {
 			os.Exit(novelliaDatabaseErr)
 		}
 		defer novelliaDatabaseService.Close(ctx)
+		
+		err = novelliaDatabaseService.PrepareQueries(ctx)
+		if err != nil {
+			fmt.Printf("Failed to prepare queries for Novellia database service: %+v\n", err)
+			os.Exit(novelliaDatabaseErr)
+		}
 
 		apiService = api.NewApiService(
 			cardanoGraphQLService,

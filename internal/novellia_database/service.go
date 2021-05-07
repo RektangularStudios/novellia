@@ -11,10 +11,11 @@ import (
 )
 
 const (
-	queryProductFilename = "query_product.sql"
-	queryCommissionFilename = "query_commission.sql"
-	queryAttributionFilename = "query_attribution.sql"
-	queryRemoteResourceFilename = "query_remote_resource.sql"
+	queryProductID = "queryProductID"
+	queryProduct = "queryProduct"
+	queryCommission = "queryCommission"
+	queryAttribution = "queryAttribution"
+	queryRemoteResource = "queryRemoteResource"
 )
 
 type ServiceImpl struct {
@@ -37,8 +38,33 @@ func New(ctx context.Context, username, password, host, database_name string, qu
 	}, nil
 }
 
+func (s *ServiceImpl) PrepareQueries(ctx context.Context) error {
+	queries := map[string]string {
+		queryProductID: "query_product_id.sql",
+		queryProduct: "query_product.sql",
+		queryCommission: "query_commission.sql",
+		queryAttribution: "query_attribution.sql",
+		queryRemoteResource: "query_remote_resource.sql",
+	}
+	
+	for name, filename := range queries {
+		fmt.Printf("Preparing SQL %s\n", filename)
+
+		query, err := s.readQueryFile(filename)
+		if err != nil {
+			return err
+		}
+		_, err = s.conn.Prepare(ctx, name, query)
+		if err != nil {
+			return err
+		}
+	}
+	fmt.Printf("SQL preparations done\n")
+	return nil
+}
+
 // reads a text file using the queriesPath as the base path
-func (s *ServiceImpl) ReadQueryFile(filename string) (string, error) {
+func (s *ServiceImpl) readQueryFile(filename string) (string, error) {
 	queryPath := filepath.Join(s.queriesPath, filename)
 
 	bytes, err := ioutil.ReadFile(queryPath)
@@ -49,19 +75,41 @@ func (s *ServiceImpl) ReadQueryFile(filename string) (string, error) {
 	return string(bytes), nil
 }
 
-// queries product information and adds it to the provided products slice
-func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, products []nvla.Product) ([]nvla.Product, error) {
-	productQuery, err := s.ReadQueryFile(queryProductFilename)
-	if err != nil {
-		return nil, err
-	}
-
-	rows, err := s.conn.Query(ctx, productQuery)
+// queries product list matching market and organization filters
+func (s *ServiceImpl) QueryProductIDs(ctx context.Context, organizationId string, marketId string) ([]string, error) {
+	rows, err := s.conn.Query(ctx, queryProductID, organizationId, marketId)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
+	productIDs := []string{}
+	for rows.Next() {
+		var productID string;
+
+		err = rows.Scan(
+			&productID,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("query product IDs failed: %v", err)
+		}
+
+		// add product ID to slice
+		productIDs = append(productIDs, productID)
+	}
+
+	return productIDs, nil
+}
+
+// queries product information and adds it to the provided products slice
+func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, productIDs []string) ([]nvla.Product, error) {
+	rows, err := s.conn.Query(ctx, queryProduct, productIDs)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	
+	products := []nvla.Product{}
 	for rows.Next() {
 		var p nvla.Product
 		var t nvla.NovelliaStandardToken
@@ -85,6 +133,7 @@ func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, products []nvla.Pr
 			&t.Copyright,
 			&t.Publisher,
 			&t.Version,
+			&t.Id,
 			&t.Tags,
 			&t.Description.Short,
 			&t.Description.Long,
@@ -108,13 +157,8 @@ func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, products []nvla.Pr
 }
 
 // queries commission information and adds it to the provided products slice
-func (s *ServiceImpl) QueryAndAddCommission(ctx context.Context, products []nvla.Product) ([]nvla.Product, error) {
-	commissionQuery, err := s.ReadQueryFile(queryCommissionFilename)
-	if err != nil {
-		return nil, err
-	}
-
-	rows, err := s.conn.Query(ctx, commissionQuery)
+func (s *ServiceImpl) QueryAndAddCommission(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error) {
+	rows, err := s.conn.Query(ctx, queryCommission, productIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -144,13 +188,8 @@ func (s *ServiceImpl) QueryAndAddCommission(ctx context.Context, products []nvla
 }
 
 // queries attribution information and adds it to the provided products slice
-func (s *ServiceImpl) QueryAndAddAttribution(ctx context.Context, products []nvla.Product) ([]nvla.Product, error) {
-	attributionQuery, err := s.ReadQueryFile(queryAttributionFilename)
-	if err != nil {
-		return nil, err
-	}
-
-	rows, err := s.conn.Query(ctx, attributionQuery)
+func (s *ServiceImpl) QueryAndAddAttribution(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error) {
+	rows, err := s.conn.Query(ctx, queryAttribution, productIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -180,13 +219,8 @@ func (s *ServiceImpl) QueryAndAddAttribution(ctx context.Context, products []nvl
 }
 
 // queries remote resource information and adds it to the provided products slice
-func (s *ServiceImpl) QueryAndAddRemoteResource(ctx context.Context, products []nvla.Product) ([]nvla.Product, error) {
-	remoteResourceQuery, err := s.ReadQueryFile(queryRemoteResourceFilename)
-	if err != nil {
-		return nil, err
-	}
-
-	rows, err := s.conn.Query(ctx, remoteResourceQuery)
+func (s *ServiceImpl) QueryAndAddRemoteResource(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error) {
+	rows, err := s.conn.Query(ctx, queryRemoteResource, productIDs)
 	if err != nil {
 		return nil, err
 	}

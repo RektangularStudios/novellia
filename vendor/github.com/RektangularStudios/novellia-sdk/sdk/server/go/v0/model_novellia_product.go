@@ -33,4 +33,7 @@ type NovelliaProduct struct {
 	Description DescriptionSet `json:"description"`
 
 	Resource []OffChainResource `json:"resource"`
+
+	// Token number in a set. Redundant field which makes no sense for tokens without a total-order.
+	Id int32 `json:"id,omitempty"`
 }

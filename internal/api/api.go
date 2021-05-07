@@ -37,26 +37,41 @@ func (s *ApiService) PostOrders(context.Context, nvla.Order) (nvla.ImplResponse,
 	return nvla.Response(http.StatusNotImplemented, nil), errors.New("PostOrders method not implemented")
 }
 
-// Gets listed products
-func (s *ApiService) GetProducts(ctx context.Context, marketId string, organizationId string, productId string) (nvla.ImplResponse, error) {
-	products, err := s.novelliaDatabaseService.QueryAndAddProduct(ctx, make([]nvla.Product, 0))
+// Gets list of products
+func (s *ApiService) GetProducts(ctx context.Context, marketId string, organizationId string) (nvla.ImplResponse, error) {
+	productIDs, err := s.novelliaDatabaseService.QueryProductIDs(ctx, organizationId, marketId)
 	if err != nil {
-		err = fmt.Errorf("get products failed at product query: %+v", err)
+		err = fmt.Errorf("get products failed at product ID query: %+v", err)
 		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
 	}
-	products, err = s.novelliaDatabaseService.QueryAndAddCommission(ctx, products)
+	
+	productsList := nvla.ProductsList{
+		ProductId: productIDs,
+	}
+	return nvla.Response(200, productsList), nil
+}
+
+
+// Post for list of products details
+func (s *ApiService) PostProducts(ctx context.Context, productsList nvla.ProductsList) (nvla.ImplResponse, error) {
+	products, err := s.novelliaDatabaseService.QueryAndAddProduct(ctx, productsList.ProductId)
 	if err != nil {
-		err = fmt.Errorf("get products failed at commission query: %+v", err)
+		err = fmt.Errorf("post products failed at product query: %+v", err)
 		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
 	}
-	products, err = s.novelliaDatabaseService.QueryAndAddAttribution(ctx, products)
+	products, err = s.novelliaDatabaseService.QueryAndAddCommission(ctx, productsList.ProductId, products)
 	if err != nil {
-		err = fmt.Errorf("get products failed at attribution query: %+v", err)
+		err = fmt.Errorf("post products failed at commission query: %+v", err)
 		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
 	}
-	products, err = s.novelliaDatabaseService.QueryAndAddRemoteResource(ctx, products)
+	products, err = s.novelliaDatabaseService.QueryAndAddAttribution(ctx, productsList.ProductId, products)
 	if err != nil {
-		err = fmt.Errorf("get products failed at remote resource query: %+v", err)
+		err = fmt.Errorf("post products failed at attribution query: %+v", err)
+		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
+	}
+	products, err = s.novelliaDatabaseService.QueryAndAddRemoteResource(ctx, productsList.ProductId, products)
+	if err != nil {
+		err = fmt.Errorf("post products failed at remote resource query: %+v", err)
 		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
 	}
 
