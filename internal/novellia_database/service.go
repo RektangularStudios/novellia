@@ -25,8 +25,9 @@ type ServiceImpl struct {
 
 // creates a new ServiceImpl, connecting to Postgres
 func New(ctx context.Context, username, password, host, database_name string, queriesPath string) (*ServiceImpl, error) {
-	// url like "postgresql://username:password@localhost:5432/database_name"
-	databaseUrl := fmt.Sprintf("postgresql://%s:%s@%s/%s", username, password, host, database_name)
+	// url like "postgresql://username:password@localhost:5432/database_name?search_path=novellia"
+	schema := "novellia"
+	databaseUrl := fmt.Sprintf("postgresql://%s:%s@%s/%s?search_path=%s", username, password, host, database_name, schema)
 	conn, err := pgx.Connect(ctx, databaseUrl)
 	if err != nil {
 		return nil, fmt.Errorf("unable to connect to Postgres: %v", err)
