@@ -38,3 +38,7 @@ Initial deployment
 ## v0.7.0
 - Automatically sort returned products by `id`
 - `/products` supports fetching list of product IDs and returning details for specific ones
+
+## v0.8.0
+- Support org and market descriptions
+- Restructure SDK to match new API split introducing `order-fulfillment`

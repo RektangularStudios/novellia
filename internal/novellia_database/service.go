@@ -124,9 +124,9 @@ func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, productIDs []strin
 			&p.Pricing.PriceCurrencyId, &p.Pricing.PriceUnitAmount, &p.Pricing.MaxOrderSize,
 			&dateListed, &dateAvailable,
 			// organization
-			&p.Organization.OrganizationId, &p.Organization.Name,
+			&p.Organization.OrganizationId, &p.Organization.Name, &p.Organization.Description,
 			// market
-			&p.Market.MarketId, &p.Market.Name,
+			&p.Market.MarketId, &p.Market.Name, &p.Market.Description,
 			// native token
 			&t.NativeToken.PolicyId, &t.NativeToken.AssetId,
 			// product detail
