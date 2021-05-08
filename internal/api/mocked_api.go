@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0"
+	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0"
 )
 
 type MockedApiService struct{}

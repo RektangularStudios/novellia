@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgtype"
-	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0"
+	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0"
 )
 
 const (
