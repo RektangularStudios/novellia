@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgtype"
-	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0"
+	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0"
 )
 
 const (
@@ -25,8 +25,9 @@ type ServiceImpl struct {
 
 // creates a new ServiceImpl, connecting to Postgres
 func New(ctx context.Context, username, password, host, database_name string, queriesPath string) (*ServiceImpl, error) {
-	// url like "postgresql://username:password@localhost:5432/database_name"
-	databaseUrl := fmt.Sprintf("postgresql://%s:%s@%s/%s", username, password, host, database_name)
+	// url like "postgresql://username:password@localhost:5432/database_name?search_path=novellia"
+	schema := "novellia"
+	databaseUrl := fmt.Sprintf("postgresql://%s:%s@%s/%s?search_path=%s", username, password, host, database_name, schema)
 	conn, err := pgx.Connect(ctx, databaseUrl)
 	if err != nil {
 		return nil, fmt.Errorf("unable to connect to Postgres: %v", err)
@@ -124,9 +125,9 @@ func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, productIDs []strin
 			&p.Pricing.PriceCurrencyId, &p.Pricing.PriceUnitAmount, &p.Pricing.MaxOrderSize,
 			&dateListed, &dateAvailable,
 			// organization
-			&p.Organization.OrganizationId, &p.Organization.Name,
+			&p.Organization.OrganizationId, &p.Organization.Name, &p.Organization.Description,
 			// market
-			&p.Market.MarketId, &p.Market.Name,
+			&p.Market.MarketId, &p.Market.Name, &p.Market.Description,
 			// native token
 			&t.NativeToken.PolicyId, &t.NativeToken.AssetId,
 			// product detail

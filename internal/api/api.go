@@ -6,7 +6,7 @@ import (
 	"errors"
 	"net/http"
 
-	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0"
+	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0"
 	cardano_graphql "github.com/RektangularStudios/novellia/internal/cardano/graphql"
 	"github.com/RektangularStudios/novellia/internal/novellia_database"
 )
@@ -25,16 +25,6 @@ func NewApiService(
 		cardanoGraphQLService: cardanoGraphQLService,
 		novelliaDatabaseService: novelliaDatabaseService,
 	}
-}
-
-// Gets an order by id
-func (s *ApiService) GetOrders(ctx context.Context, productId string) (nvla.ImplResponse, error) {
-	return nvla.Response(http.StatusNotImplemented, nil), errors.New("GetOrders method not implemented")
-}
-
-// Creates an order and returns the order_id
-func (s *ApiService) PostOrders(context.Context, nvla.Order) (nvla.ImplResponse, error) {
-	return nvla.Response(http.StatusNotImplemented, nil), errors.New("PostOrders method not implemented")
 }
 
 // Gets list of products
@@ -86,6 +76,11 @@ func (s *ApiService) GetStatus(ctx context.Context) (nvla.ImplResponse, error) {
 		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
 	}
 
+	status := "UP"
+	if !initialized || syncPercentage != 1 {
+		status = "Cardano service not ready"
+	}
+
 	resp := nvla.Status{
 		Cardano: nvla.StatusCardano{
 			Initialized: initialized,
@@ -93,6 +88,7 @@ func (s *ApiService) GetStatus(ctx context.Context) (nvla.ImplResponse, error) {
 		},
 		// TODO: read this value from somewhere
 		Maintenance: false,
+		Status: status,
 	}
 	return nvla.Response(200, resp), nil
 }

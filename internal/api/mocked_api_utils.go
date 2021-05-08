@@ -1,7 +1,7 @@
 package api
 
 import (
-	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0"
+	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0"
 )
 
 const (
@@ -129,10 +129,12 @@ func (s *MockedApiService) GetMockNovelliaStandardTokenProduct() nvla.Product {
 		Organization: nvla.ProductOrganization{
 			Name: "Rektangular Studios Inc.",
 			OrganizationId: "ORG-01F45PHP58QWYSWJPFC0RYYGJ2",
+			Description: "[Rektangular Studios](https://rektangularstudios.com) is a software development company bringing new products to the Cardano ecosystem.",
 		},
 		Market: nvla.ProductMarket{
 			Name: "Occulta Novellia",
 			MarketId: "MKT-01F45PJXRNEM8V7CP48NR39639",
+			Description: "[Occulta Novellia](https://rektangularstudios.com/occulta-novellia/) is a surreal horror multiverse.\nEach new set of collectibles is minted on the Cardano blockchain to incorporate new stories, building up the many facets of it.",
 		},
 		Stock: nvla.ProductStock{
 			Available: 2300,

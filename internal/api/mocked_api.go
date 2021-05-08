@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/v0"
+	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0"
 )
 
 type MockedApiService struct{}
@@ -13,45 +13,6 @@ type MockedApiService struct{}
 // MockedNewApiService creates an api service
 func NewMockedApiService() nvla.DefaultApiServicer {
 	return &MockedApiService {}
-}
-
-// Gets an order by id
-func (s *MockedApiService) GetOrders(ctx context.Context, productId string) (nvla.ImplResponse, error) {
-	order := nvla.Order{
-		Items: []nvla.OrderItems{
-			nvla.OrderItems{
-				ProductId: "PROD-01D78XYFJ1PRM1WPBAOU8JQMNV",
-				Quantity: 4,
-			},
-			nvla.OrderItems{
-				ProductId: "PROD-01D78XYFJ1PRM1WPBCBT3VHMNV",
-				Quantity: 2,
-			},
-		},
-		Customer: nvla.OrderCustomer{
-			DeliveryAddress: "addr1q80u75kavwd5sc7j52x0k8nrqd46540vcjgsvl4fhxjqqs60vcjwf9llp7rv006f0dqyffltyyyzpzl9vct4mp7wjdaspwq39a",
-		},
-		Payment: nvla.OrderPayment{
-			PaymentAddress: "addr1q80u75kavwd5sc7j52x0k8nrqd46540vcjgsvl4fhxjqqs60vcjwf9llp7rv006f0dqyffltyyyzpzl9vct4mp7wjdaspwq39a",
-			PriceCurrencyId: "ada",
-			PriceAmount: 20,
-			PaymentStatus: "AWAITING_PAYMENT",
-		},
-		OrderStatus: "AWAITING_PAYMENT",
-		Description: "Occulta Novellia Presale Order",
-		OrderId: "ORDER-01D78XYFJ1PRM1WPBCBT3VHMNV",
-	}
-
-	return nvla.Response(200, order), nil
-}
-
-// Creates an order and returns the order_id
-func (s *MockedApiService) PostOrders(context.Context, nvla.Order) (nvla.ImplResponse, error) {
-	orderCreated := nvla.OrderCreated{
-		OrderId: "ORDER-01D78XYFJ1PRM1WPBCBT3VHMNV",
-	}
-
-	return nvla.Response(200, orderCreated), nil
 }
 
 // Gets list of products
@@ -82,6 +43,7 @@ func (s *MockedApiService) GetStatus(ctx context.Context) (nvla.ImplResponse, er
 			SyncPercentage: 100,
 		},
 		Maintenance: false,
+		Status: "UP",
 	}
 
 	return nvla.Response(200, resp), nil
