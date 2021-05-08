@@ -22,13 +22,11 @@ import (
 // pass the data to a DefaultApiServicer to perform the required actions, then write the service results to the http response.
 type DefaultApiRouter interface { 
 	GetCardanoTip(http.ResponseWriter, *http.Request)
-	GetOrders(http.ResponseWriter, *http.Request)
 	GetProducts(http.ResponseWriter, *http.Request)
 	GetStatus(http.ResponseWriter, *http.Request)
 	GetWallet(http.ResponseWriter, *http.Request)
 	GetWorkflowMinterNvla(http.ResponseWriter, *http.Request)
 	PostCardanoTransaction(http.ResponseWriter, *http.Request)
-	PostOrders(http.ResponseWriter, *http.Request)
 	PostProducts(http.ResponseWriter, *http.Request)
 	PostWorkflowMinterNvla(http.ResponseWriter, *http.Request)
 }
@@ -40,13 +38,11 @@ type DefaultApiRouter interface {
 // and updated with the logic required for the API.
 type DefaultApiServicer interface { 
 	GetCardanoTip(context.Context) (ImplResponse, error)
-	GetOrders(context.Context, string) (ImplResponse, error)
 	GetProducts(context.Context, string, string) (ImplResponse, error)
 	GetStatus(context.Context) (ImplResponse, error)
 	GetWallet(context.Context, string) (ImplResponse, error)
 	GetWorkflowMinterNvla(context.Context) (ImplResponse, error)
 	PostCardanoTransaction(context.Context, CardanoTransaction) (ImplResponse, error)
-	PostOrders(context.Context, Order) (ImplResponse, error)
 	PostProducts(context.Context, ProductsList) (ImplResponse, error)
 	PostWorkflowMinterNvla(context.Context, MinterInfo) (ImplResponse, error)
 }
