@@ -27,16 +27,6 @@ func NewApiService(
 	}
 }
 
-// Gets an order by id
-func (s *ApiService) GetOrders(ctx context.Context, productId string) (nvla.ImplResponse, error) {
-	return nvla.Response(http.StatusNotImplemented, nil), errors.New("GetOrders method not implemented")
-}
-
-// Creates an order and returns the order_id
-func (s *ApiService) PostOrders(context.Context, nvla.Order) (nvla.ImplResponse, error) {
-	return nvla.Response(http.StatusNotImplemented, nil), errors.New("PostOrders method not implemented")
-}
-
 // Gets list of products
 func (s *ApiService) GetProducts(ctx context.Context, marketId string, organizationId string) (nvla.ImplResponse, error) {
 	productIDs, err := s.novelliaDatabaseService.QueryProductIDs(ctx, organizationId, marketId)
