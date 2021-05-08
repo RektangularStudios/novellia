@@ -82,6 +82,7 @@ func (s *MockedApiService) GetStatus(ctx context.Context) (nvla.ImplResponse, er
 			SyncPercentage: 100,
 		},
 		Maintenance: false,
+		Status: "UP",
 	}
 
 	return nvla.Response(200, resp), nil

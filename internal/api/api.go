@@ -86,6 +86,11 @@ func (s *ApiService) GetStatus(ctx context.Context) (nvla.ImplResponse, error) {
 		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
 	}
 
+	status := "UP"
+	if !initialized || syncPercentage != 1 {
+		status = "Cardano service not ready"
+	}
+
 	resp := nvla.Status{
 		Cardano: nvla.StatusCardano{
 			Initialized: initialized,
@@ -93,6 +98,7 @@ func (s *ApiService) GetStatus(ctx context.Context) (nvla.ImplResponse, error) {
 		},
 		// TODO: read this value from somewhere
 		Maintenance: false,
+		Status: status,
 	}
 	return nvla.Response(200, resp), nil
 }
