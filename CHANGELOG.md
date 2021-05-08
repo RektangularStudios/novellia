@@ -42,3 +42,5 @@ Initial deployment
 ## v0.8.0
 - Support org and market descriptions
 - Restructure SDK to match new API split introducing `order-fulfillment`
+- Remove `/orders` endpoint (migrated to `order-fulfillment`)
+- Improve `/status` endpoint
