@@ -70,27 +70,26 @@ func (s *ApiService) PostProducts(ctx context.Context, productsList nvla.Product
 
 // Availability information about service availability
 func (s *ApiService) GetStatus(ctx context.Context) (nvla.ImplResponse, error) {
-	initialized, syncPercentage, err := s.cardanoGraphQLService.GetStatus(ctx)
+	var status nvla.Status
+	status.Maintenance = false
+	// TODO: separate microservice being alive vs. some services being down
+	status.Status = "UP"
 	
+	initialized, syncPercentage, err := s.cardanoGraphQLService.GetStatus(ctx)
 	if err != nil {
-		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
-	}
-
-	status := "UP"
-	if !initialized || syncPercentage != 1 {
-		status = "Cardano service not ready"
-	}
-
-	resp := nvla.Status{
-		Cardano: nvla.StatusCardano{
+		status.Cardano = nvla.StatusCardano{
+			Initialized: false,
+			SyncPercentage: 0,
+		}
+	} else {
+		status.Cardano = nvla.StatusCardano{
 			Initialized: initialized,
 			SyncPercentage: syncPercentage,
-		},
-		// TODO: read this value from somewhere
-		Maintenance: false,
-		Status: status,
+		}
 	}
-	return nvla.Response(200, resp), nil
+
+
+	return nvla.Response(200, status), nil
 }
 
 // Cardano chain tip information

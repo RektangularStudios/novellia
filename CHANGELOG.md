@@ -47,3 +47,6 @@ Initial deployment
 
 ## v0.8.1
 - Return time as `ISO-8601 format (2021-05-17T22:00:00-00:00)`
+
+## v0.8.2
+- Add health check metrics for Prometheus
