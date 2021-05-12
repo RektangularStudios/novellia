@@ -2,6 +2,8 @@ server:
   # leave host blank or server will only accept calls from localhost
   host: 
   port: 3555
+monitoring:
+  status-url: http://localhost:3555/novellia/status
 cardano-graphql:
   host: http://127.0.0.1
   port: 3100
