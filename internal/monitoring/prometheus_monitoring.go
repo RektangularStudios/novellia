@@ -32,6 +32,11 @@ var (
 		Name: "cardano_status",
 		Help: "Health status indicator for Cardano services such as GraphQL and cardano-node",
 	})
+	productIDsListedMetric = promauto.NewGauge(prometheus.GaugeOpts{
+		Namespace: namespace,
+		Name: "products_ids_listed",
+		Help: "Number of products IDs returned when accessing Novellia",
+	})
 )
 
 type statusIndicators struct {
@@ -84,6 +89,10 @@ func getStatus() (*statusIndicators, error) {
 	fmt.Printf("Checked Status, result: %+v\n", respBody)
 
 	return &s, nil
+}
+
+func RecordNumberOfProductIDsListed(count int) {
+	productIDsListedMetric.Set(float64(count))
 }
 
 func RecordMetrics() {

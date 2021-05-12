@@ -9,6 +9,7 @@ import (
 	"github.com/jackc/pgtype"
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0"
 	"github.com/RektangularStudios/novellia/internal/constants"
+	prometheus_monitoring "github.com/RektangularStudios/novellia/internal/monitoring"
 )
 
 const (
@@ -99,6 +100,8 @@ func (s *ServiceImpl) QueryProductIDs(ctx context.Context, organizationId string
 		// add product ID to slice
 		productIDs = append(productIDs, productID)
 	}
+
+	prometheus_monitoring.RecordNumberOfProductIDsListed(len(productIDs))
 
 	return productIDs, nil
 }
