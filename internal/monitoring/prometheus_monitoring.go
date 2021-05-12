@@ -18,7 +18,7 @@ import (
 
 const (
 	namespace = "novellia"
-	status_interval = 2 * time.Second
+	status_interval = 30 * time.Second
 )
 
 var (
