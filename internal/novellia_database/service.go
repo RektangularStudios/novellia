@@ -8,6 +8,7 @@ import (
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgtype"
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0"
+	"github.com/RektangularStudios/novellia/internal/constants"
 )
 
 const (
@@ -147,8 +148,8 @@ func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, productIDs []strin
 		}
 
 		// convert dates to strings
-		p.Metadata.DateListed = dateListed.Time.String()
-		p.Metadata.DateAvailable = dateAvailable.Time.String()
+		p.Metadata.DateListed = dateListed.Time.UTC().Format(constants.ISO8601DateFormat)
+		p.Metadata.DateAvailable = dateAvailable.Time.UTC().Format(constants.ISO8601DateFormat)
 
 		// add product to slice
 		products = append(products, p)

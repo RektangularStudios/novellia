@@ -114,3 +114,4 @@ Make sure keys do not end up in git. Ignore the `local.yaml`.
 # Notes
 
 - Times returned to the Novellia front-end must match `ISO-8601 format (2021-05-17T22:00:00-00:00)`
+- All times are returned as UTC
