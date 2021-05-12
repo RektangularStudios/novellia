@@ -142,8 +142,8 @@ func (s *MockedApiService) GetMockNovelliaStandardTokenProduct() nvla.Product {
 		},
 		Metadata: nvla.ProductMetadata{
 			// PST time (-08:00) at 2:00 PM
-			DateListed: "2021-05-03T14:00:00-08:00",
-			DateAvailable: "2021-05-17T14:00:00-08:00",
+			DateListed: "2021-05-03T22:00:00-0000",
+			DateAvailable: "2021-05-17T22:00:00-0000",
 		},
 		Product: nvla.ProductProduct{
 			NovelliaStandardToken: &novelliaStandardToken,
