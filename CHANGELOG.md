@@ -52,5 +52,4 @@ Initial deployment
 - Add health check metrics for Prometheus
 
 ## v0.8.3
-- Fix error where product list randomly becomes empty, requiring microservice restart
-  - automatically reconnect to Postgres when connection dies
+- Use connection pool for concurrent queries to Postgres

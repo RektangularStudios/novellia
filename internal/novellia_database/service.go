@@ -5,8 +5,8 @@ import (
 	"context"
 	"io/ioutil"
 	"path/filepath"
-	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgtype"
+	"github.com/jackc/pgx/v4/pgxpool"
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0"
 	"github.com/RektangularStudios/novellia/internal/constants"
 	prometheus_monitoring "github.com/RektangularStudios/novellia/internal/monitoring"
@@ -22,8 +22,8 @@ const (
 
 type ServiceImpl struct {
 	queriesPath string
-	conn *pgx.Conn
-	databaseUrl string
+	pool *pgxpool.Pool
+	queries map[string]string
 }
 
 // creates a new ServiceImpl, connecting to Postgres
@@ -31,40 +31,46 @@ func New(ctx context.Context, username, password, host, database_name string, qu
 	// url like "postgresql://username:password@localhost:5432/database_name?search_path=novellia"
 	schema := "novellia"
 	databaseUrl := fmt.Sprintf("postgresql://%s:%s@%s/%s?search_path=%s", username, password, host, database_name, schema)
-	conn, err := pgx.Connect(ctx, databaseUrl)
+	pool, err := pgxpool.Connect(ctx, databaseUrl)
 	if err != nil {
 		return nil, fmt.Errorf("unable to connect to Postgres: %v", err)
 	}
 	
-	return &ServiceImpl {
-		conn: conn,
+	service := ServiceImpl {
+		pool: pool,
 		queriesPath: queriesPath,
-		databaseUrl: databaseUrl,
-	}, nil
+	}
+	err = service.loadQueries(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load queries")
+	}
+
+	return &service, nil
 }
 
-func (s *ServiceImpl) PrepareQueries(ctx context.Context) error {
-	queries := map[string]string {
+func (s *ServiceImpl) loadQueries(ctx context.Context) error {
+	queryFiles := map[string]string {
 		queryProductID: "query_product_id.sql",
 		queryProduct: "query_product.sql",
 		queryCommission: "query_commission.sql",
 		queryAttribution: "query_attribution.sql",
 		queryRemoteResource: "query_remote_resource.sql",
 	}
-	
-	for name, filename := range queries {
-		fmt.Printf("Preparing SQL %s\n", filename)
+
+	queries := make(map[string]string)
+	for name, filename := range queryFiles {
+		fmt.Printf("Loading SQL %s\n", filename)
 
 		query, err := s.readQueryFile(filename)
 		if err != nil {
 			return err
 		}
-		_, err = s.conn.Prepare(ctx, name, query)
-		if err != nil {
-			return err
-		}
+
+		queries[name] = query
 	}
-	fmt.Printf("SQL preparations done\n")
+	s.queries = queries
+
+	fmt.Printf("SQL has been loaded\n")
 	return nil
 }
 
@@ -80,30 +86,15 @@ func (s *ServiceImpl) readQueryFile(filename string) (string, error) {
 	return string(bytes), nil
 }
 
-func (s *ServiceImpl) checkConnection(ctx context.Context) error {
-	err := s.conn.Ping(ctx)
-	if err != nil {
-		fmt.Printf("database ping failed: %+v", err)
-		prometheus_monitoring.RecordDatabaseConnectionFailure()
-
-		// try to reconnect
-		s.conn, err = pgx.Connect(ctx, s.databaseUrl)
-		if err != nil {
-			fmt.Printf("failed to reconnect to Postgres: %+v", err)
-			return fmt.Errorf("failed to reconnect to Postgres")
-		}
-	}
-	return nil
-}
-
 // queries product list matching market and organization filters
 func (s *ServiceImpl) QueryProductIDs(ctx context.Context, organizationId string, marketId string) ([]string, error) {
-	err := s.checkConnection(ctx)
+	conn, err := s.pool.Acquire(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer conn.Release()
 
-	rows, err := s.conn.Query(ctx, queryProductID, organizationId, marketId)
+	rows, err := conn.Query(ctx, s.queries[queryProductID], organizationId, marketId)
 	if err != nil {
 		return nil, err
 	}
@@ -131,12 +122,13 @@ func (s *ServiceImpl) QueryProductIDs(ctx context.Context, organizationId string
 
 // queries product information and adds it to the provided products slice
 func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, productIDs []string) ([]nvla.Product, error) {
-	err := s.checkConnection(ctx)
+	conn, err := s.pool.Acquire(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer conn.Release()
 
-	rows, err := s.conn.Query(ctx, queryProduct, productIDs)
+	rows, err := conn.Query(ctx, s.queries[queryProduct], productIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -191,12 +183,13 @@ func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, productIDs []strin
 
 // queries commission information and adds it to the provided products slice
 func (s *ServiceImpl) QueryAndAddCommission(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error) {
-	err := s.checkConnection(ctx)
+	conn, err := s.pool.Acquire(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer conn.Release()
 
-	rows, err := s.conn.Query(ctx, queryCommission, productIDs)
+	rows, err := conn.Query(ctx, s.queries[queryCommission], productIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -227,12 +220,13 @@ func (s *ServiceImpl) QueryAndAddCommission(ctx context.Context, productIDs []st
 
 // queries attribution information and adds it to the provided products slice
 func (s *ServiceImpl) QueryAndAddAttribution(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error) {
-	err := s.checkConnection(ctx)
+	conn, err := s.pool.Acquire(ctx)
 	if err != nil {
 		return nil, err
 	}
+	defer conn.Release()
 
-	rows, err := s.conn.Query(ctx, queryAttribution, productIDs)
+	rows, err := conn.Query(ctx, s.queries[queryAttribution], productIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -263,12 +257,13 @@ func (s *ServiceImpl) QueryAndAddAttribution(ctx context.Context, productIDs []s
 
 // queries remote resource information and adds it to the provided products slice
 func (s *ServiceImpl) QueryAndAddRemoteResource(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error) {
-	err := s.checkConnection(ctx)
+	conn, err := s.pool.Acquire(ctx)
 	if err != nil {
 		return nil, err
 	}
-	
-	rows, err := s.conn.Query(ctx, queryRemoteResource, productIDs)
+	defer conn.Release()
+
+	rows, err := conn.Query(ctx, s.queries[queryRemoteResource], productIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -302,5 +297,5 @@ func (s *ServiceImpl) QueryAndAddRemoteResource(ctx context.Context, productIDs 
 }
 
 func (s *ServiceImpl) Close(ctx context.Context) {
-	s.conn.Close(ctx)
+	s.pool.Close()
 }

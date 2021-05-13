@@ -6,7 +6,6 @@ import (
 )
 
 type Service interface {
-	PrepareQueries(ctx context.Context) error
 	QueryProductIDs(ctx context.Context, organizationId string, marketId string) ([]string, error)
 	QueryAndAddProduct(ctx context.Context, productIDs []string) ([]nvla.Product, error)
 	QueryAndAddCommission(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error)
