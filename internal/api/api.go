@@ -32,6 +32,8 @@ func (s *ApiService) GetProducts(ctx context.Context, marketId string, organizat
 	productIDs, err := s.novelliaDatabaseService.QueryProductIDs(ctx, organizationId, marketId)
 	if err != nil {
 		err = fmt.Errorf("get products failed at product ID query: %+v", err)
+		// TODO: log this in a proper logging stack
+		fmt.Printf("GetProducts error: %+v", err)
 		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
 	}
 	

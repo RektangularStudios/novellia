@@ -37,6 +37,11 @@ var (
 		Name: "products_ids_listed",
 		Help: "Number of products IDs returned when accessing Novellia",
 	})
+	databaseConnectionFailedMetric = promauto.NewCounter(prometheus.CounterOpts{
+		Namespace: namespace,
+		Name: "database_connection_failed",
+		Help: "Incremented whenever the database connection fails",
+	})
 )
 
 type statusIndicators struct {
@@ -93,6 +98,10 @@ func getStatus() (*statusIndicators, error) {
 
 func RecordNumberOfProductIDsListed(count int) {
 	productIDsListedMetric.Set(float64(count))
+}
+
+func RecordDatabaseConnectionFailure() {
+	databaseConnectionFailedMetric.Inc()
 }
 
 func RecordMetrics() {

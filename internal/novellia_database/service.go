@@ -23,6 +23,7 @@ const (
 type ServiceImpl struct {
 	queriesPath string
 	conn *pgx.Conn
+	databaseUrl string
 }
 
 // creates a new ServiceImpl, connecting to Postgres
@@ -34,10 +35,11 @@ func New(ctx context.Context, username, password, host, database_name string, qu
 	if err != nil {
 		return nil, fmt.Errorf("unable to connect to Postgres: %v", err)
 	}
-
+	
 	return &ServiceImpl {
 		conn: conn,
 		queriesPath: queriesPath,
+		databaseUrl: databaseUrl,
 	}, nil
 }
 
@@ -78,8 +80,29 @@ func (s *ServiceImpl) readQueryFile(filename string) (string, error) {
 	return string(bytes), nil
 }
 
+func (s *ServiceImpl) checkConnection(ctx context.Context) error {
+	err := s.conn.Ping(ctx)
+	if err != nil {
+		fmt.Printf("database ping failed: %+v", err)
+		prometheus_monitoring.RecordDatabaseConnectionFailure()
+
+		// try to reconnect
+		s.conn, err = pgx.Connect(ctx, s.databaseUrl)
+		if err != nil {
+			fmt.Printf("failed to reconnect to Postgres: %+v", err)
+			return fmt.Errorf("failed to reconnect to Postgres")
+		}
+	}
+	return nil
+}
+
 // queries product list matching market and organization filters
 func (s *ServiceImpl) QueryProductIDs(ctx context.Context, organizationId string, marketId string) ([]string, error) {
+	err := s.checkConnection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	rows, err := s.conn.Query(ctx, queryProductID, organizationId, marketId)
 	if err != nil {
 		return nil, err
@@ -108,6 +131,11 @@ func (s *ServiceImpl) QueryProductIDs(ctx context.Context, organizationId string
 
 // queries product information and adds it to the provided products slice
 func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, productIDs []string) ([]nvla.Product, error) {
+	err := s.checkConnection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	rows, err := s.conn.Query(ctx, queryProduct, productIDs)
 	if err != nil {
 		return nil, err
@@ -163,6 +191,11 @@ func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, productIDs []strin
 
 // queries commission information and adds it to the provided products slice
 func (s *ServiceImpl) QueryAndAddCommission(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error) {
+	err := s.checkConnection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	rows, err := s.conn.Query(ctx, queryCommission, productIDs)
 	if err != nil {
 		return nil, err
@@ -194,6 +227,11 @@ func (s *ServiceImpl) QueryAndAddCommission(ctx context.Context, productIDs []st
 
 // queries attribution information and adds it to the provided products slice
 func (s *ServiceImpl) QueryAndAddAttribution(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error) {
+	err := s.checkConnection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	rows, err := s.conn.Query(ctx, queryAttribution, productIDs)
 	if err != nil {
 		return nil, err
@@ -225,6 +263,11 @@ func (s *ServiceImpl) QueryAndAddAttribution(ctx context.Context, productIDs []s
 
 // queries remote resource information and adds it to the provided products slice
 func (s *ServiceImpl) QueryAndAddRemoteResource(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error) {
+	err := s.checkConnection(ctx)
+	if err != nil {
+		return nil, err
+	}
+	
 	rows, err := s.conn.Query(ctx, queryRemoteResource, productIDs)
 	if err != nil {
 		return nil, err
