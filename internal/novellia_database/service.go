@@ -88,13 +88,7 @@ func (s *ServiceImpl) readQueryFile(filename string) (string, error) {
 
 // queries product list matching market and organization filters
 func (s *ServiceImpl) QueryProductIDs(ctx context.Context, organizationId string, marketId string) ([]string, error) {
-	conn, err := s.pool.Acquire(ctx)
-	if err != nil {
-		return nil, err
-	}
-	defer conn.Release()
-
-	rows, err := conn.Query(ctx, s.queries[queryProductID], organizationId, marketId)
+	rows, err := s.pool.Query(ctx, s.queries[queryProductID], organizationId, marketId)
 	if err != nil {
 		return nil, err
 	}
@@ -122,13 +116,7 @@ func (s *ServiceImpl) QueryProductIDs(ctx context.Context, organizationId string
 
 // queries product information and adds it to the provided products slice
 func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, productIDs []string) ([]nvla.Product, error) {
-	conn, err := s.pool.Acquire(ctx)
-	if err != nil {
-		return nil, err
-	}
-	defer conn.Release()
-
-	rows, err := conn.Query(ctx, s.queries[queryProduct], productIDs)
+	rows, err := s.pool.Query(ctx, s.queries[queryProduct], productIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -183,13 +171,7 @@ func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, productIDs []strin
 
 // queries commission information and adds it to the provided products slice
 func (s *ServiceImpl) QueryAndAddCommission(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error) {
-	conn, err := s.pool.Acquire(ctx)
-	if err != nil {
-		return nil, err
-	}
-	defer conn.Release()
-
-	rows, err := conn.Query(ctx, s.queries[queryCommission], productIDs)
+	rows, err := s.pool.Query(ctx, s.queries[queryCommission], productIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -220,13 +202,7 @@ func (s *ServiceImpl) QueryAndAddCommission(ctx context.Context, productIDs []st
 
 // queries attribution information and adds it to the provided products slice
 func (s *ServiceImpl) QueryAndAddAttribution(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error) {
-	conn, err := s.pool.Acquire(ctx)
-	if err != nil {
-		return nil, err
-	}
-	defer conn.Release()
-
-	rows, err := conn.Query(ctx, s.queries[queryAttribution], productIDs)
+	rows, err := s.pool.Query(ctx, s.queries[queryAttribution], productIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -257,13 +233,7 @@ func (s *ServiceImpl) QueryAndAddAttribution(ctx context.Context, productIDs []s
 
 // queries remote resource information and adds it to the provided products slice
 func (s *ServiceImpl) QueryAndAddRemoteResource(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error) {
-	conn, err := s.pool.Acquire(ctx)
-	if err != nil {
-		return nil, err
-	}
-	defer conn.Release()
-
-	rows, err := conn.Query(ctx, s.queries[queryRemoteResource], productIDs)
+	rows, err := s.pool.Query(ctx, s.queries[queryRemoteResource], productIDs)
 	if err != nil {
 		return nil, err
 	}
