@@ -50,3 +50,6 @@ Initial deployment
 
 ## v0.8.2
 - Add health check metrics for Prometheus
+
+## v0.8.3
+- Use connection pool for concurrent queries to Postgres
