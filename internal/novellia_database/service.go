@@ -207,7 +207,6 @@ func (s *ServiceImpl) QueryAndAddAttribution(ctx context.Context, productIDs []s
 		return nil, err
 	}
 	defer rows.Close()
-	fmt.Printf("After rows close\n")
 
 	for rows.Next() {
 		var a nvla.Attribution
@@ -218,7 +217,6 @@ func (s *ServiceImpl) QueryAndAddAttribution(ctx context.Context, productIDs []s
 			&a.Url,
 			&a.WorkAttributed,
 		)
-		fmt.Printf("attribution: %+v, productID: %s\n", a, product_id)
 		if err != nil {
 			return nil, fmt.Errorf("query and add attribution failed: %v", err)
 		}
