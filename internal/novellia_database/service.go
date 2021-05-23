@@ -190,9 +190,9 @@ func (s *ServiceImpl) QueryAndAddCommission(ctx context.Context, productIDs []st
 			return nil, fmt.Errorf("query and add commission failed: %v", err)
 		}
 
-		for _, p := range products {
-			if p.Product.ProductId == product_id {
-				p.Product.NovelliaStandardToken.Commission = append(p.Product.NovelliaStandardToken.Commission, c)
+		for i := range products {
+			if products[i].Product.ProductId == product_id {
+				products[i].Product.NovelliaStandardToken.Commission = append(products[i].Product.NovelliaStandardToken.Commission, c)
 			}
 		}
 	}
@@ -221,9 +221,9 @@ func (s *ServiceImpl) QueryAndAddAttribution(ctx context.Context, productIDs []s
 			return nil, fmt.Errorf("query and add attribution failed: %v", err)
 		}
 
-		for _, p := range products {
-			if p.Product.ProductId == product_id {
-				p.Attribution = append(p.Attribution, a)
+		for i := range products {
+			if products[i].Product.ProductId == product_id {
+				products[i].Attribution = append(products[i].Attribution, a)
 			}
 		}
 	}
@@ -256,9 +256,9 @@ func (s *ServiceImpl) QueryAndAddRemoteResource(ctx context.Context, productIDs 
 			return nil, fmt.Errorf("query and add remote resource failed: %v", err)
 		}
 
-		for _, p := range products {
-			if p.Product.ProductId == product_id {
-				p.Product.NovelliaStandardToken.Resource = append(p.Product.NovelliaStandardToken.Resource, r)
+		for i := range products {
+			if products[i].Product.ProductId == product_id {
+				products[i].Product.NovelliaStandardToken.Resource = append(products[i].Product.NovelliaStandardToken.Resource, r)
 			}
 		}
 	}

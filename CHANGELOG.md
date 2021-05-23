@@ -53,3 +53,6 @@ Initial deployment
 
 ## v0.8.3
 - Use connection pool for concurrent queries to Postgres
+
+## v0.8.4
+- Fix attribution information missing (bug)
