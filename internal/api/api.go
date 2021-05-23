@@ -46,6 +46,7 @@ func (s *ApiService) GetProducts(ctx context.Context, marketId string, organizat
 
 // Post for list of products details
 func (s *ApiService) PostProducts(ctx context.Context, productsList nvla.ProductsList) (nvla.ImplResponse, error) {
+	fmt.Printf("entered post products\n")
 	products, err := s.novelliaDatabaseService.QueryAndAddProduct(ctx, productsList.ProductId)
 	if err != nil {
 		err = fmt.Errorf("post products failed at product query: %+v", err)
@@ -56,11 +57,13 @@ func (s *ApiService) PostProducts(ctx context.Context, productsList nvla.Product
 		err = fmt.Errorf("post products failed at commission query: %+v", err)
 		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
 	}
+	fmt.Printf("before query and add attribution\n")
 	products, err = s.novelliaDatabaseService.QueryAndAddAttribution(ctx, productsList.ProductId, products)
 	if err != nil {
 		err = fmt.Errorf("post products failed at attribution query: %+v", err)
 		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
 	}
+	fmt.Printf("after query and add attribution\n")
 	products, err = s.novelliaDatabaseService.QueryAndAddRemoteResource(ctx, productsList.ProductId, products)
 	if err != nil {
 		err = fmt.Errorf("post products failed at remote resource query: %+v", err)
