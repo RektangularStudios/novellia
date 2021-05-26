@@ -14,14 +14,17 @@ package novellia
 type Token struct {
 
 	// Token asset ID registered on Cardano
-	AssetId string `json:"asset_id"`
+	NativeTokenId string `json:"native_token_id"`
 
 	// Amount of token held in Cardano wallet (in discrete units, i.e. lovelace)
-	Amount int32 `json:"amount"`
+	Amount uint64 `json:"amount"`
 
 	// Name or ticker as interpreted by Novellia (e.g. NVLA, ADA)
 	Name string `json:"name,omitempty"`
 
 	// Short description of token as interpreted by Novellia
 	Description string `json:"description,omitempty"`
+
+	// Onchain metadata
+	Metadata string `json:"metadata,omitempty"`
 }

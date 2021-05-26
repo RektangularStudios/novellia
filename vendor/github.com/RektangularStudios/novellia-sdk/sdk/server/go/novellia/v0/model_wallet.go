@@ -10,9 +10,9 @@
 
 package novellia
 
-// ProductsList - Light-weight list of products for further querying
-type ProductsList struct {
+// Wallet - Parameters identifying a wallet
+type Wallet struct {
 
-	// List of available products
-	Products []ProductListElement `json:"products"`
+	// List of Cardano addresses and/or stake keys
+	CardanoIdentifiers []string `json:"cardano_identifiers"`
 }

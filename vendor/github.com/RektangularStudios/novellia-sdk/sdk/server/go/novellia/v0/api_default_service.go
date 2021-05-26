@@ -43,8 +43,8 @@ func (s *DefaultApiService) GetProducts(ctx context.Context, marketId string, or
 	// TODO - update GetProducts with the required logic for this service method.
 	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 
-	//TODO: Uncomment the next line to return response Response(200, ProductsList{}) or use other options such as http.Ok ...
-	//return Response(200, ProductsList{}), nil
+	//TODO: Uncomment the next line to return response Response(200, []interface{}{}) or use other options such as http.Ok ...
+	//return Response(200, []interface{}{}), nil
 
 	return Response(http.StatusNotImplemented, nil), errors.New("GetProducts method not implemented")
 }
@@ -58,20 +58,6 @@ func (s *DefaultApiService) GetStatus(ctx context.Context) (ImplResponse, error)
 	//return Response(200, Status{}), nil
 
 	return Response(http.StatusNotImplemented, nil), errors.New("GetStatus method not implemented")
-}
-
-// GetWallet - Your GET endpoint
-func (s *DefaultApiService) GetWallet(ctx context.Context, walletAddress string) (ImplResponse, error) {
-	// TODO - update GetWallet with the required logic for this service method.
-	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
-
-	//TODO: Uncomment the next line to return response Response(200, []Token{}) or use other options such as http.Ok ...
-	//return Response(200, []Token{}), nil
-
-	//TODO: Uncomment the next line to return response Response(400, {}) or use other options such as http.Ok ...
-	//return Response(400, nil),nil
-
-	return Response(http.StatusNotImplemented, nil), errors.New("GetWallet method not implemented")
 }
 
 // GetWorkflowMinterNvla - 
@@ -108,6 +94,17 @@ func (s *DefaultApiService) PostProducts(ctx context.Context, productsList Produ
 	//return Response(200, []Product{}), nil
 
 	return Response(http.StatusNotImplemented, nil), errors.New("PostProducts method not implemented")
+}
+
+// PostWallet - POST Wallet
+func (s *DefaultApiService) PostWallet(ctx context.Context, wallet Wallet) (ImplResponse, error) {
+	// TODO - update PostWallet with the required logic for this service method.
+	// Add api_default_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
+
+	//TODO: Uncomment the next line to return response Response(200, TokenList{}) or use other options such as http.Ok ...
+	//return Response(200, TokenList{}), nil
+
+	return Response(http.StatusNotImplemented, nil), errors.New("PostWallet method not implemented")
 }
 
 // PostWorkflowMinterNvla - 

@@ -10,9 +10,9 @@
 
 package novellia
 
-// ProductsList - Light-weight list of products for further querying
-type ProductsList struct {
+// TokenList - List of token information to return
+type TokenList struct {
 
-	// List of available products
-	Products []ProductListElement `json:"products"`
+	// List of tokens returned
+	Tokens []Token `json:"tokens,omitempty"`
 }
