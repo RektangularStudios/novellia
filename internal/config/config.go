@@ -17,6 +17,7 @@ type Config struct {
 	} `yaml:"server"`
 	Monitoring struct {
 		StatusURL string `yaml:"status-url"`
+		Namespace string `yaml:"namespace"`
 	} `yaml:"monitoring"`
 	CardanoGraphQL struct {
 		Host string `yaml:"host"`

@@ -76,6 +76,7 @@ func main() {
 	router := nvla.NewRouter(apiController)
 
 	// add Prometheus metrics to router
+	prometheus_monitoring.Init(config.Monitoring.Namespace)
 	prometheus_monitoring.RecordMetrics()
 	router.Handle("/metrics", promhttp.Handler())
 
