@@ -72,6 +72,8 @@ func (s *ApiService) PostProducts(ctx context.Context, productsList nvla.Product
 
 // Availability information about service availability
 func (s *ApiService) GetStatus(ctx context.Context) (nvla.ImplResponse, error) {
+	errorStrings := []string{}
+
 	var status nvla.Status
 	status.Maintenance = false
 	// TODO: separate microservice being alive vs. some services being down
@@ -83,6 +85,7 @@ func (s *ApiService) GetStatus(ctx context.Context) (nvla.ImplResponse, error) {
 			Initialized: false,
 			SyncPercentage: 0,
 		}
+		errorStrings = append(errorStrings, fmt.Sprintf(%v, err))
 	} else {
 		status.Cardano = nvla.StatusCardano{
 			Initialized: initialized,
@@ -90,7 +93,7 @@ func (s *ApiService) GetStatus(ctx context.Context) (nvla.ImplResponse, error) {
 		}
 	}
 
-
+	status.Errors = errorStrings
 	return nvla.Response(200, status), nil
 }
 
