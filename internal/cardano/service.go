@@ -1,4 +1,4 @@
-package cardano_graphql
+package cardano
 
 import (
 	"fmt"
@@ -42,9 +42,16 @@ func (s *ServiceImpl) GetStatus(ctx context.Context) (bool, float32, error) {
 		}
 	}
 
-	err := s.graphQLClient.Query(ctx, &query, nil)
-	if err != nil {
-		return false, 0, err
+	// TODO: remove this loop once cardano-graphql is less buggy
+	for i := 0; i < graphQLRetries; i++ {
+		err := s.graphQLClient.Query(ctx, &query, nil)
+		if err != nil && i == graphQLRetries - 1 {
+			return false, 0, err
+		}
+		if err != nil {
+			continue
+		}
+		break
 	}
 
 	return bool(query.CardanoDbMeta.Initialized), float32(query.CardanoDbMeta.SyncPercentage), nil
@@ -70,6 +77,7 @@ func (s *ServiceImpl) GetTip(ctx context.Context) (int32, int32, error) {
 		if err != nil {
 			continue
 		}
+		break
 	}
 
 
@@ -129,10 +137,18 @@ func (s *ServiceImpl) getAssetsFromPaymentAddresses(ctx context.Context, payment
 		PaymentAddresses []struct {
 			Summary struct {
 				AssetBalances []struct {
-					Asset struct{
+					Asset struct {
 						AssetID graphql.String
 						Description graphql.String
 						Name graphql.String
+						TokenMints struct {
+							Transaction []struct {
+								Metadata []struct{
+									Key graphql.String
+									//Json graphql.String
+								}
+							}
+						}
 					}
 					Quantity graphql.String
 				}
@@ -150,11 +166,13 @@ func (s *ServiceImpl) getAssetsFromPaymentAddresses(ctx context.Context, payment
 		if err != nil {
 			continue
 		}
+		break
 	}
 
+	fmt.Printf("query: %+v", query)
 	for _, paymentAddress := range query.PaymentAddresses {
 		for _, assetBalance := range paymentAddress.Summary.AssetBalances {
-			amount, err := strconv.ParseInt(string(assetBalance.Quantity), 10, 32)
+			amount, err := strconv.ParseUint(string(assetBalance.Quantity), 10, 64)
 			if err != nil {
 				return nil, fmt.Errorf("could not convert balance to integer: %v", err)
 			}

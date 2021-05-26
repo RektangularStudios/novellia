@@ -1,4 +1,4 @@
-package cardano_graphql
+package cardano
 
 import (
 	"context"

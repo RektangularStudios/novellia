@@ -7,22 +7,22 @@ import (
 	"net/http"
 
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0"
-	cardano_graphql "github.com/RektangularStudios/novellia/internal/cardano/graphql"
+	"github.com/RektangularStudios/novellia/internal/cardano"
 	"github.com/RektangularStudios/novellia/internal/novellia_database"
 )
 
 type ApiService struct{
-	cardanoGraphQLService cardano_graphql.Service
+	cardanoService cardano.Service
 	novelliaDatabaseService novellia_database.Service
 }
 
 // NewApiService creates an api service
 func NewApiService(
-	cardanoGraphQLService cardano_graphql.Service,
+	cardanoService cardano.Service,
 	novelliaDatabaseService novellia_database.Service,
 ) nvla.DefaultApiServicer {
 	return &ApiService {
-		cardanoGraphQLService: cardanoGraphQLService,
+		cardanoService: cardanoService,
 		novelliaDatabaseService: novelliaDatabaseService,
 	}
 }
@@ -85,7 +85,7 @@ func (s *ApiService) GetStatus(ctx context.Context) (nvla.ImplResponse, error) {
 	// TODO: separate microservice being alive vs. some services being down
 	status.Status = "UP"
 	
-	initialized, syncPercentage, err := s.cardanoGraphQLService.GetStatus(ctx)
+	initialized, syncPercentage, err := s.cardanoService.GetStatus(ctx)
 	if err != nil {
 		status.Cardano = nvla.StatusCardano{
 			Initialized: false,
@@ -105,7 +105,7 @@ func (s *ApiService) GetStatus(ctx context.Context) (nvla.ImplResponse, error) {
 
 // Cardano chain tip information
 func (s *ApiService) GetCardanoTip(ctx context.Context) (nvla.ImplResponse, error) {
-	blockNumber, epochNumber, err := s.cardanoGraphQLService.GetTip(ctx)
+	blockNumber, epochNumber, err := s.cardanoService.GetTip(ctx)
 	if err != nil {
 		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
 	}
@@ -119,7 +119,7 @@ func (s *ApiService) GetCardanoTip(ctx context.Context) (nvla.ImplResponse, erro
 
 // Lists assets owned by a wallet
 func (s *ApiService) PostWallet(ctx context.Context, wallet nvla.Wallet) (nvla.ImplResponse, error) {
-	tokens, err := s.cardanoGraphQLService.GetAssets(ctx, wallet)
+	tokens, err := s.cardanoService.GetAssets(ctx, wallet)
 	if err != nil {
 		return nvla.Response(500, nil), err
 	}
