@@ -94,19 +94,27 @@ func (s *ServiceImpl) QueryProductIDs(ctx context.Context, organizationId string
 	}
 	defer rows.Close()
 
-	productIDs := []string{}
+	products := []nvla.ProductListElement{}
 	for rows.Next() {
-		var productID string;
+		var p nvla.ProductListElement
+		var modified pgtype.Timestamptz
 
 		err = rows.Scan(
-			&productID,
+			&p.ProductId,
+			&p.NativeTokenId,
+			&modified,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("query product IDs failed: %v", err)
 		}
 
-		// add product ID to slice
-		productIDs = append(productIDs, productID)
+		m := modified.Get()
+		if m != nil {
+			p.Modified = modified.Time.UTC().Format(constants.ISO8601DateFormat)
+		}
+
+		// add product element to slice
+		products = append(products, p)
 	}
 
 	prometheus_monitoring.RecordNumberOfProductIDsListed(len(productIDs))
@@ -130,7 +138,6 @@ func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, productIDs []strin
 		var dateListed pgtype.Timestamptz
 		var dateAvailable pgtype.Timestamptz
 
-		// TODO: handle case where native token does not exist (i.e. NovelliaProduct)
 		err = rows.Scan(
 			// product
 			&p.Product.ProductId, &p.Product.NovelliaStandardToken.Name,

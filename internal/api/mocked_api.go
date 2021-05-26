@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"time"
 
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0"
 )
@@ -17,10 +18,21 @@ func NewMockedApiService() nvla.DefaultApiServicer {
 
 // Gets list of products
 func (s *MockedApiService) GetProducts(ctx context.Context, marketId string, organizationId string) (nvla.ImplResponse, error) {
+	tokenProduct := GetMockNovelliaStandardTokenProduct()
+	product := GetMockNovelliaProduct()
+
 	productsList := nvla.ProductsList{
-		ProductId: []string{
-			MockedNovelliaStandardTokenProductId,
-			MockedNovelliaProductProductId,
+		ProductId: []nvla.ProductListElement{
+			nvla.ProductListElement{
+				ProductId: tokenProduct.Product.ProductId
+				NativeTokenId: fmt.Sprintf("%s.%s", tokenProduct.Product.NovelliaStandardToken.PolicyId, tokenProduct.Product.NovelliaStandardToken.AssetId),
+				Modified: time.Now().UTC().Format(constants.ISO8601DateFormat)
+			},
+			nvla.ProductListElement{
+				ProductId: product.Product.ProductId,
+				NativeTokenId: "",
+				Modified: time.Now().UTC().Format(constants.ISO8601DateFormat)
+			},
 		},
 	}
 

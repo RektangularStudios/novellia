@@ -8,6 +8,14 @@ import (
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0"
 )
 
+type AddressInfo struct {
+	Address string `json:"address"`
+	Base16 string `json:"base16"`
+	Type string `json:"type"`
+	Encoding string `json:"encoding"`
+	Era string `json:"era"`
+}
+
 type ServiceImpl struct {
 	graphQLClient *graphql.Client
 }
@@ -108,4 +116,24 @@ func (s *ServiceImpl) GetAssets(ctx context.Context, paymentAddress string) ([]n
 	}
 
 	return tokens, nil
+}
+
+func (s *ServiceImpl) GetAddressType(address string) (string, error) {
+	out, err := exec.Command("cardano-cli", "address", "info",
+		"--address", address,
+	).Output()
+	if err != nil {
+		return fmt.Errorf("failed to validate address (cmd): %v", err)
+	}
+	if strings.Contains(string(out), "Invalid") {
+		return fmt.Errorf("address is invalid: %s, output: %s", address, string(out))
+	}
+
+	var info AddressInfo
+	err = json.Unmarshal(out, &info)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal address info JSON: %v", err)
+	}
+
+	return info.Type, nil
 }

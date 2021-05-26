@@ -12,4 +12,6 @@ type Service interface {
 	GetTip(ctx context.Context) (int32, int32, error)
 	// Assets owned at a payment address
 	GetAssets(ctx context.Context, paymentAddress string) ([]nvla.Token, error)
+	// Gets an address' type
+	GetAddressType(address string) (string, error)
 }
