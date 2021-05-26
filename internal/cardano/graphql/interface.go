@@ -11,7 +11,7 @@ type Service interface {
 	// Tip of Cardano, returns lastest block and epoch
 	GetTip(ctx context.Context) (int32, int32, error)
 	// Assets owned at a payment address
-	GetAssets(ctx context.Context, paymentAddress string) ([]nvla.Token, error)
+	GetAssets(ctx context.Context, wallet nvla.Wallet) ([]nvla.Token, error)
 	// Gets an address' type
 	GetAddressType(address string) (string, error)
 }

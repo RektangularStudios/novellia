@@ -87,7 +87,7 @@ func (s *ServiceImpl) readQueryFile(filename string) (string, error) {
 }
 
 // queries product list matching market and organization filters
-func (s *ServiceImpl) QueryProductIDs(ctx context.Context, organizationId string, marketId string) ([]string, error) {
+func (s *ServiceImpl) QueryProductIDs(ctx context.Context, organizationId string, marketId string) ([]nvla.ProductListElement, error) {
 	rows, err := s.pool.Query(ctx, s.queries[queryProductID], organizationId, marketId)
 	if err != nil {
 		return nil, err
@@ -117,14 +117,25 @@ func (s *ServiceImpl) QueryProductIDs(ctx context.Context, organizationId string
 		products = append(products, p)
 	}
 
-	prometheus_monitoring.RecordNumberOfProductIDsListed(len(productIDs))
+	prometheus_monitoring.RecordNumberOfProductIDsListed(len(products))
 
-	return productIDs, nil
+	return products, nil
 }
 
 // queries product information and adds it to the provided products slice
-func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, productIDs []string) ([]nvla.Product, error) {
-	rows, err := s.pool.Query(ctx, s.queries[queryProduct], productIDs)
+func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, productElements []nvla.ProductListElement) ([]nvla.Product, error) {
+	productIDs := []string{}
+	nativeTokenIDs := []string{}
+	for _, product := range productElements {
+		if product.ProductId != "" {
+			productIDs = append(productIDs, product.ProductId)
+		}
+		if product.NativeTokenId != "" {
+			nativeTokenIDs = append(nativeTokenIDs, product.NativeTokenId)
+		}
+	}
+
+	rows, err := s.pool.Query(ctx, s.queries[queryProduct], productIDs, nativeTokenIDs)
 	if err != nil {
 		return nil, err
 	}

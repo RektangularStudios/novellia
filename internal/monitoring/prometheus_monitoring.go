@@ -21,7 +21,7 @@ const (
 	status_interval = 30 * time.Second
 )
 
-struct PrometheusMetrics {
+type PrometheusMetrics struct {
 	microserviceStatusMetric prometheus.Gauge
 	cardanoStatusMetric prometheus.Gauge
 	productIDsListedMetric prometheus.Gauge
@@ -47,12 +47,12 @@ func Init(namespace string) {
 		Name: "microservice_status",
 		Help: "Health status indicator for the Novellia microservice",
 	})
-	cardanoStatusMetric = promauto.NewGauge(prometheus.GaugeOpts{
+	prometheusMetrics.cardanoStatusMetric = promauto.NewGauge(prometheus.GaugeOpts{
 		Namespace: n,
 		Name: "cardano_status",
 		Help: "Health status indicator for Cardano services such as GraphQL and cardano-node",
 	})
-	productIDsListedMetric = promauto.NewGauge(prometheus.GaugeOpts{
+	prometheusMetrics.productIDsListedMetric = promauto.NewGauge(prometheus.GaugeOpts{
 		Namespace: n,
 		Name: "products_ids_listed",
 		Help: "Number of products IDs returned when accessing Novellia",
@@ -127,8 +127,8 @@ func RecordMetrics() {
 					fmt.Printf("Checked status, got error: %+v\n", err)
 				}
 				
-				microserviceStatusMetric.Set(indicators.microserviceStatus)
-				cardanoStatusMetric.Set(indicators.cardanoStatus)
+				prometheusMetrics.microserviceStatusMetric.Set(indicators.microserviceStatus)
+				prometheusMetrics.cardanoStatusMetric.Set(indicators.cardanoStatus)
 			}
 			time.Sleep(status_interval)
 		}

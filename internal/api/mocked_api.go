@@ -5,7 +5,9 @@ import (
 	"errors"
 	"net/http"
 	"time"
+	"fmt"
 
+	"github.com/RektangularStudios/novellia/internal/constants"
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0"
 )
 
@@ -18,20 +20,20 @@ func NewMockedApiService() nvla.DefaultApiServicer {
 
 // Gets list of products
 func (s *MockedApiService) GetProducts(ctx context.Context, marketId string, organizationId string) (nvla.ImplResponse, error) {
-	tokenProduct := GetMockNovelliaStandardTokenProduct()
-	product := GetMockNovelliaProduct()
+	tokenProduct := s.GetMockNovelliaStandardTokenProduct()
+	product := s.GetMockNovelliaProduct()
 
 	productsList := nvla.ProductsList{
-		ProductId: []nvla.ProductListElement{
+		Products: []nvla.ProductListElement{
 			nvla.ProductListElement{
-				ProductId: tokenProduct.Product.ProductId
-				NativeTokenId: fmt.Sprintf("%s.%s", tokenProduct.Product.NovelliaStandardToken.PolicyId, tokenProduct.Product.NovelliaStandardToken.AssetId),
-				Modified: time.Now().UTC().Format(constants.ISO8601DateFormat)
+				ProductId: tokenProduct.Product.ProductId,
+				NativeTokenId: fmt.Sprintf("%s.%s", tokenProduct.Product.NovelliaStandardToken.NativeToken.PolicyId, tokenProduct.Product.NovelliaStandardToken.NativeToken.AssetId),
+				Modified: time.Now().UTC().Format(constants.ISO8601DateFormat),
 			},
 			nvla.ProductListElement{
 				ProductId: product.Product.ProductId,
 				NativeTokenId: "",
-				Modified: time.Now().UTC().Format(constants.ISO8601DateFormat)
+				Modified: time.Now().UTC().Format(constants.ISO8601DateFormat),
 			},
 		},
 	}
@@ -72,22 +74,22 @@ func (s *MockedApiService) GetCardanoTip(ctx context.Context) (nvla.ImplResponse
 }
 
 // Lists assets owned by a wallet
-func (s *MockedApiService) GetWallet(ctx context.Context, walletAddress string) (nvla.ImplResponse, error) {
+func (s *MockedApiService) PostWallet(ctx context.Context, wallet nvla.Wallet) (nvla.ImplResponse, error) {
 	tokens := []nvla.Token{
 		nvla.Token{
-			AssetId: "0xOccultaNovellia.IscaraTheTenThousandGuns",
+			NativeTokenId: "0xOccultaNovellia.IscaraTheTenThousandGuns",
 			Amount: 2400,
 			Name: "OCCLT",
 			Description: "Occulta Novellia Character",
 		},
 		nvla.Token{
-			AssetId: "0xOccultaNovellia.Draculi",
+			NativeTokenId: "0xOccultaNovellia.Draculi",
 			Amount: 500,
 			Name: "OCCLT",
 			Description: "Occulta Novellia Character",
 		},
 		nvla.Token{
-			AssetId: "0xOccultaNovellia.Voyin",
+			NativeTokenId: "0xOccultaNovellia.Voyin",
 			Amount: 0,
 			Name: "OCCLT",
 			Description: "Occulta Novellia Character",

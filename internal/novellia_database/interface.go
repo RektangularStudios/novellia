@@ -6,8 +6,8 @@ import (
 )
 
 type Service interface {
-	QueryProductIDs(ctx context.Context, organizationId string, marketId string) ([]string, error)
-	QueryAndAddProduct(ctx context.Context, productIDs []string) ([]nvla.Product, error)
+	QueryProductIDs(ctx context.Context, organizationId string, marketId string) ([]nvla.ProductListElement, error)
+	QueryAndAddProduct(ctx context.Context, productElements []nvla.ProductListElement) ([]nvla.Product, error)
 	QueryAndAddCommission(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error)
 	QueryAndAddAttribution(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error)
 	QueryAndAddRemoteResource(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error)	
