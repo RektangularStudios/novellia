@@ -6,4 +6,5 @@ const (
 	configLoadErr = 2
 	configGetErr = 3
 	novelliaDatabaseErr = 4
+	cardanoServiceErr = 5
 )

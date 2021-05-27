@@ -119,11 +119,20 @@ func (s *ApiService) GetCardanoTip(ctx context.Context) (nvla.ImplResponse, erro
 
 // Lists assets owned by a wallet
 func (s *ApiService) PostWallet(ctx context.Context, wallet nvla.Wallet) (nvla.ImplResponse, error) {
+	fmt.Printf("entered POST wallet\n")
 	tokens, err := s.cardanoService.GetAssets(ctx, wallet)
 	if err != nil {
-		return nvla.Response(500, nil), err
+		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
 	}
-	return nvla.Response(200, tokens), nil
+	fmt.Printf("entering add 721\n")
+	tokens, err = s.cardanoService.Add721Metadata(ctx, tokens)
+	if err != nil {
+		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
+	}
+
+	return nvla.Response(200, nvla.TokenList{
+		Tokens: tokens,
+	}), nil
 }
 
 // GetWorkflowMinterNvla -

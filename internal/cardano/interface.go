@@ -14,4 +14,7 @@ type Service interface {
 	GetAssets(ctx context.Context, wallet nvla.Wallet) ([]nvla.Token, error)
 	// Gets an address' type
 	GetAddressType(address string) (string, error)
+	// Add 721 onchain metadata to list of tokens
+	Add721Metadata(ctx context.Context, tokens []nvla.Token) ([]nvla.Token, error)
+	Close(ctx context.Context)
 }

@@ -7,8 +7,10 @@ import (
 	"path/filepath"
 	"github.com/jackc/pgtype"
 	"github.com/jackc/pgx/v4/pgxpool"
+
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0"
 	"github.com/RektangularStudios/novellia/internal/constants"
+	"github.com/RektangularStudios/novellia/internal/config"
 	prometheus_monitoring "github.com/RektangularStudios/novellia/internal/monitoring"
 )
 
@@ -27,10 +29,22 @@ type ServiceImpl struct {
 }
 
 // creates a new ServiceImpl, connecting to Postgres
-func New(ctx context.Context, username, password, host, database_name string, queriesPath string) (*ServiceImpl, error) {
+func New(ctx context.Context) (*ServiceImpl, error) {
+	cfg, err := config.GetConfig()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get config")
+	}
+
 	// url like "postgresql://username:password@localhost:5432/database_name?search_path=novellia"
 	schema := "novellia"
-	databaseUrl := fmt.Sprintf("postgresql://%s:%s@%s/%s?search_path=%s", username, password, host, database_name, schema)
+	databaseUrl := fmt.Sprintf("postgresql://%s:%s@%s/%s?search_path=%s",
+		cfg.Postgres.Username,
+		cfg.Postgres.Password,
+		cfg.Postgres.Host,
+		cfg.Postgres.CardanoDatabase,
+		schema,
+	)
+	
 	pool, err := pgxpool.Connect(ctx, databaseUrl)
 	if err != nil {
 		return nil, fmt.Errorf("unable to connect to Postgres: %v", err)
@@ -38,7 +52,7 @@ func New(ctx context.Context, username, password, host, database_name string, qu
 	
 	service := ServiceImpl {
 		pool: pool,
-		queriesPath: queriesPath,
+		queriesPath: cfg.Postgres.QueriesPath,
 	}
 	err = service.loadQueries(ctx)
 	if err != nil {

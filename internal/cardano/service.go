@@ -7,12 +7,25 @@ import (
 	"os/exec"
 	"encoding/json"
 	"strings"
+	"io/ioutil"
+	"path/filepath"
+	"encoding/hex"
+	// TODO
+	//"reflect"
+
 	"github.com/shurcooL/graphql"
+	"github.com/jackc/pgx/v4/pgxpool"
+
+	"github.com/RektangularStudios/novellia/internal/config"
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0"
 )
 
 const (
 	graphQLRetries = 10
+)
+
+const (
+	queryMetadata = "queryMetadata"
 )
 
 type AddressInfo struct {
@@ -25,12 +38,77 @@ type AddressInfo struct {
 
 type ServiceImpl struct {
 	graphQLClient *graphql.Client
+	queriesPath string
+	pool *pgxpool.Pool
+	queries map[string]string
 }
 
-func New(graphQLClient *graphql.Client) (*ServiceImpl) {
-	return &ServiceImpl {
-		graphQLClient: graphQLClient,
+func New(ctx context.Context) (*ServiceImpl, error) {
+	cfg, err := config.GetConfig()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get config")
 	}
+
+	graphQLHostString := fmt.Sprintf("%s:%s", cfg.CardanoGraphQL.Host, cfg.CardanoGraphQL.Port)
+	graphQLClient := graphql.NewClient(graphQLHostString, nil)
+
+	// url like "postgresql://username:password@localhost:5432/database_name"
+	databaseUrl := fmt.Sprintf("postgresql://%s:%s@%s/%s",
+		cfg.Postgres.Username,
+		cfg.Postgres.Password,
+		cfg.Postgres.Host,
+		cfg.Postgres.CardanoDatabase,
+	)
+	pool, err := pgxpool.Connect(ctx, databaseUrl)
+	if err != nil {
+		return nil, fmt.Errorf("unable to connect to Postgres: %v", err)
+	}
+	
+	service := ServiceImpl {
+		graphQLClient: graphQLClient,
+		pool: pool,
+		queriesPath: cfg.Postgres.QueriesPath,
+	}
+	err = service.loadQueries(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load queries")
+	}
+
+	return &service, nil
+}
+
+func (s *ServiceImpl) loadQueries(ctx context.Context) error {
+	queryFiles := map[string]string {
+		queryMetadata: "query_metadata.sql",
+	}
+
+	queries := make(map[string]string)
+	for name, filename := range queryFiles {
+		fmt.Printf("Loading SQL %s\n", filename)
+
+		query, err := s.readQueryFile(filename)
+		if err != nil {
+			return err
+		}
+
+		queries[name] = query
+	}
+	s.queries = queries
+
+	fmt.Printf("SQL has been loaded\n")
+	return nil
+}
+
+// reads a text file using the queriesPath as the base path
+func (s *ServiceImpl) readQueryFile(filename string) (string, error) {
+	queryPath := filepath.Join(s.queriesPath, filename)
+
+	bytes, err := ioutil.ReadFile(queryPath)
+	if err != nil {
+		return "", fmt.Errorf("failed to read query file %s: %v", filename, err)
+	}
+
+	return string(bytes), nil
 }
 
 // Returns the initialization status of the remote GraphQL instance, and the sync percentage
@@ -141,14 +219,6 @@ func (s *ServiceImpl) getAssetsFromPaymentAddresses(ctx context.Context, payment
 						AssetID graphql.String
 						Description graphql.String
 						Name graphql.String
-						TokenMints struct {
-							Transaction []struct {
-								Metadata []struct{
-									Key graphql.String
-									//Json graphql.String
-								}
-							}
-						}
 					}
 					Quantity graphql.String
 				}
@@ -169,7 +239,6 @@ func (s *ServiceImpl) getAssetsFromPaymentAddresses(ctx context.Context, payment
 		break
 	}
 
-	fmt.Printf("query: %+v", query)
 	for _, paymentAddress := range query.PaymentAddresses {
 		for _, assetBalance := range paymentAddress.Summary.AssetBalances {
 			amount, err := strconv.ParseUint(string(assetBalance.Quantity), 10, 64)
@@ -209,7 +278,7 @@ func (s *ServiceImpl) GetAssets(ctx context.Context, wallet nvla.Wallet) ([]nvla
 	if err != nil {
 		return nil, err
 	}
-
+	
 	return tokens, nil
 }
 
@@ -235,4 +304,148 @@ func (s *ServiceImpl) GetAddressType(address string) (string, error) {
 	}
 
 	return info.Type, nil
+}
+
+func (s *ServiceImpl) query721Metadata(ctx context.Context, nativeTokens []nvla.NativeToken) ([]string, error) {
+	metadataJSON := []string{}
+
+	policyIDs := [][]byte{}
+	assetIDs := [][]byte{}
+	for _, n := range nativeTokens {
+		decodedPolicyID, err := hex.DecodeString(n.PolicyId)
+		if err != nil {
+			return nil, err
+		}
+		policyIDs = append(policyIDs, decodedPolicyID)
+
+		assetIDs = append(assetIDs, []byte(n.AssetId))
+	}
+
+	rows, err := s.pool.Query(ctx, s.queries[queryMetadata], policyIDs, assetIDs)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var j string
+		err = rows.Scan(
+			&j,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("query 721 metadata failed: %v", err)
+		}
+
+		metadataJSON = append(metadataJSON, j)
+	}
+
+	return metadataJSON, nil
+}
+
+func (s *ServiceImpl) Add721Metadata(ctx context.Context, tokens []nvla.Token) ([]nvla.Token, error) {
+	fmt.Printf("tokens: %+v", tokens)
+
+	nativeTokens := []nvla.NativeToken{}
+	for _, t := range tokens {
+		f := strings.Split(t.NativeTokenId, ".")
+		if len(f) != 2 {
+			// probably just 'ada'
+			continue
+		}
+
+		policyID := f[0]
+		assetID := f[1]
+		nativeTokens = append(nativeTokens, nvla.NativeToken{
+			PolicyId: policyID,
+			AssetId: assetID,
+		})
+	}
+
+	metadataJSONList, err := s.query721Metadata(ctx, nativeTokens)
+	if err != nil {
+		return nil, err
+	}
+
+	for i, token := range nativeTokens {
+		for j := 0; j < len(tokens); j++ {
+			 if tokens[i].NativeTokenId == fmt.Sprintf("%s.%s", token.PolicyId, token.AssetId) {
+				tokens[j].Metadata = metadataJSONList[i]
+			 }
+		}
+
+		/* TODO
+		type OnchainMetadata struct {
+			Copyright string
+			Extension []string
+			Publisher []string
+			Version int
+		}
+
+		copyright: "Copyright Rektangular Studios Inc.; all rights reserved",
+		d27dadf7c5f24bfe9e377927c2d811d63d19222e1a53bb50cbb51772: {
+			 Draculi: {
+					description: {
+						 long: "A character for the surreal horror multiverse Occulta Novellia",
+						 short: "Occulta Novellia Character"
+					},
+					id: 1,
+					image: "ipfs://QmZEKqVWGEMkHC1874YSn9XbH2eQTTBp4VeqmA96NXeHYU",
+					name: "Draculi",
+					resource: [
+						 {
+								content_type: "application/json",
+								description: "Off-chain Novellia extended metadata",
+								hash_source_type: "ipfs",
+								multihash: "QmNgaN1kH6JMp67im1vXwjKJgx6hm9P6QQCBhifDpwsYeA",
+								priority: 0,
+								resource_id: "Novellia",
+								url: [
+									 "https://api.rektangularstudios.com/static/i1brch9esdw3/nvla.json",
+									 "ipfs://QmNgaN1kH6JMp67im1vXwjKJgx6hm9P6QQCBhifDpwsYeA",
+									 "sia://CAAGS2vvrM04F8K409Ogu_mMNhiqcgH31MeYeN5QeixY4A"
+								]
+						 }
+					],
+					tags: [
+						 "Collectible Character"
+					]
+			 }
+		},
+		extension: [
+			 "novellia_1"
+		],
+		publisher: [
+			 "https://rektangularstudios.com"
+		],
+		version: 1
+
+		o := make(map[string]map[string]*OnchainMetadata)
+
+		j := metadataJSONList[i]
+		var iface interface{}
+		err := json.Unmarshal([]byte(j), &iface)
+		if err != nil {
+			return nil, err
+		}
+
+		ifaceValue := reflect.ValueOf(iface)
+    policyObject := reflect.Indirect(ifaceValue).FieldByName(nativeTokens[i].PolicyId)
+		
+		policyObjectValue := reflect.ValueOf(policyObject)
+		assetObject := reflect.Indirect(policyObjectValue).FieldByName(nativeTokens[i].AssetId)
+
+		assetJSON, err := json.Marshal(&assetObject)
+		if err != nil {
+			return nil, err
+		}
+
+		tokens[i].Metadata = string(assetJSON)
+		*/
+	}
+
+	return tokens, nil
+}
+
+func (s *ServiceImpl) Close(ctx context.Context) {
+	s.pool.Close()
 }
