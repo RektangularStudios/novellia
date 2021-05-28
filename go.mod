@@ -3,7 +3,7 @@ module github.com/RektangularStudios/novellia
 go 1.16
 
 require (
-	github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia v0.0.0-20210528050942-a5d026694252
+	github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia v0.0.0-20210528051410-5263c8ddaa85
 	github.com/gofrs/uuid v4.0.0+incompatible // indirect
 	github.com/jackc/pgtype v1.7.0
 	github.com/jackc/pgx/v4 v4.11.0
