@@ -42,10 +42,10 @@ func New(ctx context.Context) (*ServiceImpl, error) {
 		cfg.Postgres.Username,
 		cfg.Postgres.Password,
 		cfg.Postgres.Host,
-		cfg.Postgres.CardanoDatabase,
+		cfg.Postgres.NovelliaDatabase,
 		schema,
 	)
-	
+
 	pool, err := pgxpool.Connect(ctx, databaseUrl)
 	if err != nil {
 		return nil, fmt.Errorf("unable to connect to Postgres: %v", err)
@@ -302,7 +302,7 @@ func (s *ServiceImpl) QueryAndAddRemoteResource(ctx context.Context, productIDs 
 
 // queries the chain of "modified" fields relevant to requesting the front-end to replace cached product data
 func (s *ServiceImpl) QueryAndAddProductModified(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error) {
-	rows, err := s.pool.Query(ctx, s.queries[queryRemoteResource], productIDs)
+	rows, err := s.pool.Query(ctx, s.queries[queryProductModified], productIDs)
 	if err != nil {
 		return nil, err
 	}
