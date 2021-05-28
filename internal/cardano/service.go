@@ -10,8 +10,6 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"encoding/hex"
-	// TODO
-	//"reflect"
 
 	"github.com/shurcooL/graphql"
 	"github.com/jackc/pgx/v4/pgxpool"
@@ -369,78 +367,9 @@ func (s *ServiceImpl) Add721Metadata(ctx context.Context, tokens []nvla.Token) (
 	for i, token := range nativeTokens {
 		for j := 0; j < len(tokens); j++ {
 			 if tokens[i].NativeTokenId == fmt.Sprintf("%s.%s", token.PolicyId, token.AssetId) {
-				tokens[j].Metadata = metadataJSONList[i]
+				tokens[j].InitialMintTxMetadata = metadataJSONList[i]
 			 }
 		}
-
-		/* TODO
-		type OnchainMetadata struct {
-			Copyright string
-			Extension []string
-			Publisher []string
-			Version int
-		}
-
-		copyright: "Copyright Rektangular Studios Inc.; all rights reserved",
-		d27dadf7c5f24bfe9e377927c2d811d63d19222e1a53bb50cbb51772: {
-			 Draculi: {
-					description: {
-						 long: "A character for the surreal horror multiverse Occulta Novellia",
-						 short: "Occulta Novellia Character"
-					},
-					id: 1,
-					image: "ipfs://QmZEKqVWGEMkHC1874YSn9XbH2eQTTBp4VeqmA96NXeHYU",
-					name: "Draculi",
-					resource: [
-						 {
-								content_type: "application/json",
-								description: "Off-chain Novellia extended metadata",
-								hash_source_type: "ipfs",
-								multihash: "QmNgaN1kH6JMp67im1vXwjKJgx6hm9P6QQCBhifDpwsYeA",
-								priority: 0,
-								resource_id: "Novellia",
-								url: [
-									 "https://api.rektangularstudios.com/static/i1brch9esdw3/nvla.json",
-									 "ipfs://QmNgaN1kH6JMp67im1vXwjKJgx6hm9P6QQCBhifDpwsYeA",
-									 "sia://CAAGS2vvrM04F8K409Ogu_mMNhiqcgH31MeYeN5QeixY4A"
-								]
-						 }
-					],
-					tags: [
-						 "Collectible Character"
-					]
-			 }
-		},
-		extension: [
-			 "novellia_1"
-		],
-		publisher: [
-			 "https://rektangularstudios.com"
-		],
-		version: 1
-
-		o := make(map[string]map[string]*OnchainMetadata)
-
-		j := metadataJSONList[i]
-		var iface interface{}
-		err := json.Unmarshal([]byte(j), &iface)
-		if err != nil {
-			return nil, err
-		}
-
-		ifaceValue := reflect.ValueOf(iface)
-    policyObject := reflect.Indirect(ifaceValue).FieldByName(nativeTokens[i].PolicyId)
-		
-		policyObjectValue := reflect.ValueOf(policyObject)
-		assetObject := reflect.Indirect(policyObjectValue).FieldByName(nativeTokens[i].AssetId)
-
-		assetJSON, err := json.Marshal(&assetObject)
-		if err != nil {
-			return nil, err
-		}
-
-		tokens[i].Metadata = string(assetJSON)
-		*/
 	}
 
 	return tokens, nil

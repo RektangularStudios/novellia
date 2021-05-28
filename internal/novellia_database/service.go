@@ -324,7 +324,7 @@ func (s *ServiceImpl) QueryAndAddProductModified(ctx context.Context, productIDs
 			if products[i].Product.ProductId == product_id {
 				m := modified.Get()
 				if m != nil {
-					products[i].Product.Modified = modified.Time.UTC().Format(constants.ISO8601DateFormat)
+					products[i].Modified = modified.Time.UTC().Format(constants.ISO8601DateFormat)
 				}
 			}
 		}
