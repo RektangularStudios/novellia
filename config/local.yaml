@@ -2,15 +2,17 @@ server:
   # you can only hit this from within localhost
   host: 127.0.0.1
   port: 3555
+monitoring:
+  status-url: http://localhost:3555/novellia/status
+  namespace: demo
 # You'll need your own instance hosting cardano-graphql
 cardano-graphql:
   host: X
   port: X
 postgres:
-  database: X
-  host: X
-  username: X
-  password: X
-now-payments:
-  api-key: X
+  database: novellia
+  host: 127.0.0.1:5432
+  username: rektangular
+  password: vF2gLd93VVBkhYlxgUgPJh51
+  queries-path: /media/ninja/SSD_2/rektangular/novellia/sql
 mocked: false

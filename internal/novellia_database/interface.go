@@ -11,5 +11,6 @@ type Service interface {
 	QueryAndAddCommission(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error)
 	QueryAndAddAttribution(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error)
 	QueryAndAddRemoteResource(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error)	
+	QueryAndAddProductModified(ctx context.Context, productIDs []string) ([]nvla.Product, error)
 	Close(ctx context.Context)
 }

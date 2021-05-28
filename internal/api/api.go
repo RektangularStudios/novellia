@@ -72,6 +72,11 @@ func (s *ApiService) PostProducts(ctx context.Context, productsList nvla.Product
 		err = fmt.Errorf("post products failed at remote resource query: %+v", err)
 		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
 	}
+	products, err = s.novelliaDatabaseService.QueryAndAddProductModified(ctx, productIDs, products)
+	if err != nil {
+		err = fmt.Errorf("post products failed at product modified query: %+v", err)
+		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
+	}
 
 	return nvla.Response(200, products), nil
 }

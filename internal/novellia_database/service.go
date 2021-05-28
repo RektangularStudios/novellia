@@ -20,6 +20,7 @@ const (
 	queryCommission = "queryCommission"
 	queryAttribution = "queryAttribution"
 	queryRemoteResource = "queryRemoteResource"
+	queryProductModified = "queryProductModified"
 )
 
 type ServiceImpl struct {
@@ -69,6 +70,7 @@ func (s *ServiceImpl) loadQueries(ctx context.Context) error {
 		queryCommission: "query_commission.sql",
 		queryAttribution: "query_attribution.sql",
 		queryRemoteResource: "query_remote_resource.sql",
+		queryProductModified: "query_product_modified.sql",
 	}
 
 	queries := make(map[string]string)
@@ -291,6 +293,39 @@ func (s *ServiceImpl) QueryAndAddRemoteResource(ctx context.Context, productIDs 
 		for i := range products {
 			if products[i].Product.ProductId == product_id {
 				products[i].Product.NovelliaStandardToken.Resource = append(products[i].Product.NovelliaStandardToken.Resource, r)
+			}
+		}
+	}
+
+	return products, nil
+}
+
+// queries the chain of "modified" fields relevant to requesting the front-end to replace cached product data
+func (s *ServiceImpl) QueryAndAddProductModified(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error) {
+	rows, err := s.pool.Query(ctx, s.queries[queryRemoteResource], productIDs)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var product_id string
+		var modified pgtype.Timestamptz
+
+		err = rows.Scan(
+			&product_id,
+			&modified,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("query product modified failed: %v", err)
+		}
+
+		for i := range products {
+			if products[i].Product.ProductId == product_id {
+				m := modified.Get()
+				if m != nil {
+					products[i].Product.Modified = modified.Time.UTC().Format(constants.ISO8601DateFormat)
+				}
 			}
 		}
 	}
