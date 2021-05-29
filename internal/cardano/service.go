@@ -214,9 +214,10 @@ func (s *ServiceImpl) getAssetsFromPaymentAddresses(ctx context.Context, payment
 			Summary struct {
 				AssetBalances []struct {
 					Asset struct {
-						AssetID graphql.String
+						PolicyID graphql.String
 						Description graphql.String
 						Name graphql.String
+						AssetName graphql.String
 					}
 					Quantity graphql.String
 				}
@@ -244,10 +245,18 @@ func (s *ServiceImpl) getAssetsFromPaymentAddresses(ctx context.Context, payment
 				return nil, fmt.Errorf("could not convert balance to integer: %v", err)
 			}
 
+			nativeTokenID := "ada"
+			if string(assetBalance.Asset.AssetName) != "ada" {
+				decodedAssetID, err := hex.DecodeString(string(assetBalance.Asset.AssetName))
+				if err != nil {
+					return nil, err
+				}
+				nativeTokenID = fmt.Sprintf("%s.%s", string(assetBalance.Asset.PolicyID), string(decodedAssetID))
+			}
 			t := nvla.Token{
 				Amount: uint64(amount),
 				Name: string(assetBalance.Asset.Name),
-				NativeTokenId: string(assetBalance.Asset.AssetID),
+				NativeTokenId: nativeTokenID,
 				Description: string(assetBalance.Asset.Description),
 			}
 
@@ -341,14 +350,14 @@ func (s *ServiceImpl) query721Metadata(ctx context.Context, nativeTokens []nvla.
 }
 
 func (s *ServiceImpl) Add721Metadata(ctx context.Context, tokens []nvla.Token) ([]nvla.Token, error) {
-	fmt.Printf("tokens: %+v", tokens)
-
 	nativeTokens := []nvla.NativeToken{}
 	for _, t := range tokens {
+		if t.NativeTokenId == "ada" {
+			continue
+		}
 		f := strings.Split(t.NativeTokenId, ".")
 		if len(f) != 2 {
-			// probably just 'ada'
-			continue
+			return nil, fmt.Errorf("failed to split native token ID into policy and asset IDs")
 		}
 
 		policyID := f[0]
@@ -364,11 +373,11 @@ func (s *ServiceImpl) Add721Metadata(ctx context.Context, tokens []nvla.Token) (
 		return nil, err
 	}
 
-	for i, token := range nativeTokens {
+	for i, nativeToken := range nativeTokens {
 		for j := 0; j < len(tokens); j++ {
-			 if tokens[i].NativeTokenId == fmt.Sprintf("%s.%s", token.PolicyId, token.AssetId) {
+			if tokens[j].NativeTokenId == fmt.Sprintf("%s.%s", nativeToken.PolicyId, nativeToken.AssetId) {
 				tokens[j].InitialMintTxMetadata = metadataJSONList[i]
-			 }
+			}
 		}
 	}
 
