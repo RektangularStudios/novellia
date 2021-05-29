@@ -1,4 +1,4 @@
-# github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia v0.0.0-20210528051410-5263c8ddaa85
+# github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia v0.0.0-20210529025535-6e4b83f48d2c
 ## explicit
 github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0
 # github.com/beorn7/perks v1.0.1

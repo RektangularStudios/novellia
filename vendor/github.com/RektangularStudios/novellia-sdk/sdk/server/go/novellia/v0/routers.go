@@ -16,8 +16,8 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"mime/multipart"
 	"github.com/gorilla/mux"
+	"mime/multipart"
 )
 
 // A Route defines the parameters for an api endpoint
