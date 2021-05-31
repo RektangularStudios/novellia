@@ -313,8 +313,8 @@ func (s *ServiceImpl) GetAddressType(address string) (string, error) {
 	return info.Type, nil
 }
 
-func (s *ServiceImpl) query721Metadata(ctx context.Context, nativeTokens []nvla.NativeToken) ([]string, error) {
-	metadataJSON := []string{}
+func (s *ServiceImpl) query721Metadata(ctx context.Context, nativeTokens []nvla.NativeToken) (map[string]string, error) {
+	metadataJSON := map[string]string{}
 
 	policyIDs := [][]byte{}
 	assetIDs := [][]byte{}
@@ -335,15 +335,19 @@ func (s *ServiceImpl) query721Metadata(ctx context.Context, nativeTokens []nvla.
 	defer rows.Close()
 
 	for rows.Next() {
+		var policyID, assetID []byte
 		var j string
 		err = rows.Scan(
+			&policyID,
+			&assetID,
 			&j,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("query 721 metadata failed: %v", err)
 		}
 
-		metadataJSON = append(metadataJSON, j)
+		nativeTokenID := fmt.Sprintf("%x.%s", policyID, string(assetID))
+		metadataJSON[nativeTokenID] = j
 	}
 
 	return metadataJSON, nil
@@ -368,16 +372,14 @@ func (s *ServiceImpl) Add721Metadata(ctx context.Context, tokens []nvla.Token) (
 		})
 	}
 
-	metadataJSONList, err := s.query721Metadata(ctx, nativeTokens)
+	metadataJSON, err := s.query721Metadata(ctx, nativeTokens)
 	if err != nil {
 		return nil, err
 	}
 
-	for i, nativeToken := range nativeTokens {
-		for j := 0; j < len(tokens); j++ {
-			if tokens[j].NativeTokenId == fmt.Sprintf("%s.%s", nativeToken.PolicyId, nativeToken.AssetId) {
-				tokens[j].InitialMintTxMetadata = metadataJSONList[i]
-			}
+	for i := range tokens {
+		if j, ok := metadataJSON[tokens[i].NativeTokenId]; ok {
+			tokens[i].InitialMintTxMetadata = j
 		}
 	}
 
