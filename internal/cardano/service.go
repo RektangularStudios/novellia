@@ -3,7 +3,7 @@ package cardano
 import (
 	"fmt"
 	"context"
-	"strconv"
+	//"strconv"
 	"os/exec"
 	"encoding/json"
 	"strings"
@@ -15,6 +15,7 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 
 	"github.com/RektangularStudios/novellia/internal/config"
+	"github.com/RektangularStudios/novellia/internal/constants"
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0"
 )
 
@@ -24,6 +25,10 @@ const (
 
 const (
 	queryMetadata = "queryMetadata"
+	queryStakeKeyFromPaymentAddress = "queryStakeKeyFromPaymentAddress"
+	queryPaymentAddressesFromStakeKey = "queryPaymentAddressesFromStakeKey"
+	queryADABalance = "queryADABalance"
+	queryTokenBalance = "queryTokenBalance"
 )
 
 type AddressInfo struct {
@@ -78,6 +83,10 @@ func New(ctx context.Context) (*ServiceImpl, error) {
 func (s *ServiceImpl) loadQueries(ctx context.Context) error {
 	queryFiles := map[string]string {
 		queryMetadata: "query_metadata.sql",
+		queryStakeKeyFromPaymentAddress: "query_stake_key_from_payment_address.sql",
+		queryPaymentAddressesFromStakeKey: "query_payment_addresses_from_stake_key.sql",
+		queryADABalance: "query_ada_balance.sql",
+		queryTokenBalance: "query_token_balance.sql",
 	}
 
 	queries := make(map[string]string)
@@ -181,12 +190,7 @@ func (s *ServiceImpl) categorizeWalletIdentifiers(wallet nvla.Wallet) ([]string,
 	return paymentAddresses, stakeAddresses, nil
 }
 
-func (s *ServiceImpl) getPaymentAddressesFromStakeAddress(ctx context.Context, stakeAddress string) ([]string, error) {
-	paymentAddresses := []string{}
-	
-	return paymentAddresses, nil
-}
-
+/*
 func (s *ServiceImpl) getAssetsFromPaymentAddresses(ctx context.Context, paymentAddresses []string) ([]nvla.Token, error) {
 	// query assets at latest block
 	blockNumber, _, err := s.GetTip(ctx)
@@ -266,6 +270,7 @@ func (s *ServiceImpl) getAssetsFromPaymentAddresses(ctx context.Context, payment
 
 	return tokens, nil
 }
+*/
 
 func (s *ServiceImpl) GetAssets(ctx context.Context, wallet nvla.Wallet) ([]nvla.Token, error) {
 	paymentAddresses, stakeAddresses, err := s.categorizeWalletIdentifiers(wallet)
@@ -273,15 +278,43 @@ func (s *ServiceImpl) GetAssets(ctx context.Context, wallet nvla.Wallet) ([]nvla
 		return nil, err
 	}	
 
-	for _, stakeAddr := range(stakeAddresses) {
-		p, err := s.getPaymentAddressesFromStakeAddress(ctx, stakeAddr)
+	// multi-step to get assets
+	// 1. get stake keys from addresses
+	// 2. get addresses from stake keys
+	// 3. get assets from total list of addresses
+	
+	for i, paymentAddr := range(paymentAddresses) {
+		// enforce maximum payment addresses from API
+		if i > constants.MaxPaymentAddresses {
+			break
+		}
+		
+		stakeAddr, err := s.QueryStakeKeyFromPaymentAddress(ctx, paymentAddr)
+		if err != nil {
+			return nil, err
+		}
+		stakeAddresses = append(stakeAddresses, stakeAddr)
+	}
+
+	for i, stakeAddr := range(stakeAddresses) {
+		// enforce maximum stake addresses from API
+		if i > constants.MaxStakeAddresses {
+			break
+		}
+		
+		p, err := s.QueryPaymentAddressesesFromStakeKey(ctx, stakeAddr)
 		if err != nil {
 			return nil, err
 		}
 		paymentAddresses = append(paymentAddresses, p...)
 	}
 
-	tokens, err := s.getAssetsFromPaymentAddresses(ctx, paymentAddresses)
+	tokens := []nvla.Token{}
+	tokens, err = s.QueryADABalance(ctx, paymentAddresses, tokens)
+	if err != nil {
+		return nil, err
+	}
+	tokens, err = s.QueryTokenBalance(ctx, paymentAddresses, tokens)
 	if err != nil {
 		return nil, err
 	}
@@ -386,6 +419,114 @@ func (s *ServiceImpl) Add721Metadata(ctx context.Context, tokens []nvla.Token) (
 	return tokens, nil
 }
 
+// Queries the stake key associated with a payment address (if it exists)
+func (s *ServiceImpl) QueryStakeKeyFromPaymentAddress(ctx context.Context, paymentAddress string) (string, error) {
+	rows, err := s.pool.Query(ctx, s.queries[queryStakeKeyFromPaymentAddress], paymentAddress)
+	if err != nil {
+		return "", err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var stakeKey string
+		err = rows.Scan(
+			&stakeKey,
+		)
+		if err != nil {
+			return "", err
+		}
+		return stakeKey, nil
+	}
+
+	// stake key might not exist
+	return "", nil
+}
+	
+// Queries payment addresses from stake key
+func (s *ServiceImpl) QueryPaymentAddressesesFromStakeKey(ctx context.Context, stakeKey string) ([]string, error) {
+	rows, err := s.pool.Query(ctx, s.queries[queryPaymentAddressesFromStakeKey], stakeKey)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	paymentAddresses := []string{}
+	for rows.Next() {
+		var paymentAddress string
+		err = rows.Scan(
+			&paymentAddress,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		paymentAddresses = append(paymentAddresses, paymentAddress)
+	}
+
+	return paymentAddresses, nil
+}
+
+// Queries ADA held in a list of payment addresses
+func (s *ServiceImpl) QueryADABalance(ctx context.Context, paymentAddresses []string, tokens []nvla.Token) ([]nvla.Token, error) {
+	rows, err := s.pool.Query(ctx, s.queries[queryADABalance], paymentAddresses)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var adaSum uint64
+		err = rows.Scan(
+			&adaSum,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		tokens = append(tokens, nvla.Token{
+			NativeTokenId: "ada",
+			Amount: adaSum,
+			Name: "ada",
+		})
+	}
+
+	return tokens, nil
+}
+
+
+// Queries tokens held in a list of payment addresses
+func (s *ServiceImpl) QueryTokenBalance(ctx context.Context, paymentAddresses []string, tokens []nvla.Token) ([]nvla.Token, error) {
+	rows, err := s.pool.Query(ctx, s.queries[queryTokenBalance], paymentAddresses)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var policyID, assetID []byte
+		var tokenQuantity uint64
+
+		err = rows.Scan(
+			&policyID,
+			&assetID,
+			&tokenQuantity,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		nativeTokenID := fmt.Sprintf("%x.%s", policyID, assetID)
+
+		tokens = append(tokens, nvla.Token{
+			NativeTokenId: nativeTokenID,
+			Amount: tokenQuantity,
+		})
+	}
+
+	return tokens, nil
+}
+
+// Safely closes the DB connection
 func (s *ServiceImpl) Close(ctx context.Context) {
 	s.pool.Close()
 }

@@ -16,5 +16,14 @@ type Service interface {
 	GetAddressType(address string) (string, error)
 	// Add 721 onchain metadata to list of tokens
 	Add721Metadata(ctx context.Context, tokens []nvla.Token) ([]nvla.Token, error)
+	// Queries the stake key associated with a payment address (if it exists)
+	QueryStakeKeyFromPaymentAddress(ctx context.Context, paymentAddress string) (string, error)
+	// Queries payment addresses from stake key
+	QueryPaymentAddressesesFromStakeKey(ctx context.Context, stakeKey string) ([]string, error)
+	// Queries ADA held in a list of payment addresses
+	QueryADABalance(ctx context.Context, paymentAddresses []string, tokens []nvla.Token) ([]nvla.Token, error)
+	// Queries tokens held in a list of payment addresses
+	QueryTokenBalance(ctx context.Context, paymentAddresses []string, tokens []nvla.Token) ([]nvla.Token, error)
+	// Safely closes the DB connection
 	Close(ctx context.Context)
 }
