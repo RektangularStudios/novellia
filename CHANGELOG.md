@@ -67,3 +67,5 @@ Initial deployment
 - monitoring
   - Namespace monitoring to isolate prod from demo
   - Add `Errors` list to Status endpoint result to help with diagnosing service specific problems
+- `cardano-graphql`
+  - Start removing it because it's buggy, slow, and doesn't work. Prefer direct PostgreSQL.
