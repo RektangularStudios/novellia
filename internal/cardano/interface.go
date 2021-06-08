@@ -14,6 +14,8 @@ type Service interface {
 	GetAssets(ctx context.Context, wallet nvla.Wallet) ([]nvla.Token, error)
 	// Gets an address' type
 	GetAddressType(address string) (string, error)
+	// Gets a stake key embedded in a payment address
+	DecodeStakeAddress(paymentAddress string) (string, error)
 	// Add 721 onchain metadata to list of tokens
 	Add721Metadata(ctx context.Context, tokens []nvla.Token) ([]nvla.Token, error)
 	// Queries the stake key associated with a payment address (if it exists)

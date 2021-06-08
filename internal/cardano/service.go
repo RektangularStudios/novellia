@@ -13,6 +13,7 @@ import (
 
 	"github.com/shurcooL/graphql"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/btcsuite/btcutil/bech32"
 
 	"github.com/RektangularStudios/novellia/internal/config"
 	"github.com/RektangularStudios/novellia/internal/constants"
@@ -344,6 +345,26 @@ func (s *ServiceImpl) GetAddressType(address string) (string, error) {
 	}
 
 	return info.Type, nil
+}
+
+func (s *ServiceImpl) DecodeStakeAddress(paymentAddress string) (string, error) {
+	s, b, err := bech32.Decode(paymentAddress)
+	if err != nil {
+		return "", err
+	}
+	fmt.Printf("s: %v, b: %v", s, b)
+
+	/*
+	s, b, err := bech32.Encode(paymentAddress)
+	if err != nil {
+		return "", err
+	}
+
+	bech32StakeKey := s[59:]
+	stakeKey := bech32.Decode()
+	*/
+
+	return s
 }
 
 func (s *ServiceImpl) query721Metadata(ctx context.Context, nativeTokens []nvla.NativeToken) (map[string]string, error) {

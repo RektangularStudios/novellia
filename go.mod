@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia v0.0.0-20210529025535-6e4b83f48d2c
+	github.com/btcsuite/btcutil v1.0.2
 	github.com/gofrs/uuid v4.0.0+incompatible // indirect
 	github.com/jackc/pgtype v1.7.0
 	github.com/jackc/pgx/v4 v4.11.0
