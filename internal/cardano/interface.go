@@ -12,14 +12,12 @@ type Service interface {
 	GetTip(ctx context.Context) (int32, int32, error)
 	// Assets owned at a payment address
 	GetAssets(ctx context.Context, wallet nvla.Wallet) ([]nvla.Token, error)
-	// Gets an address' type
-	GetAddressType(address string) (string, error)
+	// Gets an address' type and returns the base16 encoding
+	GetAddressType(address string) (string, string, error)
 	// Gets a stake key embedded in a payment address
-	DecodeStakeAddress(paymentAddress string) (string, error)
+	DecodeStakeAddressFromBase16(paymentAddressBase16 string) (string, error)
 	// Add 721 onchain metadata to list of tokens
 	Add721Metadata(ctx context.Context, tokens []nvla.Token) ([]nvla.Token, error)
-	// Queries the stake key associated with a payment address (if it exists)
-	QueryStakeKeyFromPaymentAddress(ctx context.Context, paymentAddress string) (string, error)
 	// Queries payment addresses from stake key
 	QueryPaymentAddressesesFromStakeKey(ctx context.Context, stakeKey string) ([]string, error)
 	// Queries ADA held in a list of payment addresses

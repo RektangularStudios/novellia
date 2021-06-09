@@ -13,8 +13,9 @@ import (
 
 	"github.com/shurcooL/graphql"
 	"github.com/jackc/pgx/v4/pgxpool"
-	"github.com/btcsuite/btcutil/bech32"
+	//"github.com/btcsuite/btcutil/bech32"
 
+	"github.com/RektangularStudios/novellia/internal/common"
 	"github.com/RektangularStudios/novellia/internal/config"
 	"github.com/RektangularStudios/novellia/internal/constants"
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0"
@@ -26,7 +27,6 @@ const (
 
 const (
 	queryMetadata = "queryMetadata"
-	queryStakeKeyFromPaymentAddress = "queryStakeKeyFromPaymentAddress"
 	queryPaymentAddressesFromStakeKey = "queryPaymentAddressesFromStakeKey"
 	queryADABalance = "queryADABalance"
 	queryTokenBalance = "queryTokenBalance"
@@ -84,7 +84,6 @@ func New(ctx context.Context) (*ServiceImpl, error) {
 func (s *ServiceImpl) loadQueries(ctx context.Context) error {
 	queryFiles := map[string]string {
 		queryMetadata: "query_metadata.sql",
-		queryStakeKeyFromPaymentAddress: "query_stake_key_from_payment_address.sql",
 		queryPaymentAddressesFromStakeKey: "query_payment_addresses_from_stake_key.sql",
 		queryADABalance: "query_ada_balance.sql",
 		queryTokenBalance: "query_token_balance.sql",
@@ -175,7 +174,11 @@ func (s *ServiceImpl) categorizeWalletIdentifiers(wallet nvla.Wallet) ([]string,
 	stakeAddresses := []string{}
 
 	for _, addr := range wallet.CardanoIdentifiers {
-		t, err := s.GetAddressType(addr)
+		if common.StringInSlice(addr, paymentAddresses) || common.StringInSlice(addr, stakeAddresses) {
+			continue
+		}
+		
+		t, base16, err := s.GetAddressType(addr)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -183,6 +186,13 @@ func (s *ServiceImpl) categorizeWalletIdentifiers(wallet nvla.Wallet) ([]string,
 		switch t {
 		case "payment":
 			paymentAddresses = append(paymentAddresses, addr)
+			decodedStakeAddr, err := s.DecodeStakeAddressFromBase16(base16)
+			if err != nil {
+				return nil, nil, err
+			}
+			if !common.StringInSlice(decodedStakeAddr, stakeAddresses) {
+				stakeAddresses = append(stakeAddresses, decodedStakeAddr)
+			}
 		case "stake":
 			stakeAddresses = append(stakeAddresses, addr)
 		}
@@ -274,27 +284,14 @@ func (s *ServiceImpl) getAssetsFromPaymentAddresses(ctx context.Context, payment
 */
 
 func (s *ServiceImpl) GetAssets(ctx context.Context, wallet nvla.Wallet) ([]nvla.Token, error) {
-	paymentAddresses, stakeAddresses, err := s.categorizeWalletIdentifiers(wallet)
-	if err != nil {
-		return nil, err
-	}	
-
 	// multi-step to get assets
 	// 1. get stake keys from addresses
 	// 2. get addresses from stake keys
 	// 3. get assets from total list of addresses
 	
-	for i, paymentAddr := range(paymentAddresses) {
-		// enforce maximum payment addresses from API
-		if i > constants.MaxPaymentAddresses {
-			break
-		}
-		
-		stakeAddr, err := s.QueryStakeKeyFromPaymentAddress(ctx, paymentAddr)
-		if err != nil {
-			return nil, err
-		}
-		stakeAddresses = append(stakeAddresses, stakeAddr)
+	paymentAddresses, stakeAddresses, err := s.categorizeWalletIdentifiers(wallet)
+	if err != nil {
+		return nil, err
 	}
 
 	for i, stakeAddr := range(stakeAddresses) {
@@ -323,48 +320,52 @@ func (s *ServiceImpl) GetAssets(ctx context.Context, wallet nvla.Wallet) ([]nvla
 	return tokens, nil
 }
 
-func (s *ServiceImpl) GetAddressType(address string) (string, error) {
+func (s *ServiceImpl) GetAddressType(address string) (string, string, error) {
 	out, err := exec.Command("cardano-cli", "address", "info",
 		"--address", address,
 	).Output()
 	if err != nil {
-		return "", fmt.Errorf("failed to validate address (cmd): %v", err)
+		return "", "", fmt.Errorf("failed to validate address (cmd): %v", err)
 	}
 	if strings.Contains(string(out), "Invalid") {
-		return "", fmt.Errorf("address is invalid: %s, output: %s", address, string(out))
+		return "", "", fmt.Errorf("address is invalid: %s, output: %s", address, string(out))
 	}
 
 	var info AddressInfo
 	err = json.Unmarshal(out, &info)
 	if err != nil {
-		return "", fmt.Errorf("failed to unmarshal address info JSON: %v", err)
+		return "", "", fmt.Errorf("failed to unmarshal address info JSON: %v", err)
 	}
 
 	if info.Era != "shelley" {
-		return "", fmt.Errorf("not a shelley address: %s", address)
+		return "", "", fmt.Errorf("not a shelley address: %s", address)
 	}
 
-	return info.Type, nil
+	return info.Type, info.Base16, nil
 }
 
-func (s *ServiceImpl) DecodeStakeAddress(paymentAddress string) (string, error) {
-	s, b, err := bech32.Decode(paymentAddress)
-	if err != nil {
-		return "", err
-	}
-	fmt.Printf("s: %v, b: %v", s, b)
-
+func (s *ServiceImpl) DecodeStakeAddressFromBase16(paymentAddressBase16 string) (string, error) {
 	/*
-	s, b, err := bech32.Encode(paymentAddress)
+	fmt.Printf("s: %v, b: %v\n", paymentAddressBase16, stakeAddressBase16)
+	
+	unhex, err := hex.DecodeString(paymentAddressBase16)
 	if err != nil {
 		return "", err
 	}
-
-	bech32StakeKey := s[59:]
-	stakeKey := bech32.Decode()
+	
+	b := []byte(fmt.Sprintf("e1%s", paymentAddressBase16))
+	conv, err := bech32.ConvertBits(b, 4, 5, true)
+	if err != nil {
+		return "", err
+	}
+	stakeAddress, err := bech32.Encode("stake", conv)
+	if err != nil {
+		return "", err
+	}
+	fmt.Printf("stake decoded: %s", stakeAddress)
 	*/
 
-	return s
+	return paymentAddressBase16[58:], nil
 }
 
 func (s *ServiceImpl) query721Metadata(ctx context.Context, nativeTokens []nvla.NativeToken) (map[string]string, error) {
@@ -439,33 +440,11 @@ func (s *ServiceImpl) Add721Metadata(ctx context.Context, tokens []nvla.Token) (
 
 	return tokens, nil
 }
-
-// Queries the stake key associated with a payment address (if it exists)
-func (s *ServiceImpl) QueryStakeKeyFromPaymentAddress(ctx context.Context, paymentAddress string) (string, error) {
-	rows, err := s.pool.Query(ctx, s.queries[queryStakeKeyFromPaymentAddress], paymentAddress)
-	if err != nil {
-		return "", err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var stakeKey string
-		err = rows.Scan(
-			&stakeKey,
-		)
-		if err != nil {
-			return "", err
-		}
-		return stakeKey, nil
-	}
-
-	// stake key might not exist
-	return "", nil
-}
 	
 // Queries payment addresses from stake key
 func (s *ServiceImpl) QueryPaymentAddressesesFromStakeKey(ctx context.Context, stakeKey string) ([]string, error) {
-	rows, err := s.pool.Query(ctx, s.queries[queryPaymentAddressesFromStakeKey], stakeKey)
+	fmt.Printf("skey: %s", stakeKey)
+	rows, err := s.pool.Query(ctx, s.queries[queryPaymentAddressesFromStakeKey], fmt.Sprintf("e1%s", stakeKey))
 	if err != nil {
 		return nil, err
 	}
@@ -473,6 +452,7 @@ func (s *ServiceImpl) QueryPaymentAddressesesFromStakeKey(ctx context.Context, s
 
 	paymentAddresses := []string{}
 	for rows.Next() {
+		fmt.Printf("HIT\n")
 		var paymentAddress string
 		err = rows.Scan(
 			&paymentAddress,
@@ -504,11 +484,13 @@ func (s *ServiceImpl) QueryADABalance(ctx context.Context, paymentAddresses []st
 			return nil, err
 		}
 
-		tokens = append(tokens, nvla.Token{
-			NativeTokenId: "ada",
-			Amount: adaSum,
-			Name: "ada",
-		})
+		if adaSum != 0 {
+			tokens = append(tokens, nvla.Token{
+				NativeTokenId: "ada",
+				Amount: adaSum,
+				Name: "ada",
+			})
+		}
 	}
 
 	return tokens, nil

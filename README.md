@@ -38,6 +38,13 @@ Same as above, except you don't need a real instance to supply all the depended 
 Start mock server (after building)
 - `./novellia-server ${PWD}/config/mock.yaml`
 
+### Testing
+
+Execute a command like
+- `go test service_test.go -run TestDecodeStakeAddress -v`
+
+You'll probably have to modify the file slightly fit your local machine. These tests are not designed for running by automation, they're more for manual testing / integration.
+
 ## What features are supported?
 
 For a comprehensive list, refer to the [Novellia SDK Documentation on our Wiki](https://rektangularstudios.com/wiki) (TODO)

@@ -55,12 +55,10 @@ func TestDecodeStakeAddress(t *testing.T) {
 	}
 	defer cardanoService.Close(ctx)
 
-	paymentAddress := "0132488c6dc87ed3e2c51436fd46cdfba158f4d99ddc6e708ccc87e06ce6bfe1302efb8d5f5b9891e41f14fa1573a2038176a3c6bd9d4c14fb"
-	paymentAddressBech32 := "addr1qyey3rrdepld8ck9zsm063kdlws43axenhwxuuyvejr7qm8xhlsnqthm3404hxy3us03f7s4ww3q8qtk50rtm82vznasv64fhk"
-	stakeAddress := "e6bfe1302efb8d5f5b9891e41f14fa1573a2038176a3c6bd9d4c14fb"
-	stakeAddressBech32 := "stake1u8ntlcfs9mac6h6mnzg7g8c5lg2h8gsrs9m2834an4xpf7cp8zaff"
+	// addr1q86l6gs80s0a5dnj9q4nrf4g5yzzaxs59srgxp4s5r0x33d2gm8j6rd5lx9y9tuvfv6qm6mypfhc7p9qkjawyj7g3h2spum389
+	paymentAddressBase16 := "01f5fd22077c1fda3672282b31a6a8a1042e9a142c068306b0a0de68c5aa46cf2d0db4f98a42af8c4b340deb640a6f8f04a0b4bae24bc88dd5"
 
-	s, err := cardanoService.DecodeStakeAddress(paymentAddressBech32)
+	s, err := cardanoService.DecodeStakeAddressFromBase16(paymentAddressBase16)
 	if err != nil {
 		t.Errorf("failed to get decode stake address: %+v", err)
 	}
