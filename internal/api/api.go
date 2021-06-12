@@ -7,29 +7,29 @@ import (
 	"net/http"
 
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0"
-	cardano_graphql "github.com/RektangularStudios/novellia/internal/cardano/graphql"
+	"github.com/RektangularStudios/novellia/internal/cardano"
 	"github.com/RektangularStudios/novellia/internal/novellia_database"
 )
 
 type ApiService struct{
-	cardanoGraphQLService cardano_graphql.Service
+	cardanoService cardano.Service
 	novelliaDatabaseService novellia_database.Service
 }
 
 // NewApiService creates an api service
 func NewApiService(
-	cardanoGraphQLService cardano_graphql.Service,
+	cardanoService cardano.Service,
 	novelliaDatabaseService novellia_database.Service,
 ) nvla.DefaultApiServicer {
 	return &ApiService {
-		cardanoGraphQLService: cardanoGraphQLService,
+		cardanoService: cardanoService,
 		novelliaDatabaseService: novelliaDatabaseService,
 	}
 }
 
 // Gets list of products
 func (s *ApiService) GetProducts(ctx context.Context, marketId string, organizationId string) (nvla.ImplResponse, error) {
-	productIDs, err := s.novelliaDatabaseService.QueryProductIDs(ctx, organizationId, marketId)
+	products, err := s.novelliaDatabaseService.QueryProductIDs(ctx, organizationId, marketId)
 	if err != nil {
 		err = fmt.Errorf("get products failed at product ID query: %+v", err)
 		// TODO: log this in a proper logging stack
@@ -38,7 +38,7 @@ func (s *ApiService) GetProducts(ctx context.Context, marketId string, organizat
 	}
 	
 	productsList := nvla.ProductsList{
-		ProductId: productIDs,
+		Products: products,
 	}
 	return nvla.Response(200, productsList), nil
 }
@@ -46,24 +46,35 @@ func (s *ApiService) GetProducts(ctx context.Context, marketId string, organizat
 
 // Post for list of products details
 func (s *ApiService) PostProducts(ctx context.Context, productsList nvla.ProductsList) (nvla.ImplResponse, error) {
-	products, err := s.novelliaDatabaseService.QueryAndAddProduct(ctx, productsList.ProductId)
+	products, err := s.novelliaDatabaseService.QueryAndAddProduct(ctx, productsList.Products)
 	if err != nil {
 		err = fmt.Errorf("post products failed at product query: %+v", err)
 		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
 	}
-	products, err = s.novelliaDatabaseService.QueryAndAddCommission(ctx, productsList.ProductId, products)
+
+	productIDs := []string{}
+	for _, p := range products {
+		productIDs = append(productIDs, p.Product.ProductId)
+	}
+
+	products, err = s.novelliaDatabaseService.QueryAndAddCommission(ctx, productIDs, products)
 	if err != nil {
 		err = fmt.Errorf("post products failed at commission query: %+v", err)
 		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
 	}
-	products, err = s.novelliaDatabaseService.QueryAndAddAttribution(ctx, productsList.ProductId, products)
+	products, err = s.novelliaDatabaseService.QueryAndAddAttribution(ctx, productIDs, products)
 	if err != nil {
 		err = fmt.Errorf("post products failed at attribution query: %+v", err)
 		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
 	}
-	products, err = s.novelliaDatabaseService.QueryAndAddRemoteResource(ctx, productsList.ProductId, products)
+	products, err = s.novelliaDatabaseService.QueryAndAddRemoteResource(ctx, productIDs, products)
 	if err != nil {
 		err = fmt.Errorf("post products failed at remote resource query: %+v", err)
+		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
+	}
+	products, err = s.novelliaDatabaseService.QueryAndAddProductModified(ctx, productIDs, products)
+	if err != nil {
+		err = fmt.Errorf("post products failed at product modified query: %+v", err)
 		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
 	}
 
@@ -72,17 +83,20 @@ func (s *ApiService) PostProducts(ctx context.Context, productsList nvla.Product
 
 // Availability information about service availability
 func (s *ApiService) GetStatus(ctx context.Context) (nvla.ImplResponse, error) {
+	errorStrings := []string{}
+
 	var status nvla.Status
 	status.Maintenance = false
 	// TODO: separate microservice being alive vs. some services being down
 	status.Status = "UP"
 	
-	initialized, syncPercentage, err := s.cardanoGraphQLService.GetStatus(ctx)
+	initialized, syncPercentage, err := s.cardanoService.GetStatus(ctx)
 	if err != nil {
 		status.Cardano = nvla.StatusCardano{
 			Initialized: false,
 			SyncPercentage: 0,
 		}
+		errorStrings = append(errorStrings, fmt.Sprintf("%v", err))
 	} else {
 		status.Cardano = nvla.StatusCardano{
 			Initialized: initialized,
@@ -90,13 +104,13 @@ func (s *ApiService) GetStatus(ctx context.Context) (nvla.ImplResponse, error) {
 		}
 	}
 
-
+	status.Errors = errorStrings
 	return nvla.Response(200, status), nil
 }
 
 // Cardano chain tip information
 func (s *ApiService) GetCardanoTip(ctx context.Context) (nvla.ImplResponse, error) {
-	blockNumber, epochNumber, err := s.cardanoGraphQLService.GetTip(ctx)
+	blockNumber, epochNumber, err := s.cardanoService.GetTip(ctx)
 	if err != nil {
 		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
 	}
@@ -109,12 +123,19 @@ func (s *ApiService) GetCardanoTip(ctx context.Context) (nvla.ImplResponse, erro
 }
 
 // Lists assets owned by a wallet
-func (s *ApiService) GetWallet(ctx context.Context, walletAddress string) (nvla.ImplResponse, error) {
-	tokens, err := s.cardanoGraphQLService.GetAssets(ctx, walletAddress)
+func (s *ApiService) PostWallet(ctx context.Context, wallet nvla.Wallet) (nvla.ImplResponse, error) {
+	tokens, err := s.cardanoService.GetAssets(ctx, wallet)
 	if err != nil {
-		return nvla.Response(500, nil), err
+		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
 	}
-	return nvla.Response(200, tokens), nil
+	tokens, err = s.cardanoService.Add721Metadata(ctx, tokens)
+	if err != nil {
+		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
+	}
+
+	return nvla.Response(200, nvla.TokenList{
+		Tokens: tokens,
+	}), nil
 }
 
 // GetWorkflowMinterNvla -

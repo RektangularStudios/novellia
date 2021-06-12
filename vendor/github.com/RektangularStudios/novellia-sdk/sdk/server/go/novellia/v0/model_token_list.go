@@ -10,9 +10,9 @@
 
 package novellia
 
-// WorkflowInformation - Returns preconditions relevant to a user wanting to execute a workflow. I.e. costs.
-type WorkflowInformation struct {
+// TokenList - List of token information to return
+type TokenList struct {
 
-	// The lovelace cost to execute the workflow
-	FeeLovelace int32 `json:"fee_lovelace,omitempty"`
+	// List of tokens returned
+	Tokens []Token `json:"tokens,omitempty"`
 }

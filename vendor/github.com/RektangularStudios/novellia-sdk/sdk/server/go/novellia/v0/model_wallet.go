@@ -10,9 +10,9 @@
 
 package novellia
 
-// WorkflowInformation - Returns preconditions relevant to a user wanting to execute a workflow. I.e. costs.
-type WorkflowInformation struct {
+// Wallet - Parameters identifying a wallet
+type Wallet struct {
 
-	// The lovelace cost to execute the workflow
-	FeeLovelace int32 `json:"fee_lovelace,omitempty"`
+	// List of Cardano addresses and/or stake keys
+	CardanoIdentifiers []string `json:"cardano_identifiers"`
 }

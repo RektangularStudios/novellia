@@ -4,3 +4,6 @@ novellia-server
 
 sql/
 *.sql
+
+deploy_testing.sh
+config/

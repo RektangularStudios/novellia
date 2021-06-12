@@ -7,8 +7,10 @@ import (
 	"path/filepath"
 	"github.com/jackc/pgtype"
 	"github.com/jackc/pgx/v4/pgxpool"
+
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0"
 	"github.com/RektangularStudios/novellia/internal/constants"
+	"github.com/RektangularStudios/novellia/internal/config"
 	prometheus_monitoring "github.com/RektangularStudios/novellia/internal/monitoring"
 )
 
@@ -18,6 +20,7 @@ const (
 	queryCommission = "queryCommission"
 	queryAttribution = "queryAttribution"
 	queryRemoteResource = "queryRemoteResource"
+	queryProductModified = "queryProductModified"
 )
 
 type ServiceImpl struct {
@@ -27,10 +30,22 @@ type ServiceImpl struct {
 }
 
 // creates a new ServiceImpl, connecting to Postgres
-func New(ctx context.Context, username, password, host, database_name string, queriesPath string) (*ServiceImpl, error) {
+func New(ctx context.Context) (*ServiceImpl, error) {
+	cfg, err := config.GetConfig()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get config")
+	}
+
 	// url like "postgresql://username:password@localhost:5432/database_name?search_path=novellia"
 	schema := "novellia"
-	databaseUrl := fmt.Sprintf("postgresql://%s:%s@%s/%s?search_path=%s", username, password, host, database_name, schema)
+	databaseUrl := fmt.Sprintf("postgresql://%s:%s@%s/%s?search_path=%s",
+		cfg.Postgres.Username,
+		cfg.Postgres.Password,
+		cfg.Postgres.Host,
+		cfg.Postgres.NovelliaDatabase,
+		schema,
+	)
+
 	pool, err := pgxpool.Connect(ctx, databaseUrl)
 	if err != nil {
 		return nil, fmt.Errorf("unable to connect to Postgres: %v", err)
@@ -38,7 +53,7 @@ func New(ctx context.Context, username, password, host, database_name string, qu
 	
 	service := ServiceImpl {
 		pool: pool,
-		queriesPath: queriesPath,
+		queriesPath: cfg.Postgres.QueriesPath,
 	}
 	err = service.loadQueries(ctx)
 	if err != nil {
@@ -55,6 +70,7 @@ func (s *ServiceImpl) loadQueries(ctx context.Context) error {
 		queryCommission: "query_commission.sql",
 		queryAttribution: "query_attribution.sql",
 		queryRemoteResource: "query_remote_resource.sql",
+		queryProductModified: "query_product_modified.sql",
 	}
 
 	queries := make(map[string]string)
@@ -87,36 +103,55 @@ func (s *ServiceImpl) readQueryFile(filename string) (string, error) {
 }
 
 // queries product list matching market and organization filters
-func (s *ServiceImpl) QueryProductIDs(ctx context.Context, organizationId string, marketId string) ([]string, error) {
+func (s *ServiceImpl) QueryProductIDs(ctx context.Context, organizationId string, marketId string) ([]nvla.ProductListElement, error) {
 	rows, err := s.pool.Query(ctx, s.queries[queryProductID], organizationId, marketId)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	productIDs := []string{}
+	products := []nvla.ProductListElement{}
 	for rows.Next() {
-		var productID string;
+		var p nvla.ProductListElement
+		var modified pgtype.Timestamptz
 
 		err = rows.Scan(
-			&productID,
+			&p.ProductId,
+			&p.NativeTokenId,
+			&modified,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("query product IDs failed: %v", err)
 		}
 
-		// add product ID to slice
-		productIDs = append(productIDs, productID)
+		m := modified.Get()
+		if m != nil {
+			p.Modified = modified.Time.UTC().Format(constants.ISO8601DateFormat)
+		}
+
+		// add product element to slice
+		products = append(products, p)
 	}
 
-	prometheus_monitoring.RecordNumberOfProductIDsListed(len(productIDs))
+	prometheus_monitoring.RecordNumberOfProductIDsListed(len(products))
 
-	return productIDs, nil
+	return products, nil
 }
 
 // queries product information and adds it to the provided products slice
-func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, productIDs []string) ([]nvla.Product, error) {
-	rows, err := s.pool.Query(ctx, s.queries[queryProduct], productIDs)
+func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, productElements []nvla.ProductListElement) ([]nvla.Product, error) {
+	productIDs := []string{}
+	nativeTokenIDs := []string{}
+	for _, product := range productElements {
+		if product.ProductId != "" {
+			productIDs = append(productIDs, product.ProductId)
+		}
+		if product.NativeTokenId != "" {
+			nativeTokenIDs = append(nativeTokenIDs, product.NativeTokenId)
+		}
+	}
+
+	rows, err := s.pool.Query(ctx, s.queries[queryProduct], productIDs, nativeTokenIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +165,6 @@ func (s *ServiceImpl) QueryAndAddProduct(ctx context.Context, productIDs []strin
 		var dateListed pgtype.Timestamptz
 		var dateAvailable pgtype.Timestamptz
 
-		// TODO: handle case where native token does not exist (i.e. NovelliaProduct)
 		err = rows.Scan(
 			// product
 			&p.Product.ProductId, &p.Product.NovelliaStandardToken.Name,
@@ -259,6 +293,39 @@ func (s *ServiceImpl) QueryAndAddRemoteResource(ctx context.Context, productIDs 
 		for i := range products {
 			if products[i].Product.ProductId == product_id {
 				products[i].Product.NovelliaStandardToken.Resource = append(products[i].Product.NovelliaStandardToken.Resource, r)
+			}
+		}
+	}
+
+	return products, nil
+}
+
+// queries the chain of "modified" fields relevant to requesting the front-end to replace cached product data
+func (s *ServiceImpl) QueryAndAddProductModified(ctx context.Context, productIDs []string, products []nvla.Product) ([]nvla.Product, error) {
+	rows, err := s.pool.Query(ctx, s.queries[queryProductModified], productIDs)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var product_id string
+		var modified pgtype.Timestamptz
+
+		err = rows.Scan(
+			&product_id,
+			&modified,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("query product modified failed: %v", err)
+		}
+
+		for i := range products {
+			if products[i].Product.ProductId == product_id {
+				m := modified.Get()
+				if m != nil {
+					products[i].Modified = modified.Time.UTC().Format(constants.ISO8601DateFormat)
+				}
 			}
 		}
 	}

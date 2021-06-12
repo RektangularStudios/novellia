@@ -17,31 +17,48 @@ import (
 // https://prometheus.io/docs/guides/go-application/
 
 const (
-	namespace = "novellia"
+	microservice_namespace = "novellia"
 	status_interval = 30 * time.Second
 )
 
+type PrometheusMetrics struct {
+	microserviceStatusMetric prometheus.Gauge
+	cardanoStatusMetric prometheus.Gauge
+	productIDsListedMetric prometheus.Gauge
+}
 var (
-	microserviceStatusMetric = promauto.NewGauge(prometheus.GaugeOpts{
-		Namespace: namespace,
-		Name: "microservice_status",
-		Help: "Health status indicator for the Novellia microservice",
-	})
-	cardanoStatusMetric = promauto.NewGauge(prometheus.GaugeOpts{
-		Namespace: namespace,
-		Name: "cardano_status",
-		Help: "Health status indicator for Cardano services such as GraphQL and cardano-node",
-	})
-	productIDsListedMetric = promauto.NewGauge(prometheus.GaugeOpts{
-		Namespace: namespace,
-		Name: "products_ids_listed",
-		Help: "Number of products IDs returned when accessing Novellia",
-	})
+	initialized = false
+	prometheusMetrics PrometheusMetrics
 )
 
 type statusIndicators struct {
 	microserviceStatus float64
 	cardanoStatus float64
+}
+
+func Init(namespace string) {
+	n := microservice_namespace
+	if namespace != "" {
+		n = fmt.Sprintf("%s_%s", namespace, microservice_namespace)
+	}
+
+	prometheusMetrics.microserviceStatusMetric = promauto.NewGauge(prometheus.GaugeOpts{
+		Namespace: n,
+		Name: "microservice_status",
+		Help: "Health status indicator for the Novellia microservice",
+	})
+	prometheusMetrics.cardanoStatusMetric = promauto.NewGauge(prometheus.GaugeOpts{
+		Namespace: n,
+		Name: "cardano_status",
+		Help: "Health status indicator for Cardano services such as GraphQL and cardano-node",
+	})
+	prometheusMetrics.productIDsListedMetric = promauto.NewGauge(prometheus.GaugeOpts{
+		Namespace: n,
+		Name: "products_ids_listed",
+		Help: "Number of products IDs returned when accessing Novellia",
+	})
+
+	initialized = true
 }
 
 func getStatus() (*statusIndicators, error) {
@@ -92,24 +109,27 @@ func getStatus() (*statusIndicators, error) {
 }
 
 func RecordNumberOfProductIDsListed(count int) {
-	productIDsListedMetric.Set(float64(count))
+	if initialized {
+		prometheusMetrics.productIDsListedMetric.Set(float64(count))
+	}
 }
 
 func RecordMetrics() {
 	go func() {
 		for {
-			indicators, err := getStatus()
-			if err != nil {
-				indicators = &statusIndicators{
-					microserviceStatus: 0,
-					cardanoStatus: 0,
+			if initialized {
+				indicators, err := getStatus()
+				if err != nil {
+					indicators = &statusIndicators{
+						microserviceStatus: 0,
+						cardanoStatus: 0,
+					}
+					fmt.Printf("Checked status, got error: %+v\n", err)
 				}
-				fmt.Printf("Checked status, got error: %+v\n", err)
+				
+				prometheusMetrics.microserviceStatusMetric.Set(indicators.microserviceStatus)
+				prometheusMetrics.cardanoStatusMetric.Set(indicators.cardanoStatus)
 			}
-			
-			microserviceStatusMetric.Set(indicators.microserviceStatus)
-			cardanoStatusMetric.Set(indicators.cardanoStatus)
-
 			time.Sleep(status_interval)
 		}
 	}()

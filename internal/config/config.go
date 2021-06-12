@@ -17,13 +17,15 @@ type Config struct {
 	} `yaml:"server"`
 	Monitoring struct {
 		StatusURL string `yaml:"status-url"`
+		Namespace string `yaml:"namespace"`
 	} `yaml:"monitoring"`
 	CardanoGraphQL struct {
 		Host string `yaml:"host"`
 		Port string `yaml:"port"`
 	} `yaml:"cardano-graphql"`
 	Postgres struct {
-		Database string `yaml:"database"`
+		CardanoDatabase string `yaml:"cardano-database"`
+		NovelliaDatabase string `yaml:"novellia-database"`
 		Host string `yaml:"host"`
 		Username string `yaml:"username"`
 		Password string `yaml:"password"`

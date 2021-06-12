@@ -5,15 +5,13 @@ import (
 	"net/http"
 	"os"
 	"context"
-	
-	"github.com/shurcooL/graphql"
 
 	nvla "github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0"
 	"github.com/RektangularStudios/novellia/internal/config"
 	prometheus_monitoring "github.com/RektangularStudios/novellia/internal/monitoring"
 	"github.com/RektangularStudios/novellia/internal/api"
 	"github.com/RektangularStudios/novellia/internal/novellia_database"
-	cardano_graphql "github.com/RektangularStudios/novellia/internal/cardano/graphql"
+	"github.com/RektangularStudios/novellia/internal/cardano"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -46,19 +44,14 @@ func main() {
 	if config.Mocked {
 		apiService = api.NewMockedApiService()
 	} else {
-		cardanoGraphQLHostString := fmt.Sprintf("%s:%s", config.CardanoGraphQL.Host, config.CardanoGraphQL.Port)
-		cardanoGraphQLClient := graphql.NewClient(cardanoGraphQLHostString, nil)
-	
-		cardanoGraphQLService := cardano_graphql.New(cardanoGraphQLClient)
-	
-		novelliaDatabaseService, err := novellia_database.New(
-			ctx,
-			config.Postgres.Username,
-			config.Postgres.Password,
-			config.Postgres.Host,
-			config.Postgres.Database,
-			config.Postgres.QueriesPath,
-		)
+		cardanoService, err := cardano.New(ctx)
+		if err != nil {
+			fmt.Printf("failed to make Cardano service: %v\n", err)
+			os.Exit(cardanoServiceErr)
+		}
+		defer cardanoService.Close(ctx)
+
+		novelliaDatabaseService, err := novellia_database.New(ctx)
 		if err != nil {
 			fmt.Printf("Failed to make Novellia database service: %+v\n", err)
 			os.Exit(novelliaDatabaseErr)
@@ -66,7 +59,7 @@ func main() {
 		defer novelliaDatabaseService.Close(ctx)
 
 		apiService = api.NewApiService(
-			cardanoGraphQLService,
+			cardanoService,
 			novelliaDatabaseService,
 		)	
 	}
@@ -76,6 +69,7 @@ func main() {
 	router := nvla.NewRouter(apiController)
 
 	// add Prometheus metrics to router
+	prometheus_monitoring.Init(config.Monitoring.Namespace)
 	prometheus_monitoring.RecordMetrics()
 	router.Handle("/metrics", promhttp.Handler())
 

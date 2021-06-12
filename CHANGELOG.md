@@ -56,3 +56,16 @@ Initial deployment
 
 ## v0.8.4
 - Fix attribution information missing (bug)
+
+## v0.9.0
+- `/products`
+  - Request products by native token ID
+  - `modified` field to for more easily overriding front-end cache
+- `/wallet`
+  - Support an array of payment and stake addresses
+  - Return on-chain metadata
+- monitoring
+  - Namespace monitoring to isolate prod from demo
+  - Add `Errors` list to Status endpoint result to help with diagnosing service specific problems
+- `cardano-graphql`
+  - Start removing it because it's buggy, slow, and doesn't work. Prefer direct PostgreSQL.
