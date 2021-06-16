@@ -10,12 +10,8 @@
 
 package novellia
 
-type ProductOrganization struct {
+type TokenSearch struct {
 
-	Name string `json:"name"`
-
-	OrganizationId string `json:"organization_id"`
-
-	// Organization description. This can be markdown.
-	Description string `json:"description"`
+	// List of asset_id, policy_id, or token name
+	CardanoIdentifiers []string `json:"cardano_identifiers"`
 }

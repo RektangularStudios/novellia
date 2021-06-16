@@ -69,3 +69,6 @@ Initial deployment
   - Add `Errors` list to Status endpoint result to help with diagnosing service specific problems
 - `cardano-graphql`
   - Start removing it because it's buggy, slow, and doesn't work. Prefer direct PostgreSQL.
+
+# v0.9.2
+- add `/tokens` endpoint for querying tokens by asset_id, policy_id, and name
