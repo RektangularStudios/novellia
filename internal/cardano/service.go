@@ -28,7 +28,9 @@ const (
 	queryPaymentAddressesFromStakeKey = "queryPaymentAddressesFromStakeKey"
 	queryADABalance = "queryADABalance"
 	queryTokenBalance = "queryTokenBalance"
-	queryTokens = "queryTokens"
+	queryTokensByPolicyOrName = "queryTokensByPolicyOrName"
+	queryTokenByNativeTokenID = "queryTokensByNativeTokenID"
+	queryTokensRandom = "queryTokensRandom"
 )
 
 type AddressInfo struct {
@@ -86,7 +88,9 @@ func (s *ServiceImpl) loadQueries(ctx context.Context) error {
 		queryPaymentAddressesFromStakeKey: "query_payment_addresses_from_stake_key.sql",
 		queryADABalance: "query_ada_balance.sql",
 		queryTokenBalance: "query_token_balance.sql",
-		queryTokens: "query_tokens.sql",
+		queryTokensByPolicyOrName: "query_tokens_by_policy_or_name.sql",
+		queryTokenByNativeTokenID: "query_token_by_native_token_id.sql",
+		queryTokensRandom: "query_tokens_random.sql",
 	}
 
 	queries := make(map[string]string)
@@ -312,9 +316,9 @@ func (s *ServiceImpl) Add721Metadata(ctx context.Context, tokens []nvla.Token) (
 		if t.NativeTokenId == "ada" {
 			continue
 		}
-		f := strings.Split(t.NativeTokenId, ".")
+		f := strings.SplitN(t.NativeTokenId, ".", 2)
 		if len(f) != 2 {
-			return nil, fmt.Errorf("failed to split native token ID into policy and asset IDs")
+			return nil, fmt.Errorf("failed to split native token ID into policy and asset IDs: %s", t.NativeTokenId)
 		}
 
 		policyID := f[0]
@@ -349,7 +353,6 @@ func (s *ServiceImpl) QueryPaymentAddressesesFromStakeKey(ctx context.Context, s
 
 	paymentAddresses := []string{}
 	for rows.Next() {
-		fmt.Printf("HIT\n")
 		var paymentAddress string
 		err = rows.Scan(
 			&paymentAddress,
@@ -420,54 +423,6 @@ func (s *ServiceImpl) QueryTokenBalance(ctx context.Context, paymentAddresses []
 		tokens = append(tokens, nvla.Token{
 			NativeTokenId: nativeTokenID,
 			Amount: tokenQuantity,
-		})
-	}
-
-	return tokens, nil
-}
-
-func (s *ServiceImpl) categorizeTokenIdentifiers(tokenSearch nvla.TokenSearch) []string {
-	policiesAndNames := []string{}
-	// TODO: use assetIDs
-	//assetIDs := []string{}
-
-	for _, identifier := range tokenSearch.CardanoIdentifiers {
-		if strings.HasPrefix(identifier, "asset") {
-			//assetIDs = append(assetIDs, identifier)
-			continue
-		}
-		policiesAndNames = append(policiesAndNames, identifier)
-	}
-
-	return policiesAndNames
-}
-
-// Query tokens on Cardano from search identifiers
-func (s *ServiceImpl) QueryTokens(ctx context.Context, search nvla.TokenSearch) ([]nvla.Token, error) {
-	policiesAndNames := s.categorizeTokenIdentifiers(search)
-	
-	rows, err := s.pool.Query(ctx, s.queries[queryTokens], policiesAndNames)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	tokens := []nvla.Token{}
-	for rows.Next() {
-		var policyID, assetID []byte
-		var j string
-		err = rows.Scan(
-			&policyID,
-			&assetID,
-			&j,
-		)
-		if err != nil {
-			return nil, fmt.Errorf("query tokens failed: %v", err)
-		}
-
-		nativeTokenID := fmt.Sprintf("%x.%s", policyID, string(assetID))
-		tokens = append(tokens, nvla.Token{
-			NativeTokenId: nativeTokenID,
 		})
 	}
 

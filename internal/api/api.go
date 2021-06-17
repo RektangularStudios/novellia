@@ -144,6 +144,10 @@ func (s *ApiService) PostTokens(ctx context.Context, tokenSearch nvla.TokenSearc
 	if err != nil {
 		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
 	}
+	tokens, err = s.cardanoService.Add721Metadata(ctx, tokens)
+	if err != nil {
+		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
+	}
 
 	return nvla.Response(200, nvla.TokenList{
 		Tokens: tokens,

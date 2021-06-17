@@ -24,8 +24,16 @@ type Service interface {
 	QueryADABalance(ctx context.Context, paymentAddresses []string, tokens []nvla.Token) ([]nvla.Token, error)
 	// Queries tokens held in a list of payment addresses
 	QueryTokenBalance(ctx context.Context, paymentAddresses []string, tokens []nvla.Token) ([]nvla.Token, error)
-	// Query tokens on Cardano from search identifiers
-	QueryTokens(ctx context.Context, search nvla.TokenSearch) ([]nvla.Token, error)
 	// Safely closes the DB connection
 	Close(ctx context.Context)
+
+	// Token searching
+
+	// Query tokens on Cardano from search identifiers
+	QueryTokens(ctx context.Context, search nvla.TokenSearch) ([]nvla.Token, error)
+
+	QueryTokensRandom(ctx context.Context) ([]nvla.Token, error)
+	QueryTokensBySpecialIdentifier(ctx context.Context, tokenSearch nvla.TokenSearch) ([]nvla.Token, error)
+	QueryTokensByNativeTokenID(ctx context.Context, tokenSearch nvla.TokenSearch) ([]nvla.Token, error)
+	QueryTokensByPolicyOrName(ctx context.Context, tokenSearch nvla.TokenSearch) ([]nvla.Token, error)
 }
