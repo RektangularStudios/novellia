@@ -17,7 +17,7 @@ type Token struct {
 	NativeTokenId string `json:"native_token_id"`
 
 	// Amount of token held in Cardano wallet (in discrete units, i.e. lovelace)
-	Amount int32 `json:"amount,omitempty"`
+	Amount uint64 `json:"amount,omitempty"`
 
 	// Name or ticker as interpreted by Novellia (e.g. NVLA, ADA)
 	Name string `json:"name,omitempty"`
