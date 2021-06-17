@@ -428,17 +428,17 @@ func (s *ServiceImpl) QueryTokenBalance(ctx context.Context, paymentAddresses []
 
 func (s *ServiceImpl) categorizeTokenIdentifiers(tokenSearch nvla.TokenSearch) []string {
 	policiesAndNames := []string{}
-	assetIDs := []string{}
+	// TODO: use assetIDs
+	//assetIDs := []string{}
 
 	for _, identifier := range tokenSearch.CardanoIdentifiers {
 		if strings.HasPrefix(identifier, "asset") {
-			assetIDs = append(assetIDs, identifier)
+			//assetIDs = append(assetIDs, identifier)
 			continue
 		}
 		policiesAndNames = append(policiesAndNames, identifier)
 	}
 
-	// TODO: use assetIDs
 	return policiesAndNames
 }
 

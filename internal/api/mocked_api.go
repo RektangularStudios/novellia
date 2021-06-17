@@ -99,6 +99,17 @@ func (s *MockedApiService) PostWallet(ctx context.Context, wallet nvla.Wallet) (
 	return nvla.Response(200, tokens), nil
 }
 
+// PostTokens
+func (s *MockedApiService) PostTokens(ctx context.Context, tokenSearch nvla.TokenSearch) (nvla.ImplResponse, error) {
+	tokens := []nvla.Token{
+		nvla.Token{
+			NativeTokenId: "0xOccultaNovellia.IscaraTheTenThousandGuns",
+		},
+	}
+
+	return nvla.Response(200, tokens), nil
+}
+
 // GetWorkflowMinterNvla -
 func (s *MockedApiService) GetWorkflowMinterNvla(ctx context.Context) (nvla.ImplResponse, error) {
 	return nvla.Response(http.StatusNotImplemented, nil), errors.New("GetWorkflowMinterNvla method not implemented")
