@@ -86,7 +86,7 @@ func (s *ServiceImpl) loadQueries(ctx context.Context) error {
 		queryPaymentAddressesFromStakeKey: "query_payment_addresses_from_stake_key.sql",
 		queryADABalance: "query_ada_balance.sql",
 		queryTokenBalance: "query_token_balance.sql",
-		queryTokens: "queryTokens",
+		queryTokens: "query_tokens.sql",
 	}
 
 	queries := make(map[string]string)
