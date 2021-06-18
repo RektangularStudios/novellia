@@ -1,11 +1,8 @@
-# github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia v0.0.0-20210529025535-6e4b83f48d2c
+# github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia v0.0.0-20210617005253-7aab596caf3b
 ## explicit
 github.com/RektangularStudios/novellia-sdk/sdk/server/go/novellia/v0
 # github.com/beorn7/perks v1.0.1
 github.com/beorn7/perks/quantile
-# github.com/btcsuite/btcutil v1.0.2
-## explicit
-github.com/btcsuite/btcutil/bech32
 # github.com/cespare/xxhash/v2 v2.1.1
 github.com/cespare/xxhash/v2
 # github.com/gofrs/uuid v4.0.0+incompatible

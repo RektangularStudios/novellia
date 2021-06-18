@@ -138,6 +138,22 @@ func (s *ApiService) PostWallet(ctx context.Context, wallet nvla.Wallet) (nvla.I
 	}), nil
 }
 
+// PostTokens
+func (s *ApiService) PostTokens(ctx context.Context, tokenSearch nvla.TokenSearch) (nvla.ImplResponse, error) {
+	tokens, err := s.cardanoService.QueryTokens(ctx, tokenSearch)
+	if err != nil {
+		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
+	}
+	tokens, err = s.cardanoService.Add721Metadata(ctx, tokens)
+	if err != nil {
+		return nvla.Response(500, fmt.Sprintf("error: %v", err)), nil
+	}
+
+	return nvla.Response(200, nvla.TokenList{
+		Tokens: tokens,
+	}),nil
+}
+
 // GetWorkflowMinterNvla -
 func (s *ApiService) GetWorkflowMinterNvla(ctx context.Context) (nvla.ImplResponse, error) {
 	// TODO - update GetWorkflowMinterNvla with the required logic for this service method.

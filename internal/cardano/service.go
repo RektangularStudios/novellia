@@ -3,7 +3,6 @@ package cardano
 import (
 	"fmt"
 	"context"
-	//"strconv"
 	"os/exec"
 	"encoding/json"
 	"strings"
@@ -13,7 +12,6 @@ import (
 
 	"github.com/shurcooL/graphql"
 	"github.com/jackc/pgx/v4/pgxpool"
-	//"github.com/btcsuite/btcutil/bech32"
 
 	"github.com/RektangularStudios/novellia/internal/common"
 	"github.com/RektangularStudios/novellia/internal/config"
@@ -30,6 +28,9 @@ const (
 	queryPaymentAddressesFromStakeKey = "queryPaymentAddressesFromStakeKey"
 	queryADABalance = "queryADABalance"
 	queryTokenBalance = "queryTokenBalance"
+	queryTokensByPolicyOrName = "queryTokensByPolicyOrName"
+	queryTokenByNativeTokenID = "queryTokensByNativeTokenID"
+	queryTokensRandom = "queryTokensRandom"
 )
 
 type AddressInfo struct {
@@ -87,6 +88,9 @@ func (s *ServiceImpl) loadQueries(ctx context.Context) error {
 		queryPaymentAddressesFromStakeKey: "query_payment_addresses_from_stake_key.sql",
 		queryADABalance: "query_ada_balance.sql",
 		queryTokenBalance: "query_token_balance.sql",
+		queryTokensByPolicyOrName: "query_tokens_by_policy_or_name.sql",
+		queryTokenByNativeTokenID: "query_token_by_native_token_id.sql",
+		queryTokensRandom: "query_tokens_random.sql",
 	}
 
 	queries := make(map[string]string)
@@ -201,88 +205,6 @@ func (s *ServiceImpl) categorizeWalletIdentifiers(wallet nvla.Wallet) ([]string,
 	return paymentAddresses, stakeAddresses, nil
 }
 
-/*
-func (s *ServiceImpl) getAssetsFromPaymentAddresses(ctx context.Context, paymentAddresses []string) ([]nvla.Token, error) {
-	// query assets at latest block
-	blockNumber, _, err := s.GetTip(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	tokens := []nvla.Token{}
-	if len(paymentAddresses) == 0 {
-		return tokens, nil
-	}
-
-	graphQLPaymentAddresses := []graphql.String{}
-	for _, p := range paymentAddresses {
-		graphQLPaymentAddresses = append(graphQLPaymentAddresses, graphql.String(p))
-	}
-
-	queryParams := map[string]interface{}{
-		"addresses":  graphQLPaymentAddresses,
-		"atBlock": 		graphql.Int(blockNumber),
-	}
-	
-	var query struct {
-		PaymentAddresses []struct {
-			Summary struct {
-				AssetBalances []struct {
-					Asset struct {
-						PolicyID graphql.String
-						Description graphql.String
-						Name graphql.String
-						AssetName graphql.String
-					}
-					Quantity graphql.String
-				}
-				UtxosCount graphql.Int
-			} `graphql:"summary(atBlock: $atBlock)"`
-		} `graphql:"paymentAddresses(addresses: $addresses)"`
-	}
-
-	// TODO: remove this loop once cardano-graphql is less buggy
-	for i := 0; i < graphQLRetries; i++ {
-		err = s.graphQLClient.Query(ctx, &query, queryParams)
-		if err != nil && i == graphQLRetries - 1 {
-			return nil, err
-		}
-		if err != nil {
-			continue
-		}
-		break
-	}
-
-	for _, paymentAddress := range query.PaymentAddresses {
-		for _, assetBalance := range paymentAddress.Summary.AssetBalances {
-			amount, err := strconv.ParseUint(string(assetBalance.Quantity), 10, 64)
-			if err != nil {
-				return nil, fmt.Errorf("could not convert balance to integer: %v", err)
-			}
-
-			nativeTokenID := "ada"
-			if string(assetBalance.Asset.AssetName) != "ada" {
-				decodedAssetID, err := hex.DecodeString(string(assetBalance.Asset.AssetName))
-				if err != nil {
-					return nil, err
-				}
-				nativeTokenID = fmt.Sprintf("%s.%s", string(assetBalance.Asset.PolicyID), string(decodedAssetID))
-			}
-			t := nvla.Token{
-				Amount: uint64(amount),
-				Name: string(assetBalance.Asset.Name),
-				NativeTokenId: nativeTokenID,
-				Description: string(assetBalance.Asset.Description),
-			}
-
-			tokens = append(tokens, t)
-		}
-	}
-
-	return tokens, nil
-}
-*/
-
 func (s *ServiceImpl) GetAssets(ctx context.Context, wallet nvla.Wallet) ([]nvla.Token, error) {
 	// multi-step to get assets
 	// 1. get stake keys from addresses
@@ -345,27 +267,7 @@ func (s *ServiceImpl) GetAddressType(address string) (string, string, error) {
 }
 
 func (s *ServiceImpl) DecodeStakeAddressFromBase16(paymentAddressBase16 string) (string, error) {
-	/*
-	fmt.Printf("s: %v, b: %v\n", paymentAddressBase16, stakeAddressBase16)
-	
-	unhex, err := hex.DecodeString(paymentAddressBase16)
-	if err != nil {
-		return "", err
-	}
-	
-	b := []byte(fmt.Sprintf("e1%s", paymentAddressBase16))
-	conv, err := bech32.ConvertBits(b, 4, 5, true)
-	if err != nil {
-		return "", err
-	}
-	stakeAddress, err := bech32.Encode("stake", conv)
-	if err != nil {
-		return "", err
-	}
-	fmt.Printf("stake decoded: %s", stakeAddress)
-	*/
-
-	return paymentAddressBase16[58:], nil
+	return fmt.Sprintf("e1%s", paymentAddressBase16[58:]), nil
 }
 
 func (s *ServiceImpl) query721Metadata(ctx context.Context, nativeTokens []nvla.NativeToken) (map[string]string, error) {
@@ -414,9 +316,9 @@ func (s *ServiceImpl) Add721Metadata(ctx context.Context, tokens []nvla.Token) (
 		if t.NativeTokenId == "ada" {
 			continue
 		}
-		f := strings.Split(t.NativeTokenId, ".")
+		f := strings.SplitN(t.NativeTokenId, ".", 2)
 		if len(f) != 2 {
-			return nil, fmt.Errorf("failed to split native token ID into policy and asset IDs")
+			return nil, fmt.Errorf("failed to split native token ID into policy and asset IDs: %s", t.NativeTokenId)
 		}
 
 		policyID := f[0]
@@ -443,8 +345,7 @@ func (s *ServiceImpl) Add721Metadata(ctx context.Context, tokens []nvla.Token) (
 	
 // Queries payment addresses from stake key
 func (s *ServiceImpl) QueryPaymentAddressesesFromStakeKey(ctx context.Context, stakeKey string) ([]string, error) {
-	fmt.Printf("skey: %s", stakeKey)
-	rows, err := s.pool.Query(ctx, s.queries[queryPaymentAddressesFromStakeKey], fmt.Sprintf("e1%s", stakeKey))
+	rows, err := s.pool.Query(ctx, s.queries[queryPaymentAddressesFromStakeKey], stakeKey)
 	if err != nil {
 		return nil, err
 	}
@@ -452,7 +353,6 @@ func (s *ServiceImpl) QueryPaymentAddressesesFromStakeKey(ctx context.Context, s
 
 	paymentAddresses := []string{}
 	for rows.Next() {
-		fmt.Printf("HIT\n")
 		var paymentAddress string
 		err = rows.Scan(
 			&paymentAddress,
