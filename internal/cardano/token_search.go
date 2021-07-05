@@ -72,7 +72,6 @@ func (s *ServiceImpl) getPolicyOrNameTokenIdentifiers(tokenSearch nvla.TokenSear
 }
 
 func (s *ServiceImpl) QueryTokensRandom(ctx context.Context) ([]nvla.Token, error) {
-	fmt.Printf("entered random\n")
 	rows, err := s.pool.Query(ctx, s.queries[queryTokensRandom])
 	if err != nil {
 		return nil, err
@@ -94,9 +93,7 @@ func (s *ServiceImpl) QueryTokensRandom(ctx context.Context) ([]nvla.Token, erro
 		tokens = append(tokens, nvla.Token{
 			NativeTokenId: nativeTokenID,
 		})
-		//fmt.Printf("%s\n", nativeTokenID)
 	}
-	fmt.Printf("returned tokens %d", len(tokens))
 	return tokens, nil
 }
 
@@ -177,12 +174,11 @@ func (s *ServiceImpl) QueryTokensByPolicyOrName(ctx context.Context, tokenSearch
 func (s *ServiceImpl) QueryTokens(ctx context.Context, search nvla.TokenSearch) ([]nvla.Token, error) {
 	tokens := []nvla.Token{}
 	
-	fmt.Printf("enter")
 	t, err := s.QueryTokensBySpecialIdentifier(ctx, search)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("exit")
+
 	if len(t) != 0 {
 		// do not do additional querying after consuming special identifier
 		return t, nil
@@ -190,7 +186,7 @@ func (s *ServiceImpl) QueryTokens(ctx context.Context, search nvla.TokenSearch) 
 	if len(s.getSpecialTokenIdentifier(search)) != 0 {
 		return tokens, nil
 	}
-	fmt.Printf("OHNO")
+
 
 	t, err = s.QueryTokensByPolicyOrName(ctx, search)
 	if err != nil {
