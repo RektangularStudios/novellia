@@ -198,7 +198,7 @@ func (s *ServiceImpl) categorizeWalletIdentifiers(wallet nvla.Wallet) ([]string,
 				stakeAddresses = append(stakeAddresses, decodedStakeAddr)
 			}
 		case "stake":
-			stakeAddresses = append(stakeAddresses, addr)
+			stakeAddresses = append(stakeAddresses, base16)
 		}
 	}
 
