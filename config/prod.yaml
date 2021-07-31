@@ -1,0 +1,18 @@
+server:
+  # leave host blank or server will only accept calls from localhost
+  host: 
+  port: 3557
+monitoring:
+  status-url: https://api-demo.rektangularstudios.com/novellia/v0/status
+  namespace: demo
+cardano-graphql:
+  host: http://127.0.0.1
+  port: 3100
+postgres:
+  cardano-database: cexplorer
+  novellia-database: novellia_bravo
+  host: localhost:5432
+  username: rektangular
+  password: X
+  queries-path: /novellia/sql
+mocked: false

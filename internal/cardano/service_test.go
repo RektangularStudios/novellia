@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	configPath = "/media/ninja/SSD_2/rektangular/novellia/config/local.yaml"
+	configPath = "/novellia/config/local.yaml"
 )
 
 func setupTest(ctx context.Context) (cardano.Service, error) {
